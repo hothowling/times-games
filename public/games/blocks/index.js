@@ -1,0 +1,491 @@
+/*
+ * blocks/index.js - 구구단 땅따먹기(원본 times-block/js/game.js). 화면, 판 그리기(끌기), 카드, 소리/캐릭터 연결.
+ * 규칙 판정은 rules.js, 효과음·숫자 읽기는 ctx.audio, 캐릭터는 ctx.character 가 맡습니다.
+ * 진행도: { level } (ctx.saveProgress). 판을 다 채우면 ctx.finish 로 별(지운 땅 수 기준)을 보고합니다.
+ */
+import * as P from './rules.js';
+
+export const dict = {
+  ko: {
+    titleHtml: '구구단<br>땅따먹기',
+    start: '시작!',
+    levelLine: '<b>{n}</b>판 · {size}',
+    level: '{n}판',
+    rule1: '카드가 <b>12</b>면 <b>3×4</b>나 <b>2×6</b>으로 칸을 끌어서 그려요.',
+    rule2: '가로·세로는 2~9칸. 이미 채운 칸과는 겹칠 수 없어요.',
+    rule3: '카드를 모두 한 번씩 써서 판을 빈틈없이 채우면 성공!',
+    rule4: '그려 놓은 땅을 톡 누르면 지워져요.',
+    help: '숫자 카드만큼 칸을 끌어서 그려요.',
+    big: '가로·세로는 9칸까지예요.',
+    overlap: '이미 채운 칸과 겹쳐요.',
+    nocard: '{n} 카드가 없어요.',
+    removedMsg: '땅을 지웠어요.',
+    card: '{n} 카드',
+    cardUsed: '{n} 카드, 사용함',
+    clearAll: '모두 지우기',
+    newPuzzle: '다른 문제',
+    boardLabel: '땅따먹기 판',
+    soundOff: '소리 끄기',
+    soundOn: '소리 켜기',
+    quit: '나가기',
+    winTitle: '다 채웠어요!',
+    timeTaken: '걸린 시간',
+    removedLabel: '지운 땅',
+    times: '{n}번',
+    stars: '별 {n}개',
+    next: '다음 판',
+    quitAsk: '그만할까요?',
+    keepGoing: '계속하기'
+  },
+  en: {
+    titleHtml: 'Times Table<br>Blocks',
+    start: 'Start!',
+    levelLine: 'Level <b>{n}</b> · {size}',
+    level: 'Level {n}',
+    rule1: 'For card <b>12</b>, drag out <b>3×4</b> or <b>2×6</b> squares.',
+    rule2: 'Each side is 2 to 9 squares. Blocks can’t overlap.',
+    rule3: 'Use every card once and fill the whole board to win!',
+    rule4: 'Tap a block to remove it.',
+    help: 'Drag to draw a block that matches a card.',
+    big: 'Each side can be at most 9 squares.',
+    overlap: 'That overlaps a filled square.',
+    nocard: 'There’s no {n} card.',
+    removedMsg: 'Block removed.',
+    card: 'Card {n}',
+    cardUsed: 'Card {n}, used',
+    clearAll: 'Clear all',
+    newPuzzle: 'New puzzle',
+    boardLabel: 'Game board',
+    soundOff: 'Sound off',
+    soundOn: 'Sound on',
+    quit: 'Quit',
+    winTitle: 'Board filled!',
+    timeTaken: 'Time',
+    removedLabel: 'Blocks removed',
+    times: '{n}',
+    stars: '{n} stars',
+    next: 'Next level',
+    quitAsk: 'Stop playing?',
+    keepGoing: 'Keep going'
+  }
+};
+
+/* 원본 index.html 의 화면 구성. 처음 화면의 언어 버튼 대신 로비로 나가는 버튼을 둡니다. */
+const HTML = `
+<div class="app">
+  <section class="screen screen-home is-active" data-screen="home">
+    <button type="button" class="icon-btn btn-exit" data-i18n-aria="goLobby"><img src="assets/ui/home.webp" alt=""></button>
+    <h1 class="title" data-i18n-html="titleHtml"></h1>
+    <div class="mascot mascot-home"></div>
+    <p class="level-line" data-ref="homeLevel"></p>
+    <button type="button" class="btn btn-primary btn-huge" data-ref="start" data-i18n="start"></button>
+    <ol class="rules">
+      <li data-i18n-html="rule1"></li>
+      <li data-i18n-html="rule2"></li>
+      <li data-i18n-html="rule3"></li>
+      <li data-i18n-html="rule4"></li>
+    </ol>
+  </section>
+
+  <section class="screen screen-game" data-screen="game">
+    <div class="bar">
+      <span class="badge" data-ref="level"></span>
+      <span class="badge" data-ref="time">0:00</span>
+      <button type="button" class="icon-btn" data-ref="sound"></button>
+      <button type="button" class="icon-btn" data-ref="quit" data-i18n-aria="quit">✕</button>
+    </div>
+    <div class="board-wrap">
+      <div class="board" data-ref="board" role="application" data-i18n-aria="boardLabel"></div>
+    </div>
+    <div class="talk-row">
+      <div class="mascot mascot-game"></div>
+      <p class="bubble" data-ref="bubble" aria-live="polite"></p>
+    </div>
+    <div class="cards" data-ref="cards"></div>
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" data-ref="clear" data-i18n="clearAll"></button>
+      <button type="button" class="btn btn-ghost" data-ref="new" data-i18n="newPuzzle"></button>
+    </div>
+  </section>
+</div>
+
+<div class="modal" data-ref="win" hidden>
+  <div class="modal-card">
+    <p class="modal-title" data-i18n="winTitle"></p>
+    <div class="mascot mascot-result"></div>
+    <div class="result-stars" data-ref="winStars"></div>
+    <ul class="result-lines">
+      <li><span data-i18n="timeTaken"></span><b data-ref="winTime">-</b></li>
+      <li><span data-i18n="removedLabel"></span><b data-ref="winRemoved">-</b></li>
+    </ul>
+    <button type="button" class="btn btn-primary" data-ref="next" data-i18n="next"></button>
+    <button type="button" class="btn btn-ghost" data-ref="exitWin" data-i18n="goLobby"></button>
+  </div>
+</div>
+
+<div class="modal" data-ref="quitModal" hidden>
+  <div class="modal-card">
+    <p class="modal-title" data-i18n="quitAsk"></p>
+    <button type="button" class="btn btn-primary" data-ref="keep" data-i18n="keepGoing"></button>
+    <button type="button" class="btn btn-ghost" data-ref="exitQuit" data-i18n="goLobby"></button>
+  </div>
+</div>`;
+
+export function mount(el, ctx) {
+  const A = ctx.audio;
+  const t = ctx.t;
+  el.innerHTML = HTML;
+  ctx.apply(el);
+  const $ = {};
+  for (const n of el.querySelectorAll('[data-ref]')) $[n.dataset.ref] = n;
+  const board = $.board;
+
+  /* 원본 마스코트는 얼굴 그림이라 세 자리 모두 얼굴만 그립니다. */
+  const chars = {
+    home: ctx.character(el.querySelector('.mascot-home'), { body: false }),
+    game: ctx.character(el.querySelector('.mascot-game'), { body: false }),
+    result: ctx.character(el.querySelector('.mascot-result'), { body: false })
+  };
+
+  let level = Math.max(1, Number(ctx.progress?.level) || 1);
+  let W = 6;
+  let H = 6;
+  let cards = [];
+  let used = [];
+  let owner = [];      /* 칸마다 조각 번호, 빈 칸은 -1 */
+  let pieces = [];     /* 조각 번호 → { x, y, w, h, card, el } 또는 null(지움) */
+  let removed = 0;
+  let startedAt = 0;
+  let clock = null;
+  let drag = null;
+  let preview = null;
+  let done = false;
+
+  /* destroy() 에서 한꺼번에 지우려고 setTimeout 을 모아 둡니다. */
+  const timers = new Set();
+  function later(fn, ms) {
+    const id = setTimeout(() => { timers.delete(id); fn(); }, ms);
+    timers.add(id);
+  }
+
+  /* 원본 소리 버튼은 효과음과 숫자 읽기를 함께 껐습니다. 숫자 읽기도 소리가 켜져 있을 때만 합니다. */
+  function speak(nums, opts) {
+    if (A.getSound()) A.playNumbers(ctx.lang, nums, opts);
+  }
+
+  function show(name) {
+    for (const s of el.querySelectorAll('.screen')) s.classList.toggle('is-active', s.dataset.screen === name);
+    Object.values(chars).forEach((c) => c.react('idle'));
+  }
+
+  function say(text, tone) {
+    $.bubble.textContent = text;
+    $.bubble.className = 'bubble' + (tone ? ' is-' + tone : '');
+  }
+
+  function fmtTime(ms) {
+    const s = Math.floor(ms / 1000);
+    return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+  }
+
+  function tick() {
+    $.time.textContent = fmtTime(Date.now() - startedAt);
+  }
+
+  /* ---------- 홈 ---------- */
+
+  function renderHome() {
+    const n = P.boardSize(level);
+    $.homeLevel.innerHTML = t('levelLine', { n: level, size: n + '×' + n });
+  }
+
+  /* ---------- 새 판 ---------- */
+
+  function newPuzzle() {
+    W = H = P.boardSize(level);
+    cards = P.cardsFor(P.generate(W, H));
+    used = cards.map(() => false);
+    owner = new Array(W * H).fill(-1);
+    pieces = [];
+    removed = 0;
+    done = false;
+    drag = null;
+    board.textContent = '';
+    preview = null;
+    board.style.setProperty('--w', W);
+    board.style.setProperty('--h', H);
+    $.level.textContent = t('level', { n: level });
+    renderCards();
+    say(t('help'));
+    startedAt = Date.now();
+    clearInterval(clock);
+    clock = setInterval(tick, 1000);
+    tick();
+  }
+
+  function pieceOfCard(i) {
+    return pieces.find((p) => p && p.card === i) || null;
+  }
+
+  function renderCards(match) {
+    const box = $.cards;
+    box.textContent = '';
+    cards.forEach((n, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'card' + (used[i] ? ' is-used' : '') + (!used[i] && n === match ? ' is-match' : '');
+      b.dataset.n = n;
+      const num = document.createElement('span');
+      num.textContent = n;
+      b.appendChild(num);
+      if (used[i]) {
+        const p = pieceOfCard(i);
+        if (p) {
+          const s = document.createElement('small');
+          s.textContent = p.w + '×' + p.h;
+          b.appendChild(s);
+        }
+        b.setAttribute('aria-label', t('cardUsed', { n }));
+      } else {
+        b.setAttribute('aria-label', t('card', { n }));
+      }
+      box.appendChild(b);
+    });
+  }
+
+  /* ---------- 좌표 ---------- */
+
+  function cellAt(e) {
+    const r = board.getBoundingClientRect();
+    const x = Math.floor((e.clientX - r.left) / (r.width / W));
+    const y = Math.floor((e.clientY - r.top) / (r.height / H));
+    return { x: Math.max(0, Math.min(W - 1, x)), y: Math.max(0, Math.min(H - 1, y)) };
+  }
+
+  function place(node, r) {
+    node.style.setProperty('--x', r.x);
+    node.style.setProperty('--y', r.y);
+    node.style.setProperty('--pw', r.w);
+    node.style.setProperty('--ph', r.h);
+  }
+
+  /* ---------- 미리보기 ---------- */
+
+  function updatePreview() {
+    const r = P.rectFrom(drag.start, drag.cur);
+    const res = P.check(r, W, owner, cards, used);
+    if (!preview) {
+      preview = document.createElement('div');
+      preview.className = 'preview';
+      board.appendChild(preview);
+    }
+    place(preview, r);
+    preview.classList.toggle('is-ok', res.ok);
+    preview.textContent = r.w + '×' + r.h + '=' + r.w * r.h;
+    renderCards(res.ok ? r.w * r.h : 0);
+    return { rect: r, res };
+  }
+
+  function dropPreview(bad) {
+    const p = preview;
+    preview = null;
+    if (!p) return;
+    if (!bad) { p.remove(); return; }
+    p.classList.add('is-bad');
+    later(() => p.remove(), 300);
+  }
+
+  /* ---------- 놓기 / 지우기 ---------- */
+
+  function addPiece(r, cardIndex) {
+    const id = pieces.length;
+    const node = document.createElement('div');
+    const color = id % 8;
+    node.className = 'piece';
+    node.style.setProperty('--fill', 'var(--p' + color + ')');
+    node.style.setProperty('--edge', 'var(--p' + color + '-edge)');
+    place(node, r);
+    node.innerHTML = '<span class="n">' + r.w * r.h + '</span><span class="f">' + r.w + '×' + r.h + '</span>';
+    board.appendChild(node);
+    pieces.push({ x: r.x, y: r.y, w: r.w, h: r.h, card: cardIndex, el: node });
+    used[cardIndex] = true;
+    for (let y = r.y; y < r.y + r.h; y++) {
+      for (let x = r.x; x < r.x + r.w; x++) owner[y * W + x] = id;
+    }
+  }
+
+  function removePiece(id) {
+    const p = pieces[id];
+    if (!p) return;
+    pieces[id] = null;
+    used[p.card] = false;
+    for (let i = 0; i < owner.length; i++) if (owner[i] === id) owner[i] = -1;
+    p.el.classList.add('is-gone');
+    later(() => p.el.remove(), 180);
+    removed++;
+  }
+
+  function tryPlace(r, res) {
+    if (res.reason === 'small') {
+      dropPreview(false);
+      say(t('help'));
+      return;
+    }
+    if (!res.ok) {
+      dropPreview(true);
+      A.wrong();
+      chars.game.react('wrong');
+      say(t(res.reason, { n: r.w * r.h }), 'bad');
+      return;
+    }
+    dropPreview(false);
+    addPiece(r, res.card);
+    renderCards();
+    A.correct();
+    chars.game.react('correct');
+    say(r.w + ' × ' + r.h + ' = ' + r.w * r.h + '!', 'good');
+    speak([r.w, r.h, r.w * r.h], { delay: A.FX_CORRECT_SEC });
+    if (owner.every((v) => v >= 0)) win();
+  }
+
+  /* ---------- 끌기 ---------- */
+
+  board.addEventListener('pointerdown', (e) => {
+    if (done || drag) return;
+    A.unlock();
+    const c = cellAt(e);
+    const id = owner[c.y * W + c.x];
+    try { board.setPointerCapture(e.pointerId); } catch { /* 무시 */ }
+    drag = { pid: e.pointerId, start: c, cur: c, piece: id };
+    if (id < 0) updatePreview();
+  });
+
+  board.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const c = cellAt(e);
+    if (c.x === drag.cur.x && c.y === drag.cur.y) return;
+    drag.cur = c;
+    if (drag.piece >= 0) {
+      /* 채운 땅에서 시작해 끌면 지우지 않습니다(톡 누를 때만 지움). */
+      if (owner[c.y * W + c.x] !== drag.piece) drag.piece = -2;
+      return;
+    }
+    if (drag.piece === -1) updatePreview();
+  });
+
+  function endDrag(e, cancelled) {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const d = drag;
+    drag = null;
+    if (cancelled) { dropPreview(false); renderCards(); return; }
+    if (d.piece >= 0) {
+      removePiece(d.piece);
+      renderCards();
+      A.keyTap();
+      say(t('removedMsg'));
+      return;
+    }
+    if (d.piece === -1) {
+      drag = d;
+      const cur = updatePreview();
+      drag = null;
+      renderCards();
+      tryPlace(cur.rect, cur.res);
+    }
+  }
+
+  board.addEventListener('pointerup', (e) => endDrag(e, false));
+  board.addEventListener('pointercancel', (e) => endDrag(e, true));
+
+  /* 카드를 누르면 숫자를 읽어 줍니다. */
+  $.cards.addEventListener('click', (e) => {
+    const b = e.target.closest('.card');
+    if (!b) return;
+    A.unlock();
+    speak([Number(b.dataset.n)]);
+  });
+
+  /* ---------- 성공 ---------- */
+
+  function win() {
+    done = true;
+    clearInterval(clock);
+    const timeMs = Date.now() - startedAt;
+    const stars = P.starsFor(removed);
+    $.winTime.textContent = fmtTime(timeMs);
+    $.winRemoved.textContent = t('times', { n: removed });
+    $.winStars.innerHTML = '★★★'.slice(0, stars) + '<span class="off">' + '★★★'.slice(stars) + '</span>';
+    $.winStars.setAttribute('aria-label', t('stars', { n: stars }));
+    ctx.finish({ stars, score: level, detail: { level, timeMs, removed } });
+    level++;
+    ctx.saveProgress({ level });
+    later(() => {
+      $.win.hidden = false;
+      A.fanfare();
+      chars.result.react('clear');
+    }, 500);
+  }
+
+  /* ---------- 버튼 ---------- */
+
+  function renderSound() {
+    const on = A.getSound();
+    $.sound.textContent = on ? '🔊' : '🔇';
+    $.sound.setAttribute('aria-label', t(on ? 'soundOff' : 'soundOn'));
+  }
+
+  function on(node, fn) { node.addEventListener('click', fn); }
+
+  on($.start, () => {
+    A.unlock();
+    A.preloadVoices(ctx.lang);
+    show('game');
+    newPuzzle();
+  });
+
+  on($.next, () => {
+    $.win.hidden = true;
+    chars.result.react('idle');
+    A.nextFx();
+    newPuzzle();
+  });
+
+  on($.clear, () => {
+    if (done) return;
+    for (let i = 0; i < pieces.length; i++) if (pieces[i]) removePiece(i);
+    renderCards();
+    say(t('help'));
+  });
+
+  on($.new, () => {
+    if (done) return;
+    A.nextFx();
+    newPuzzle();
+  });
+
+  on($.sound, () => {
+    const next = !A.getSound();
+    ctx.setSound(next);
+    if (!next) A.cancelSpeech();
+    renderSound();
+  });
+  on($.quit, () => { $.quitModal.hidden = false; });
+  on($.keep, () => { $.quitModal.hidden = true; });
+  on($.exitQuit, () => ctx.exit());
+  on($.exitWin, () => ctx.exit());
+  on(el.querySelector('.btn-exit'), () => ctx.exit());
+
+  /* ---------- 시작 ---------- */
+
+  renderSound();
+  renderHome();
+
+  return {
+    destroy() {
+      clearInterval(clock);
+      timers.forEach(clearTimeout);
+      timers.clear();
+      drag = null;
+    }
+  };
+}

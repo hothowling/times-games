@@ -1,0 +1,18 @@
+# /etc/systemd/system/times-games.service  (설치: deploy/README 참고)
+[Unit]
+Description=times-games unified game (port 8010, ics.jotanow.site/games)
+After=network.target
+
+[Service]
+# nvm 의 node 를 씁니다. node 버전을 바꾸면 이 경로도 바꿔야 합니다.
+ExecStart=/home/linuxuser/.nvm/versions/node/v24.18.0/bin/node server/index.js
+WorkingDirectory=/home/linuxuser/dev/jotanow/times-games
+Environment=PORT=8010
+# 데이터(DB, 사진 얼굴)는 웹으로 공개되는 ~/dev/jotanow 밖에 둡니다.
+Environment=DATA_DIR=/home/linuxuser/data/times-games
+Environment=NODE_ENV=production
+User=linuxuser
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

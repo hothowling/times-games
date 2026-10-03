@@ -1,0 +1,595 @@
+/*
+ * game.css - 구구단 마스터. 원본: times-table-game/css/style.css
+ * 아이들이 쓰기 좋게 크고 둥글고 밝은 화면. 세로 모바일 기준(최대 너비 480px), 터치 영역은 최소 56px.
+ * 모든 선택자는 .game-master 아래에 씁니다. 글꼴은 플랫폼의 --font-fun(Jua, 굵기 하나).
+ * 플랫폼 ui.css 와 겹치지 않게 상단 줄·버튼은 .m-top / .m-icon / .m-btn 으로 이름을 바꿨습니다.
+ */
+
+.game-master {
+  /* 보라 테마 팔레트 */
+  --bg-top: #faf5ff;        /* 아주 연한 라벤더 */
+  --bg-bottom: #ece3ff;     /* 부드러운 라일락 */
+  --card: #ffffff;
+  --surface: #ffffff;
+  --surface-tint: #f3ecff;  /* 강조 행, 눌린 키 */
+  --glass: rgba(255, 255, 255, 0.78);
+  --glass-strong: rgba(255, 255, 255, 0.88);
+  --ink: #2e1f4d;
+  --ink-soft: #5f4f82;
+  --on-primary: #ffffff;
+  --primary: #7c3aed;
+  --primary-dark: #5b21b6;
+  --accent: #db2777;        /* 보조 포인트(핑크) */
+  --lavender: #a78bfa;
+  --green: #1f9d63;
+  --yellow: #f4c020;
+  --red: #e5484d;
+  --red-dark: #c8313a;
+  --line: #e0d4fa;
+  --overlay: rgba(46, 31, 77, 0.45);
+  --radius: 22px;
+  --pad: 16px;
+
+  padding: calc(var(--pad) + env(safe-area-inset-top, 0px)) var(--pad) var(--pad);
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%) fixed;
+  color: var(--ink);
+  font-family: var(--font-fun);
+  font-size: 18px;
+  line-height: 1.4;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.game-master button {
+  font-family: inherit;
+  font-weight: normal;
+}
+
+.game-master .screen {
+  display: none;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.game-master .screen.is-active {
+  display: block;
+  animation: mm-fade-in 200ms ease-out;
+}
+
+@keyframes mm-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.game-master button:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ---------- 상단 줄 ---------- */
+
+.game-master .m-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+}
+
+.game-master .m-top.game-top {
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+.game-master .m-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  padding: 0;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 150ms ease;
+}
+
+.game-master .m-icon img { width: 32px; height: 32px; }
+.game-master .m-icon:active { transform: scale(0.92); }
+
+.game-master .badge {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+/* ---------- 시작 화면 ---------- */
+
+.game-master .title {
+  margin: 14px 0 4px;
+  font-size: 36px;
+  font-weight: normal;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.game-master .title.small {
+  font-size: 30px;
+  margin-top: 8px;
+}
+
+.game-master .tagline {
+  margin: 0;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 17px;
+}
+
+.game-master .home-round {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.game-master .section-title {
+  margin: 22px 0 8px;
+  font-size: 20px;
+  font-weight: normal;
+  color: var(--ink-soft);
+}
+
+.game-master .rule-list {
+  margin: 0 0 24px;
+  padding: 12px 14px 12px 32px;
+  background: var(--glass);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+
+.game-master .rule-list li + li { margin-top: 4px; }
+
+/* ---------- 캐릭터 ----------
+ * core/character.js 가 그립니다(숨쉬기·기우뚱·반응 동작은 character.css). 여기서는 크기와 자리만 정합니다.
+ */
+
+.game-master .mascot {
+  --mascot-w: 180px;
+  width: var(--mascot-w);
+  margin: 0 auto;
+}
+
+.game-master .mascot-home {
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
+.game-master .mascot-result {
+  --mascot-w: 124px; /* 전신이라 원본(얼굴 150px)과 같은 높이가 되게 줄였습니다 */
+  margin-top: 6px;
+}
+
+/*
+ * 게임 화면: 문제 카드(피드백)와 키패드 사이 남는 공간에 얼굴만 둡니다.
+ * 크기는 index.js 의 fitGameMascot() 가 실제 키패드 위치를 재서 정합니다(최소 56px, 최대 200px).
+ */
+.game-master .mascot-game {
+  --mascot-w: 72px;
+  margin: 0;
+  z-index: 1;
+}
+
+/* ---------- 별 ---------- */
+
+.game-master .star-box {
+  background: var(--glass);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin: 12px 0;
+  text-align: center;
+}
+
+.game-master .star-caption {
+  font-size: 17px;
+  color: var(--ink-soft);
+}
+
+.game-master .star-caption b {
+  color: var(--primary-dark);
+  font-size: 22px;
+  font-weight: normal;
+}
+
+.game-master .stars-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  min-height: 34px;
+  align-items: center;
+  font-size: 26px;
+}
+
+.game-master .stars-row.stars-small {
+  font-size: 17px;
+  min-height: 24px;
+  gap: 2px;
+  overflow: hidden;
+  flex: 1 1 auto;
+}
+
+.game-master .stars-row .star-none {
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+.game-master .star { display: inline-block; }
+.game-master .star.pop { animation: mm-star-pop 320ms ease-out both; }
+
+@keyframes mm-star-pop {
+  0% { transform: scale(0.2) rotate(-25deg); opacity: 0; }
+  60% { transform: scale(1.25) rotate(8deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+/* ---------- 버튼 ---------- */
+
+.game-master .m-btn {
+  display: block;
+  width: 100%;
+  min-height: 62px;
+  margin: 10px 0;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius);
+  font-size: 25px;
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.game-master .btn-huge {
+  min-height: 72px;
+  font-size: 31px;
+}
+
+.game-master .btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  box-shadow: 0 5px 0 var(--primary-dark);
+}
+
+.game-master .btn-primary:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--primary-dark);
+}
+
+.game-master .btn-ghost {
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--line);
+}
+
+.game-master .btn-ghost:active { transform: scale(0.97); }
+
+/* ---------- 게임 화면 ---------- */
+
+.game-master [data-screen="game"].is-active {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 32px);
+  padding-bottom: 300px;
+}
+
+.game-master .timer-track {
+  height: 18px;
+  margin: 10px 0 6px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.game-master .timer-bar {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  transition: background-color 200ms linear;
+}
+
+.game-master .timer-bar.is-green { background: var(--green); }
+.game-master .timer-bar.is-yellow { background: var(--yellow); }
+.game-master .timer-bar.is-red { background: var(--red); }
+
+.game-master .q-area {
+  position: relative;
+  margin-top: 6px;
+}
+
+.game-master .q-card {
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 28px;
+  padding: 18px 10px;
+  text-align: center;
+  font-size: 52px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.game-master .q-card.shake {
+  animation: mm-shake 260ms ease-in-out;
+  border-color: var(--red);
+}
+
+.game-master .q-card.is-leaving { animation: mm-card-leave 300ms ease-in forwards; }
+.game-master .q-card.is-entering { animation: mm-card-enter 260ms ease-out; }
+
+@keyframes mm-card-leave {
+  from { transform: translateX(0) scale(1); opacity: 1; }
+  to { transform: translateX(-48px) scale(0.96); opacity: 0; }
+}
+
+@keyframes mm-card-enter {
+  from { transform: translateX(48px) scale(0.96); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@keyframes mm-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-9px); }
+  40% { transform: translateX(9px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+
+.game-master .q-num { font-size: 66px; }
+
+.game-master .q-op {
+  color: var(--accent);
+  padding: 0 2px;
+}
+
+.game-master .q-slot {
+  display: inline-block;
+  min-width: 1.4em;
+  color: var(--primary-dark);
+  font-size: 66px;
+  border-bottom: 6px solid var(--line);
+}
+
+.game-master .q-slot.is-answer {
+  color: var(--green);
+  border-bottom-color: transparent;
+}
+
+.game-master .feedback {
+  height: 48px;
+  margin-top: 8px;
+  text-align: center;
+  font-size: 32px;
+  color: var(--green);
+  opacity: 0;
+}
+
+.game-master .feedback.show {
+  opacity: 1;
+  animation: mm-rise 300ms ease-out;
+}
+
+.game-master .feedback.is-bad { color: var(--red); }
+.game-master .feedback.is-late { color: var(--red-dark); }
+
+@keyframes mm-rise {
+  from { transform: translateY(12px) scale(0.85); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+/*
+ * 캐릭터 자리: 남는 세로 공간을 채우고 캐릭터를 가운데 둡니다.
+ * 캐릭터 동작은 transform 만 써서 문제/키패드가 밀리지 않습니다.
+ */
+.game-master .mascot-row {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  min-height: 56px;
+  margin: 0 0 4px;
+}
+
+.game-master .keypad {
+  position: fixed;
+  z-index: 10;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px var(--pad) calc(10px + env(safe-area-inset-bottom, 0px));
+  background: var(--glass-strong);
+  backdrop-filter: blur(6px);
+  border-top: 2px solid var(--line);
+  border-radius: 24px 24px 0 0;
+}
+
+.game-master .key {
+  min-height: 62px;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 34px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--line);
+  transition: transform 120ms ease, background 120ms ease;
+}
+
+.game-master .key:active {
+  transform: translateY(3px);
+  background: var(--surface-tint);
+  box-shadow: none;
+}
+
+/*
+ * 짧은 화면: 캐릭터 자리를 만들려고 키패드를 줄입니다.
+ * 실제 보이는 높이(innerHeight)로 index.js 가 게임 요소에 클래스를 붙입니다.
+ *   is-compact      보이는 높이 760px 미만: 버튼 50px
+ *   is-compact-xs   보이는 높이 640px 미만: 버튼 44px
+ */
+.game-master.is-compact .keypad {
+  gap: 6px;
+  padding-top: 8px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+
+.game-master.is-compact .key {
+  min-height: 50px;
+  font-size: 30px;
+  border-radius: 16px;
+}
+
+.game-master.is-compact-xs .key {
+  min-height: 44px;
+  font-size: 28px;
+  border-radius: 14px;
+}
+
+.game-master .key-blank {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* ---------- 결과 화면 ---------- */
+
+.game-master [data-screen="result"] {
+  position: relative;
+  text-align: center;
+}
+
+.game-master .result-round {
+  font-size: 19px;
+  color: var(--ink-soft);
+}
+
+.game-master .result-stars {
+  font-size: 56px;
+  min-height: 72px;
+  letter-spacing: 6px;
+  margin: 6px 0 2px;
+}
+
+.game-master .result-lines {
+  list-style: none;
+  margin: 8px 0 12px;
+  padding: 0;
+}
+
+.game-master .result-lines li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.game-master .result-lines b {
+  font-size: 21px;
+  font-weight: normal;
+  color: var(--primary-dark);
+}
+
+.game-master .confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.game-master .confetti i {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 14px;
+  border-radius: 3px;
+  opacity: 0.9;
+  animation: mm-fall 1600ms linear forwards;
+}
+
+@keyframes mm-fall {
+  to { transform: translateY(110vh) rotate(540deg); opacity: 0.2; }
+}
+
+/* ---------- 모달 ---------- */
+
+.game-master .modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--overlay);
+  z-index: 50;
+}
+
+.game-master .modal-card {
+  width: 100%;
+  max-width: 340px;
+  background: var(--bg-top);
+  border-radius: 24px;
+  padding: 20px;
+  text-align: center;
+  animation: mm-pop-in 200ms ease-out;
+}
+
+@keyframes mm-pop-in {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.game-master .modal-title {
+  margin: 4px 0 14px;
+  font-size: 26px;
+}
+
+/* ---------- 가로 모드 최소 대응 ---------- */
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .game-master .mascot-home { --mascot-w: 110px; }
+  .game-master .mascot-result { --mascot-w: 80px; }
+  .game-master .title { font-size: 26px; }
+  .game-master .q-card { font-size: 38px; padding: 10px; }
+  .game-master .q-num, .game-master .q-slot { font-size: 44px; }
+  .game-master [data-screen="game"].is-active { padding-bottom: 250px; }
+  .game-master .key { min-height: 56px; font-size: 26px; }
+}
+
+/* 세로로 짧은 화면(예: 375×667): 시작 버튼이 첫 화면에 보이도록 캐릭터를 줄입니다. */
+@media (max-height: 700px) {
+  .game-master .mascot-home { --mascot-w: 120px; }
+  .game-master .mascot-result { --mascot-w: 92px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-master * {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
