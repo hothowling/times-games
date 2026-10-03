@@ -1,6 +1,6 @@
 /*
  * app.js - 앱 시작, hash 라우팅, 상단 바, 설정, 토스트, 게임 실행(ctx).
- *   #/login  #/lobby  #/chars  #/shop  #/records  #/play/<게임 id>
+ *   #/login  #/lobby  #/chars  #/shop  #/records  #/ranking  #/play/<게임 id>
  */
 import { api } from './api.js';
 import { audio } from './audio.js';
@@ -19,6 +19,7 @@ const SCREENS = {
   chars: () => import('../screens/chars.js'),
   shop: () => import('../screens/shop.js'),
   records: () => import('../screens/records.js'),
+  ranking: () => import('../screens/ranking.js'),
   play: null
 };
 
@@ -87,10 +88,12 @@ function bindSettings() {
   $('tb-settings').addEventListener('click', () => {
     $('set-sound').checked = audio.getSound();
     $('set-tts').checked = audio.getTts();
+    $('set-rank-hidden').checked = !!settings().rankHidden;
     dlg.showModal();
   });
   $('set-sound').addEventListener('change', (e) => { audio.setSound(e.target.checked); saveSetting({ sound: e.target.checked }); });
   $('set-tts').addEventListener('change', (e) => { audio.setTts(e.target.checked); saveSetting({ tts: e.target.checked }); });
+  $('set-rank-hidden').addEventListener('change', (e) => saveSetting({ rankHidden: e.target.checked }));
   $('set-lang').addEventListener('click', async () => {
     await saveSetting({ lang: i18n.getLang() === 'ko' ? 'en' : 'ko' });
     applySettings();
@@ -190,7 +193,7 @@ async function launch(view, id, token) {
           game: id, roundKey: crypto.randomUUID(), stars, score, detail, character: key
         });
         patch((me) => { me.user.sparkles = r.sparkles; });
-        toast(r.earned ? t('earned', { n: r.earned }) : t('noEarn'));
+        toast(!r.earned ? t('noEarn') : r.weekRank ? t('earnedRank', { n: r.earned, r: r.weekRank }) : t('earned', { n: r.earned }));
         return r;
       } catch {
         toast(t('offlineSave'));

@@ -210,9 +210,12 @@ export function createApp({ db, dataDir, adminPassword }) {
     if ('lang' in body) s.lang = body.lang === 'en' ? 'en' : 'ko';
     if ('sound' in body) s.sound = !!body.sound;
     if ('tts' in body) s.tts = !!body.tts;
+    if ('rankHidden' in body) s.rankHidden = !!body.rankHidden;
     if ('character' in body) {
       if (typeof body.character !== 'string' || !charExists(user.id, body.character)) fail(400, 'badCharacter');
       s.character = body.character;
+      /* 랭킹에는 사진 얼굴 대신 마지막으로 고른 프리셋 얼굴을 씁니다. */
+      if (PRESETS.includes(body.character)) s.rankFace = body.character;
     }
     S.setSettings.run(JSON.stringify(s), user.id);
     send(res, 200, { settings: s });
@@ -332,7 +335,59 @@ export function createApp({ db, dataDir, adminPassword }) {
       }
       return sparkles;
     });
-    send(res, 200, { earned, sparkles: S.userById.get(user.id).sparkles });
+    const weekRank = ranking('all', 'week', user.id).me?.rank ?? null;
+    send(res, 200, { earned, sparkles: S.userById.get(user.id).sparkles, weekRank });
+  });
+
+  /* ---------- 랭킹: plays 를 집계합니다(새 테이블 없음) ---------- */
+
+  /* 이번 주 월요일 0시(KST, UTC+9)의 ms */
+  function weekStart(now = Date.now()) {
+    const kst = now + 9 * 3600e3;
+    const day = (new Date(kst).getUTCDay() + 6) % 7; /* 월 = 0 */
+    return Math.floor(kst / 864e5) * 864e5 - day * 864e5 - 9 * 3600e3;
+  }
+
+  /* 보드별 값: 전체 = 별 합계, 게임 = 최고 점수(교실만 최고 라운드). 새 게임은 따로 적지 않으면 max(score). */
+  const BOARD_SQL = Object.fromEntries([['all', 'sum(p.stars)'], ...GAMES.map((g) => [g, 'max(p.score)'])]);
+  BOARD_SQL.classroom = "max(json_extract(p.detail, '$.round'))";
+  const boardStmts = Object.fromEntries(Object.entries(BOARD_SQL).map(([board, expr]) => [board, q(
+    `select u.id, u.nickname, u.settings, ${expr} as value from plays p join users u on u.id = p.user_id
+     where p.created_at >= ? ${board === 'all' ? '' : 'and p.game_id = ?'}
+     group by u.id having value > 0 order by value desc, u.id`)]));
+  const lookOf = q('select equipped from looks where user_id = ? and char_key = ?');
+
+  // ponytail: 기간 안의 판을 매번 다 집계합니다. 판 수가 수십만을 넘으면 주간 집계 테이블로.
+  function ranking(board, period, meId) {
+    const since = period === 'all' ? 0 : weekStart();
+    const rows = board === 'all' ? boardStmts.all.all(since) : boardStmts[board].all(since, board);
+    const visible = [];
+    let me = null;
+    for (const r of rows) {
+      const s = JSON.parse(r.settings);
+      if (r.id === meId) me = { value: r.value };
+      if (!s.rankHidden || r.id === meId) visible.push({ ...r, s });
+    }
+    /* 같은 값은 같은 순위(1, 1, 3). 숨김인 나는 목록에는 빠지고 순위만 계산합니다. */
+    let rank = 0;
+    const ranked = visible.map((r, i) => ({ ...r, rank: i && r.value === visible[i - 1].value ? rank : (rank = i + 1) }));
+    if (me) me.rank = ranked.find((r) => r.id === meId).rank;
+    const top = ranked.filter((r) => !r.s.rankHidden).slice(0, 20).map((r) => {
+      const key = r.s.character || 'sooji';
+      const face = PRESETS.includes(key) ? key : (r.s.rankFace || 'sooji');
+      const eq = lookOf.get(r.id, key);
+      return { rank: r.rank, nickname: r.nickname, value: r.value, me: r.id === meId,
+        look: { face, equipped: eq ? JSON.parse(eq.equipped) : DEFAULT_LOOK } };
+    });
+    return { top, me, since };
+  }
+
+  route('GET', '/api/ranking', async (req, res, _m, url) => {
+    const user = currentUser(req);
+    const board = url.searchParams.get('board') || 'all';
+    const period = url.searchParams.get('period') === 'all' ? 'all' : 'week';
+    if (!Object.hasOwn(BOARD_SQL, board)) fail(400, 'badBoard');
+    send(res, 200, ranking(board, period, user.id));
   });
 
   route('GET', '/api/records', async (req, res, _m, url) => {

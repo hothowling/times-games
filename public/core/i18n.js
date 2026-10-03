@@ -24,7 +24,8 @@ const CORE = {
     keepPlaying: '계속하기', goLobby: '로비로', offlineSave: '결과를 저장하지 못했어요. 연결을 확인해 주세요.',
     makerTitle1: '1. 평소 얼굴', makerTitle2: '2. 웃는 얼굴', makerTitle3: '3. 찡그린 얼굴',
     makerHint: '얼굴이 화면 가운데 오도록 정면에서 찍어 주세요. 칸을 누르면 그 표정을 다시 찍어요.',
-    takePhoto: '사진 찍기 / 고르기', save: '저장', cancel: '취소', makerName: '이름',
+    takePhoto: '📷 사진 찍기', camGallery: '앨범에서 고르기', camShoot: '찍기',
+    camGuide: '얼굴을 동그라미 안에, 눈을 점선에 맞춰요', camDenied: '카메라를 쓸 수 없어서 앨범을 열었어요.', photoGuide: '사진을 끌고, 두 손가락으로 키워서 얼굴을 동그라미에 맞춰요', photoUse: '이 얼굴 쓰기', save: '저장', cancel: '취소', makerName: '이름',
     makerConsent: '보호자와 함께 만들고 있어요. 얼굴 그림은 내 계정에만 저장되고 다른 사람에게 보이지 않아요.',
     makerLoading: '얼굴 찾기 도구를 받는 중… (처음 한 번, 약 7MB)', makerWorking: '얼굴을 찾고 있어요…',
     makerReady: '다 됐어요! 저장을 눌러 주세요.', noFace: '얼굴을 찾지 못했어요. 정면 사진으로 다시 해 주세요.',
@@ -32,7 +33,11 @@ const CORE = {
     failLoad: '얼굴 찾기 도구를 받지 못했어요. 연결을 확인해 주세요.', failWork: '사진을 처리하지 못했어요.',
     failSave: '저장하지 못했어요.', tooManyCharacters: '사진 캐릭터는 5개까지 만들 수 있어요.',
     privacy: '원본 사진은 이 기기 밖으로 나가지 않아요. 배경을 지운 얼굴 그림만 내 계정에 저장돼요.',
-    sooji: '수지', jiho: '지호'
+    sooji: '수지', jiho: '지호',
+    ranking: '랭킹', rankWeek: '이번 주', rankAll: '명예의 전당', rankTotal: '전체', rankStars: '★ {n}',
+    rankMe: '내 순위', rankNth: '{n}위', rankNone: '아직 기록이 없어요', rankEmpty: '아직 아무도 없어요. 첫 번째 주인공이 되어 볼까요?',
+    rankHiddenNote: '이름 숨김 중', rankHide: '랭킹에서 내 이름 숨기기', rankResets: '매주 월요일 0시에 새로 시작해요.',
+    earnedRank: '+{n} Sparkles! · 이번 주 {r}위'
   },
   en: {
     appTitle: 'Times Table Playground',
@@ -53,7 +58,8 @@ const CORE = {
     keepPlaying: 'Keep playing', goLobby: 'Lobby', offlineSave: "Couldn't save the result. Check your connection.",
     makerTitle1: '1. Normal face', makerTitle2: '2. Smiling face', makerTitle3: '3. Frowning face',
     makerHint: 'Face the camera with your face in the middle. Tap a box to retake that face.',
-    takePhoto: 'Take / choose photo', save: 'Save', cancel: 'Cancel', makerName: 'Name',
+    takePhoto: '📷 Take photo', camGallery: 'Choose from album', camShoot: 'Shoot',
+    camGuide: 'Fit your face in the oval, eyes on the line', camDenied: "Can't use the camera, so the album is open.", photoGuide: 'Drag and pinch the photo to fit the face in the oval', photoUse: 'Use this face', save: 'Save', cancel: 'Cancel', makerName: 'Name',
     makerConsent: 'A parent is helping me. The face picture is saved only to my account and nobody else can see it.',
     makerLoading: 'Downloading face tools… (first time only, about 7MB)', makerWorking: 'Finding the face…',
     makerReady: 'All done! Press Save.', noFace: "Couldn't find a face. Try a front-facing photo.",
@@ -61,7 +67,11 @@ const CORE = {
     failLoad: "Couldn't download the face tools. Check your connection.", failWork: "Couldn't process the photo.",
     failSave: "Couldn't save.", tooManyCharacters: 'You can make up to 5 photo characters.',
     privacy: 'Original photos never leave this device. Only the cut-out face is saved to your account.',
-    sooji: 'Sooji', jiho: 'Jiho'
+    sooji: 'Sooji', jiho: 'Jiho',
+    ranking: 'Ranking', rankWeek: 'This week', rankAll: 'Hall of Fame', rankTotal: 'All', rankStars: '★ {n}',
+    rankMe: 'My rank', rankNth: '#{n}', rankNone: 'No record yet', rankEmpty: 'Nobody yet. Be the first star!',
+    rankHiddenNote: 'Name hidden', rankHide: 'Hide my name in rankings', rankResets: 'Starts fresh every Monday.',
+    earnedRank: '+{n} Sparkles! · #{r} this week'
   }
 };
 

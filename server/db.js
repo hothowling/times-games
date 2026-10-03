@@ -58,6 +58,7 @@ create table if not exists plays (
   unique (user_id, game_id, round_key)
 );
 create index if not exists plays_user_time on plays (user_id, created_at);
+create index if not exists plays_time on plays (created_at);  -- 주간 랭킹
 create table if not exists sparkle_log (
   id integer primary key,
   user_id integer not null references users(id) on delete cascade,

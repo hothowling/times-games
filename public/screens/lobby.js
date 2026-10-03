@@ -12,7 +12,7 @@ export function render(view, { go }) {
   const btn = (key, path) => h('button', { type: 'button', class: 'btn btn-sub', onclick: () => go(path) }, t(key));
   view.append(
     h('section', { class: 'lobby-hero' }, hero),
-    h('div', { class: 'lobby-actions' }, btn('characters', 'chars'), btn('shop', 'shop'), btn('records', 'records')),
+    h('div', { class: 'lobby-actions' }, btn('ranking', 'ranking'), btn('characters', 'chars'), btn('shop', 'shop'), btn('records', 'records')),
     h('h2', { class: 'screen-title' }, t('games')),
     h('div', { class: 'game-list' }, GAMES.map((g) =>
       h('button', { type: 'button', class: 'game-card', onclick: () => go('play/' + g.id) },

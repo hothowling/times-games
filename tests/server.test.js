@@ -54,10 +54,11 @@ test('signup, login, lockout', async () => {
 test('plays reward, idempotency, shop, looks', async () => {
   const a = client();
   await a('POST', '/api/signup', { nickname: 'jiho', pin: '4321' });
+  const pay = ({ earned, sparkles }) => ({ earned, sparkles });
   let r = await a('POST', '/api/plays', { game: 'blocks', roundKey: 'r1', stars: 3, score: 10 });
-  assert.deepEqual(r.body, { earned: 10, sparkles: 10 });
+  assert.deepEqual(pay(r.body), { earned: 10, sparkles: 10 });
   r = await a('POST', '/api/plays', { game: 'blocks', roundKey: 'r1', stars: 3 });
-  assert.deepEqual(r.body, { earned: 10, sparkles: 10 }, 'same roundKey pays once');
+  assert.deepEqual(pay(r.body), { earned: 10, sparkles: 10 }, 'same roundKey pays once');
   r = await a('POST', '/api/plays', { game: 'blocks', roundKey: 'r2', stars: 3 });
   assert.equal(r.body.earned, 0, 'too soon after last reward');
   r = await a('POST', '/api/plays', { game: 'master', roundKey: 'r1', stars: 2 });
@@ -152,4 +153,50 @@ test('admin: off without password, Basic auth, PIN reset', async () => {
   } finally {
     srv.close();
   }
+});
+
+test('ranking: week/all, ties, hidden users, photo users show a preset face', async () => {
+  const mk = async (nick) => { const c = client(); await c('POST', '/api/signup', { nickname: nick, pin: '1234' }); return c; };
+  const [a, b, c] = [await mk('rank-a'), await mk('rank-b'), await mk('rank-c')];
+  const play = (cl, game, key, stars, score, detail) => cl('POST', '/api/plays', { game, roundKey: key, stars, score, detail });
+  await play(a, 'shooter', 'x', 3, 300);
+  await play(b, 'shooter', 'x', 3, 300);
+  await play(c, 'shooter', 'x', 1, 50);
+  const r = await play(c, 'classroom', 'y', 2, 5, { round: 4 });
+  assert.equal(r.body.weekRank, (await c('GET', '/api/ranking')).body.me.rank, 'result carries this week\'s overall rank');
+  assert.equal((await c('GET', '/api/ranking')).body.me.value, 3);
+
+  /* 지난주 기록은 주간에서 빠지고 명예의 전당에만 남습니다. */
+  const uid = (await a('GET', '/api/me')).body.user.id;
+  db.prepare("insert into plays (user_id, game_id, round_key, stars, score, sparkles, created_at) values (?, 'shooter', 'old', 3, 999, 0, ?)").run(uid, Date.now() - 30 * 864e5);
+
+  let s = (await a('GET', '/api/ranking?board=shooter')).body;
+  const names = (list) => list.filter((x) => x.nickname.startsWith('rank-')).map((x) => `${x.rank}:${x.nickname}:${x.value}`);
+  assert.deepEqual(names(s.top), ['1:rank-a:300', '1:rank-b:300', '3:rank-c:50']);
+  s = (await a('GET', '/api/ranking?board=shooter&period=all')).body;
+  assert.equal(s.top[0].nickname, 'rank-a');
+  assert.equal(s.top[0].value, 999);
+  assert.deepEqual(s.me, { value: 999, rank: 1 });
+
+  s = (await c('GET', '/api/ranking?board=classroom')).body;
+  assert.deepEqual(names(s.top), ['1:rank-c:4']);
+
+  /* 숨기면 목록에서 빠지지만 내 순위는 보입니다. */
+  await b('PATCH', '/api/settings', { rankHidden: true });
+  s = (await b('GET', '/api/ranking?board=shooter')).body;
+  assert.ok(!s.top.some((x) => x.nickname === 'rank-b'));
+  assert.equal(s.me.rank, 1);
+
+  /* 사진 캐릭터를 쓰면 마지막 프리셋 얼굴 + 사진 캐릭터의 옷 */
+  await a('PATCH', '/api/settings', { character: 'jiho' });
+  const photo = await a('POST', '/api/characters', PNG, { 'content-type': 'image/png' });
+  await a('PATCH', '/api/settings', { character: photo.body.key });
+  s = (await c('GET', '/api/ranking?board=shooter')).body;
+  const ra = s.top.find((x) => x.nickname === 'rank-a');
+  assert.equal(ra.look.face, 'jiho');
+  assert.equal(ra.look.equipped.outfit, 'uniform');
+  assert.ok(!JSON.stringify(s).includes('/face'), 'no photo face urls');
+
+  assert.equal((await a('GET', '/api/ranking?board=nope')).status, 400);
+  assert.equal((await client()('GET', '/api/ranking')).status, 401);
 });
