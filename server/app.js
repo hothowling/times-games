@@ -1,12 +1,14 @@
 /*
  * app.js - HTTP 처리: /api/* JSON API + public/ 정적 파일.
- * createApp({ db, dataDir }) 가 (req, res) 핸들러를 돌려줍니다(테스트에서 그대로 띄워 씁니다).
+ * createApp({ db, dataDir, adminPassword }) 가 (req, res) 핸들러를 돌려줍니다(테스트에서 그대로 띄워 씁니다).
+ * 관리자 페이지는 server/admin.js (/admin/).
  */
 import { createReadStream, mkdirSync, statSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { join, normalize, extname, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes, scryptSync, timingSafeEqual, createHash } from 'node:crypto';
 import { tx } from './db.js';
+import { adminRoutes } from './admin.js';
 import { PRESETS, COSMETICS, ITEMS, REWARD, GAMES, DEFAULT_LOOK, isPhotoKey, validLook } from '../public/core/catalog.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
@@ -81,7 +83,7 @@ const isImage = (buf, mime) =>
   (mime === 'image/png' && buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) ||
   (mime === 'image/webp' && buf.toString('latin1', 0, 4) === 'RIFF' && buf.toString('latin1', 8, 12) === 'WEBP');
 
-export function createApp({ db, dataDir }) {
+export function createApp({ db, dataDir, adminPassword }) {
   const facesDir = join(dataDir, 'faces');
   mkdirSync(facesDir, { recursive: true });
 
@@ -340,6 +342,8 @@ export function createApp({ db, dataDir }) {
     send(res, 200, { plays: rows.map((r) => ({ game: r.game_id, character: r.char_key, stars: r.stars, score: r.score, sparkles: r.sparkles, at: r.created_at })) });
   });
 
+  adminRoutes(db, adminPassword, { route, fail, send, readJson, hashPin });
+
   /* ---------- 정적 파일 ---------- */
 
   function serveStatic(req, res, pathname) {
@@ -363,14 +367,12 @@ export function createApp({ db, dataDir }) {
   return async function handle(req, res) {
     const url = new URL(req.url, 'http://x');
     try {
-      if (url.pathname.startsWith('/api/')) {
-        for (const r of routes) {
-          if (r.method !== req.method) continue;
-          const m = url.pathname.match(r.re);
-          if (m) return await r.fn(req, res, m, url);
-        }
-        fail(404, 'notFound');
+      for (const r of routes) {
+        if (r.method !== req.method) continue;
+        const m = url.pathname.match(r.re);
+        if (m) return await r.fn(req, res, m, url);
       }
+      if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/admin/')) fail(404, 'notFound');
       if (req.method !== 'GET' && req.method !== 'HEAD') fail(405, 'method');
       serveStatic(req, res, url.pathname);
     } catch (err) {

@@ -114,3 +114,42 @@ test('static files stay inside public/', async () => {
   assert.equal(res.status, 404);
   assert.equal((await fetch(base + '/core/catalog.js')).status, 200);
 });
+
+test('admin: off without password, Basic auth, PIN reset', async () => {
+  assert.equal((await fetch(base + '/admin/')).status, 404, 'disabled when ADMIN_PASSWORD is unset');
+
+  const adb = openDb(':memory:');
+  const srv = createServer(createApp({ db: adb, dataDir: mkdtempSync(join(tmpdir(), 'tg-')), adminPassword: 's3cret-pass' }));
+  await new Promise((ok) => srv.listen(0, '127.0.0.1', ok));
+  const url = `http://127.0.0.1:${srv.address().port}`;
+  const basic = (p) => ({ authorization: 'Basic ' + Buffer.from('admin:' + p).toString('base64') });
+  try {
+    const no = await fetch(url + '/admin/');
+    assert.equal(no.status, 401);
+    assert.match(no.headers.get('www-authenticate'), /^Basic/);
+    assert.equal((await fetch(url + '/admin/api/users', { headers: basic('wrong') })).status, 401);
+    const page = await fetch(url + '/admin/', { headers: basic('s3cret-pass') });
+    assert.equal(page.status, 200);
+    assert.match(await page.text(), /구구단 놀이터 관리/);
+    assert.equal((await fetch(url + '/admin', { redirect: 'manual' })).headers.get('location'), 'admin/');
+
+    const signup = await fetch(url + '/api/signup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ nickname: 'kid', pin: '1111' }) });
+    const cookie = signup.headers.get('set-cookie').split(';')[0];
+    const { users } = await (await fetch(url + '/admin/api/users', { headers: basic('s3cret-pass') })).json();
+    assert.equal(users.length, 1);
+    const id = users[0].id;
+    const detail = await (await fetch(url + `/admin/api/users/${id}`, { headers: basic('s3cret-pass') })).json();
+    assert.equal(detail.user.nickname, 'kid');
+    assert.equal(detail.user.pin, undefined, 'never exposes the PIN hash');
+
+    const reset = await fetch(url + `/admin/api/users/${id}/pin`, { method: 'POST', headers: { ...basic('s3cret-pass'), 'content-type': 'application/json' }, body: JSON.stringify({ pin: '2222' }) });
+    assert.equal(reset.status, 200);
+    assert.equal((await fetch(url + '/api/me', { headers: { cookie } })).status, 401, 'old sessions are dropped');
+    const login = await fetch(url + '/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ nickname: 'kid', pin: '2222' }) });
+    assert.equal(login.status, 200);
+    const sum = await (await fetch(url + '/admin/api/summary?tz=-540', { headers: basic('s3cret-pass') })).json();
+    assert.equal(sum.totals.users, 1);
+  } finally {
+    srv.close();
+  }
+});

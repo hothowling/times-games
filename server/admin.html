@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>구구단 놀이터 관리</title>
+<style>
+  :root { --bg: #f6f4fb; --card: #fff; --ink: #24183f; --muted: #7a7191; --line: #e6e0f2; --primary: #7c3aed; --bad: #e11d48; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; color: var(--ink); background: var(--bg); }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  h1 { margin: 4px 0 14px; font-size: 22px; }
+  h2 { margin: 22px 0 8px; font-size: 16px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .card { padding: 12px 14px; border-radius: 12px; background: var(--card); box-shadow: 0 1px 3px rgb(0 0 0 / 6%); }
+  .card b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; }
+  .card span { color: var(--muted); }
+  .box { overflow-x: auto; border-radius: 12px; background: var(--card); box-shadow: 0 1px 3px rgb(0 0 0 / 6%); }
+  table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+  th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+  th { position: sticky; top: 0; background: #faf8fe; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr.click { cursor: pointer; }
+  tbody tr.click:hover, tbody tr.on { background: #f1eafe; }
+  .muted { color: var(--muted); }
+  .bad { color: var(--bad); }
+  .detail { white-space: normal; max-width: 360px; color: var(--muted); font-size: 12px; }
+  input, button { font: inherit; }
+  .search { width: 100%; max-width: 280px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .btn { padding: 7px 14px; border: 0; border-radius: 10px; background: var(--primary); color: #fff; cursor: pointer; }
+  .btn.sub { background: #ece6fb; color: var(--primary); }
+  #detail { margin-top: 18px; }
+  .kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; padding: 12px 14px; }
+  pre { margin: 0; padding: 12px 14px; white-space: pre-wrap; word-break: break-all; font-size: 12px; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>구구단 놀이터 관리</h1>
+  <div class="cards" id="totals"></div>
+
+  <h2>최근 14일 플레이</h2>
+  <div class="box"><table id="daily"></table></div>
+
+  <h2>유저</h2>
+  <div class="row" style="margin-bottom:8px"><input id="search" class="search" placeholder="닉네임 검색" autocomplete="off"><span id="count" class="muted"></span></div>
+  <div class="box" style="max-height:420px"><table id="users"></table></div>
+
+  <section id="detail" hidden></section>
+</main>
+
+<script type="module">
+import { GAMES } from '../games/index.js';
+import { COSMETICS, ITEMS } from '../core/catalog.js';
+
+const $ = (id) => document.getElementById(id);
+const gameName = (id) => GAMES.find((g) => g.id === id)?.title.ko || id;
+const itemName = (id) => (COSMETICS[id] || ITEMS[id])?.name.ko || id;
+const charName = (k) => ({ sooji: '수지', jiho: '지호' }[k] || (k ? '사진 ' + k.slice(1) : '-'));
+const when = (ms) => (ms ? new Date(ms).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' }) : '-');
+
+/* 글자는 모두 textContent 로 넣습니다(닉네임·detail 은 사용자가 보낸 값). */
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  Object.assign(n, attrs || {});
+  for (const k of kids.flat()) if (k != null) n.append(k instanceof Node ? k : String(k));
+  return n;
+}
+const td = (v, cls) => el('td', { className: cls || '' }, v);
+const head = (cols) => el('thead', null, el('tr', null, cols.map(([t, c]) => el('th', { className: c || '' }, t))));
+
+async function get(path, opts) {
+  const res = await fetch('api/' + path, opts);
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
+  return res.json();
+}
+
+async function loadSummary() {
+  const { totals, daily } = await get('summary?tz=' + new Date().getTimezoneOffset());
+  $('totals').replaceChildren(
+    el('div', { className: 'card' }, el('b', null, totals.users), el('span', null, '가입자')),
+    el('div', { className: 'card' }, el('b', null, totals.plays), el('span', null, '전체 플레이')),
+    el('div', { className: 'card' }, el('b', null, totals.sparkles), el('span', null, '보유 Sparkles 합계')));
+  const days = [...new Set(daily.map((d) => d.day))];
+  const ids = GAMES.map((g) => g.id);
+  const cell = (day, id) => daily.find((d) => d.day === day && d.game_id === id);
+  $('daily').replaceChildren(
+    head([['날짜'], ...ids.map((id) => [gameName(id), 'num']), ['합계', 'num']]),
+    el('tbody', null, days.length ? days.map((day) => el('tr', null, td(day),
+      ids.map((id) => { const c = cell(day, id); return td(c ? `${c.plays}판 · ${c.players}명` : '', 'num'); }),
+      td(daily.filter((d) => d.day === day).reduce((s, d) => s + d.plays, 0), 'num')))
+      : el('tr', null, el('td', { colSpan: ids.length + 2, className: 'muted' }, '기록 없음'))));
+}
+
+let users = [];
+let selected = null;
+
+function drawUsers() {
+  const q = $('search').value.trim().toLowerCase();
+  const list = users.filter((u) => u.nickname.toLowerCase().includes(q));
+  $('count').textContent = `${list.length} / ${users.length}명`;
+  $('users').replaceChildren(
+    head([['닉네임'], ['Sparkles', 'num'], ['플레이', 'num'], ['마지막 플레이'], ['가입'], ['사진 캐릭터', 'num'], ['상태']]),
+    el('tbody', null, list.map((u) => {
+      const tr = el('tr', { className: 'click' + (u.id === selected ? ' on' : '') },
+        td(u.nickname), td(u.sparkles, 'num'), td(u.plays, 'num'), td(when(u.last_play)), td(when(u.created_at)),
+        td(u.photos, 'num'), td(u.locked_until > Date.now() ? '잠김' : '', 'bad'));
+      tr.addEventListener('click', () => showUser(u.id));
+      return tr;
+    })));
+}
+
+async function loadUsers() {
+  users = (await get('users')).users;
+  drawUsers();
+}
+
+async function showUser(id) {
+  selected = id;
+  drawUsers();
+  const d = await get('users/' + id);
+  const u = d.user;
+  const pin = el('input', { className: 'search', placeholder: '새 PIN 4자리', inputMode: 'numeric', maxLength: 4, style: 'max-width:140px' });
+  const msg = el('span', { className: 'muted' });
+  const reset = el('button', { className: 'btn', type: 'button' }, 'PIN 재설정');
+  reset.addEventListener('click', async () => {
+    if (!/^\d{4}$/.test(pin.value)) { msg.textContent = '숫자 4자리를 넣어 주세요.'; return; }
+    if (!confirm(`${u.nickname} 의 PIN 을 바꿀까요? 다른 기기 로그인도 끊깁니다.`)) return;
+    try {
+      await get(`users/${id}/pin`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ pin: pin.value }) });
+      msg.textContent = '바꿨어요. 잠금도 풀렸습니다.';
+      pin.value = '';
+      loadUsers();
+    } catch (e) { msg.textContent = '실패: ' + e.message; }
+  });
+
+  const plays = el('table', null,
+    head([['시각'], ['게임'], ['캐릭터'], ['별', 'num'], ['점수', 'num'], ['Sparkles', 'num'], ['내용']]),
+    el('tbody', null, d.plays.length ? d.plays.map((p) => el('tr', null,
+      td(when(p.created_at)), td(gameName(p.game_id)), td(charName(p.char_key)), td('★'.repeat(p.stars) || '-', 'num'),
+      td(p.score ?? '', 'num'), td(p.sparkles ? '+' + p.sparkles : '0', 'num'),
+      td(p.detail ? JSON.stringify(p.detail) : '', 'detail'))) : el('tr', null, el('td', { colSpan: 7, className: 'muted' }, '플레이 기록 없음'))));
+
+  const log = el('table', null, head([['시각'], ['내역'], ['변화', 'num']]),
+    el('tbody', null, d.log.length ? d.log.map((l) => el('tr', null,
+      td(when(l.created_at)), td(l.reason === 'buy' ? '구매: ' + itemName(l.ref) : '보상: ' + gameName(l.ref)),
+      td((l.delta > 0 ? '+' : '') + l.delta, 'num'))) : el('tr', null, el('td', { colSpan: 3, className: 'muted' }, '내역 없음'))));
+
+  $('detail').hidden = false;
+  $('detail').replaceChildren(
+    el('h2', null, `${u.nickname} (#${u.id})`),
+    el('div', { className: 'box' }, el('div', { className: 'kv' }, [
+      ['가입', when(u.created_at)], ['Sparkles', u.sparkles], ['사진 캐릭터', `${d.photos}개 (얼굴은 본인만 볼 수 있어 표시하지 않음)`],
+      ['설정', JSON.stringify(u.settings)], ['로그인 실패', u.locked_until > Date.now() ? `잠김 (${when(u.locked_until)}까지)` : `${u.fails}회`],
+      ['PIN', el('span', { className: 'row' }, pin, reset, msg)]
+    ].flatMap(([k, v]) => [el('span', { className: 'muted' }, k), el('span', null, v)]))),
+    el('h2', null, `플레이 기록 (최근 ${d.plays.length}판)`),
+    el('div', { className: 'box', style: 'max-height:480px' }, plays),
+    el('div', { className: 'grid2' },
+      el('div', null, el('h2', null, 'Sparkles 내역'), el('div', { className: 'box', style: 'max-height:360px' }, log)),
+      el('div', null,
+        el('h2', null, '보유 아이템'),
+        el('div', { className: 'box' }, el('pre', null, d.inventory.map((i) => `${itemName(i.item_id)} × ${i.qty}`).join('\n') || '없음 (기본 교복 외)')),
+        el('h2', null, '게임 진행도'),
+        el('div', { className: 'box' }, el('pre', null, Object.entries(d.progress).map(([g, v]) => `${gameName(g)}: ${JSON.stringify(v)}`).join('\n') || '없음')))));
+  $('detail').scrollIntoView({ behavior: 'smooth' });
+}
+
+$('search').addEventListener('input', drawUsers);
+Promise.all([loadSummary(), loadUsers()]).catch((e) => { document.querySelector('main').append(el('p', { className: 'bad' }, '불러오기 실패: ' + e.message)); });
+</script>
+</body>
+</html>

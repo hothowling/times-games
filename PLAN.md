@@ -11,6 +11,7 @@
 - nginx: `/games/` → 127.0.0.1:8010(`deploy/nginx-games.conf`). `/times-games/`는 404로 막는다. 루트 페이지 서버(8000)가 `~/dev/jotanow` 전체를 공개하기 때문이다.
 - 데이터: `/home/linuxuser/data/times-games/`(DB + 사진 얼굴, 공개 폴더 밖, 700 권한).
 - 백업: 매일 04:30 cron으로 `deploy/backup.sh`를 돌려 `…/data/times-games/backup/<날짜>/`에 저장하고, 14일이 지난 백업은 지운다.
+- 관리자: https://ics.jotanow.site/games/admin/ (`server/admin.js`, `admin.html`). 아이디는 아무거나 쓰고 비밀번호는 `/home/linuxuser/data/times-games/admin.env`의 `ADMIN_PASSWORD`이다. 비밀번호를 바꾸면 서비스를 재시작한다. 볼 수 있는 것은 요약, 14일 플레이, 유저 목록과 상세(플레이·Sparkles 내역·아이템·진행도)이고, 할 수 있는 것은 PIN 재설정뿐이다. 사진 얼굴은 관리자에게도 보이지 않는다. 같은 IP에서 10번 틀리면 10분 동안 막힌다.
 - 코드를 고친 뒤: 정적 파일(public/)은 바로 반영된다(no-cache). 서버 코드(server/, core/catalog.js)를 고쳤으면 서비스를 재시작한다.
 
 ---

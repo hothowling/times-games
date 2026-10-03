@@ -10,6 +10,8 @@ WorkingDirectory=/home/linuxuser/dev/jotanow/times-games
 Environment=PORT=8010
 # 데이터(DB, 사진 얼굴)는 웹으로 공개되는 ~/dev/jotanow 밖에 둡니다.
 Environment=DATA_DIR=/home/linuxuser/data/times-games
+# 관리자 페이지(/games/admin/) 비밀번호: ADMIN_PASSWORD=... (600 권한, 저장소 밖)
+EnvironmentFile=-/home/linuxuser/data/times-games/admin.env
 Environment=NODE_ENV=production
 User=linuxuser
 Restart=always
