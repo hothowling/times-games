@@ -131,7 +131,7 @@ test('admin: off without password, Basic auth, PIN reset', async () => {
     assert.equal((await fetch(url + '/admin/api/users', { headers: basic('wrong') })).status, 401);
     const page = await fetch(url + '/admin/', { headers: basic('s3cret-pass') });
     assert.equal(page.status, 200);
-    assert.match(await page.text(), /구구단 놀이터 관리/);
+    assert.match(await page.text(), /똑똑 놀이터 관리/);
     assert.equal((await fetch(url + '/admin', { redirect: 'manual' })).headers.get('location'), 'admin/');
 
     const signup = await fetch(url + '/api/signup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ nickname: 'kid', pin: '1111' }) });

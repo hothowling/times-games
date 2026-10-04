@@ -1,0 +1,202 @@
+/*
+ * game.css - 수도 맞히기. 모든 선택자는 .game-capitals 아래에 둡니다.
+ */
+
+.game-capitals {
+  --ink: #17365c;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  touch-action: manipulation;
+  color: var(--ink);
+  font-family: var(--font-fun);
+  background: linear-gradient(#bfe6ff, #e9f7ff 55%, #c9f0d4);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game-capitals * { box-sizing: border-box; }
+.game-capitals button { font-family: inherit; color: inherit; cursor: pointer; }
+
+.game-capitals .cq-app {
+  position: absolute;
+  inset: 0;
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: calc(8px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom));
+  gap: 10px;
+}
+
+.game-capitals .cq-hud { display: flex; align-items: center; gap: 8px; }
+.game-capitals .cq-hud .cq-count { margin-right: auto; }
+.game-capitals .cq-count:empty { visibility: hidden; }
+
+.game-capitals .cq-pill {
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .85);
+  font-size: 18px;
+  font-weight: 800;
+  box-shadow: 0 3px 0 rgba(23, 54, 92, .15);
+}
+
+.game-capitals .cq-timer {
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .7);
+  overflow: hidden;
+}
+
+.game-capitals .cq-timer i {
+  display: block;
+  height: 100%;
+  background: #34c27a;
+  transform-origin: left;
+  transition: transform .1s linear, background .3s;
+}
+
+.game-capitals .cq-timer i.low { background: #ff5a5a; }
+
+.game-capitals .cq-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.game-capitals .cq-face { width: min(24vw, 96px); }
+.game-capitals .cq-flag {
+  width: min(48vw, 200px);
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(23, 54, 92, .25);
+}
+.game-capitals .cq-ask { margin: 0; font-size: min(7vw, 30px); }
+
+.game-capitals .cq-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.game-capitals .cq-choice {
+  min-height: 72px;
+  padding: 8px;
+  border: 0;
+  border-radius: 20px;
+  background: #fff;
+  font-size: min(5.6vw, 24px);
+  font-weight: 800;
+  word-break: keep-all;
+  box-shadow: 0 5px 0 #9cc3e6;
+}
+
+.game-capitals .cq-choice:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #9cc3e6; }
+.game-capitals .cq-choice:disabled { opacity: .55; }
+.game-capitals .cq-choice.right { opacity: 1; background: #34c27a; color: #fff; box-shadow: 0 5px 0 #1f8a54; }
+.game-capitals .cq-choice.wrong { opacity: 1; background: #ff5a5a; color: #fff; box-shadow: 0 5px 0 #c23434; }
+
+/* 답한 뒤 정답 도시 사진: 무대와 보기 위를 덮고, 누르면 다음 문제 */
+.game-capitals .cq-photo {
+  position: absolute;
+  inset: calc(70px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom));
+  z-index: 5;
+  height: fit-content;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: 0;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 8px 0 rgba(23, 54, 92, .2);
+  animation: cq-pop .3s ease-out;
+}
+
+.game-capitals .cq-photo[hidden] { display: none; }
+.game-capitals .cq-photo img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 16px; background: #dbeaf7; }
+.game-capitals .cq-city { font-size: min(7vw, 30px); word-break: keep-all; }
+.game-capitals .cq-credit { max-width: 100%; color: #6b7f96; font-family: system-ui, sans-serif; font-size: 11px; overflow-wrap: anywhere; }
+.game-capitals .cq-next { margin-top: 6px; padding: 8px 22px; border-radius: 999px; background: #1d8fe1; color: #fff; font-size: 20px; }
+
+@keyframes cq-pop { from { opacity: 0; transform: scale(.9); } }
+
+@media (prefers-reduced-motion: reduce) { .game-capitals .cq-photo { animation: none; } }
+
+/* ---------- 시작 / 게임 끝 ---------- */
+
+.game-capitals .cq-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(23, 54, 92, .45);
+}
+
+.game-capitals .cq-overlay[hidden],
+.game-capitals .cq-overlay[data-mode="start"] [data-show]:not([data-show~="start"]),
+.game-capitals .cq-overlay[data-mode="over"] [data-show]:not([data-show~="over"]),
+.game-capitals .cq-overlay:not(.new-best) .cq-record { display: none; }
+
+.game-capitals .cq-card {
+  width: min(100%, 400px);
+  max-height: 100%;
+  overflow: auto;
+  padding: 18px 20px 22px;
+  border-radius: 28px;
+  background: #fff;
+  text-align: center;
+  word-break: keep-all;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, .2);
+}
+
+.game-capitals .cq-card h1 { margin: 4px 0 8px; color: #1d6fd1; font-size: min(10vw, 40px); }
+.game-capitals .cq-card-face { width: min(32vw, 120px); margin: 0 auto; }
+.game-capitals .cq-card p { margin: 6px 0; font-size: 17px; line-height: 1.45; }
+.game-capitals .cq-result { font-size: 22px !important; font-weight: 800; }
+.game-capitals .cq-record { color: #e0314b; font-size: 22px !important; font-weight: 800; }
+.game-capitals .cq-best { color: #1d6fd1; font-weight: 800; }
+
+.game-capitals .cq-levels { display: grid; gap: 10px; }
+
+.game-capitals .cq-main {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border: 0;
+  border-radius: 20px;
+  background: #1d8fe1;
+  color: #fff;
+  font-size: min(6.4vw, 26px);
+  font-weight: 800;
+  box-shadow: 0 6px 0 #11609b;
+}
+
+.game-capitals .cq-levels .cq-main { margin-top: 0; }
+.game-capitals .cq-levels .cq-main:first-child { margin-top: 10px; background: #34c27a; box-shadow: 0 6px 0 #1f8a54; }
+.game-capitals .cq-levels .cq-main:last-child { background: #ff7a45; box-shadow: 0 6px 0 #c4501f; }
+.game-capitals .cq-main:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0, 0, 0, .25) !important; }
+
+.game-capitals .cq-sub {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 2px solid #cfe2f5;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 19px;
+  font-weight: 800;
+}

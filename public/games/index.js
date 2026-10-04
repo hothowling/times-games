@@ -5,6 +5,12 @@
  * short: 랭킹 탭 이름, rank: 랭킹 값 표시({n}). 랭킹 값은 서버가 max(score) 로 셉니다(교실만 최고 라운드, server/app.js BOARD_SQL).
  */
 export const GAMES = [
+   {
+    id: 'capitals', thumb: 'assets/thumbs/capitals.jpg',
+    title: { ko: '수도 맞히기', en: 'Capital Quiz' },
+    short: { ko: '수도', en: 'Capitals' }, rank: { ko: '{n}점', en: '{n} pts' },
+    desc: { ko: '국기와 나라를 보고 수도를 골라요.', en: 'See the flag and pick the capital city.' }
+  },
   {
     id: 'classroom', thumb: 'assets/thumbs/ttclass.jpg',
     title: { ko: '수지와 지호의 교실', en: "Sooji & Jiho's Classroom" },
@@ -29,4 +35,5 @@ export const GAMES = [
     short: { ko: '마스터', en: 'Master' }, rank: { ko: '{n}점', en: '{n} pts' },
     desc: { ko: '시간 안에 빠르게 답하고 별을 모아요.', en: 'Answer fast before the timer runs out.' }
   }
+ 
 ];

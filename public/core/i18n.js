@@ -6,7 +6,7 @@
 
 const CORE = {
   ko: {
-    appTitle: '구구단 놀이터',
+    appTitle: '똑똑 놀이터',
     nickname: '닉네임', pin: '비밀번호 4자리', login: '들어가기', signup: '처음이에요', signupDo: '만들기',
     haveAccount: '이미 있어요', logout: '나가기',
     badNickname: '닉네임은 2~12글자로 써 주세요.', badPin: '비밀번호는 숫자 4자리예요.',
@@ -40,7 +40,7 @@ const CORE = {
     earnedRank: '+{n} Sparkles! · 이번 주 {r}위'
   },
   en: {
-    appTitle: 'Times Table Playground',
+    appTitle: 'Smart Playground',
     nickname: 'Nickname', pin: '4-digit PIN', login: 'Enter', signup: "I'm new", signupDo: 'Create',
     haveAccount: 'I have one', logout: 'Log out',
     badNickname: 'Nickname must be 2–12 characters.', badPin: 'PIN must be 4 digits.',

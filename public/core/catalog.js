@@ -52,7 +52,7 @@ export const ITEMS = {
 /* 게임 결과 별(0~3) → Sparkles. 모든 게임 공통. */
 export const REWARD = [1, 3, 6, 10];
 
-export const GAMES = ['master', 'blocks', 'shooter', 'classroom'];
+export const GAMES = ['master', 'blocks', 'shooter', 'classroom', 'capitals'];
 
 export const isPhotoKey = (key) => /^p\d+$/.test(key);
 
