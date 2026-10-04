@@ -2,6 +2,7 @@
  * db.js - SQLite(node:sqlite) 열기와 스키마. 파일 하나(data/games.db)라 백업은 파일 복사로 끝납니다.
  */
 import { DatabaseSync } from 'node:sqlite';
+import { ITEM_RENAME } from '../public/core/catalog.js';
 
 const SCHEMA = `
 create table if not exists users (
@@ -63,7 +64,7 @@ create table if not exists sparkle_log (
   id integer primary key,
   user_id integer not null references users(id) on delete cascade,
   delta integer not null,
-  reason text not null,                    -- 'play' | 'buy'
+  reason text not null,                    -- 'play' | 'buy' | 'box'
   ref text,
   created_at integer not null
 );
@@ -73,7 +74,21 @@ export function openDb(file) {
   const db = new DatabaseSync(file);
   db.exec('pragma journal_mode = wal; pragma foreign_keys = on;');
   db.exec(SCHEMA);
+  migrateItems(db);
   return db;
+}
+
+/* 예전 게임별 아이템을 공통 아이템 id 로 옮깁니다(개수는 더함). 옮길 게 없으면 아무것도 안 하므로 매번 불러도 됩니다. */
+function migrateItems(db) {
+  const move = db.prepare(`insert into inventory (user_id, item_id, qty) select user_id, ?, qty from inventory where item_id = ? and qty > 0
+    on conflict do update set qty = qty + excluded.qty`);
+  const drop = db.prepare('delete from inventory where item_id = ?');
+  tx(db, () => {
+    for (const [from, to] of Object.entries(ITEM_RENAME)) {
+      move.run(to, from);
+      drop.run(from);
+    }
+  });
 }
 
 /* fn 안의 쿼리를 한 트랜잭션으로 묶습니다. 중간에 throw 하면 전부 되돌립니다. */

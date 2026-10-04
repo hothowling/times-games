@@ -307,6 +307,12 @@ export function createGame(on, { isSpeaking }) {
     lastTick = now();
   }
 
+  /* 모래시계: 지금 문제의 시작 시각을 늦춰 시간을 sec 초 더 줍니다(남은 시간 막대는 index.js 가 1 로 자릅니다). */
+  function addTime(sec) {
+    if (state !== 'question' || !sess) return;
+    qStart += sec * 1000;
+  }
+
   /* 로비로 나갈 때: 예약된 단계와 rAF 를 모두 멈춥니다. */
   function destroy() {
     clearStep();
@@ -321,6 +327,7 @@ export function createGame(on, { isSpeaking }) {
     pressDigit,
     pause,
     resume,
+    addTime,
     destroy,
     state: () => state
   };

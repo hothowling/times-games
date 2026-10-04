@@ -6,10 +6,10 @@
 import { createReadStream, mkdirSync, statSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { join, normalize, extname, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { randomBytes, scryptSync, timingSafeEqual, createHash } from 'node:crypto';
+import { randomBytes, scryptSync, timingSafeEqual, createHash, randomInt } from 'node:crypto';
 import { tx } from './db.js';
 import { adminRoutes } from './admin.js';
-import { PRESETS, COSMETICS, ITEMS, REWARD, GAMES, DEFAULT_LOOK, isPhotoKey, validLook } from '../public/core/catalog.js';
+import { PRESETS, COSMETICS, ITEMS, REWARD, GAMES, DEFAULT_LOOK, BOX, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const SESSION_DAYS = 180;
@@ -147,14 +147,32 @@ export function createApp({ db, dataDir, adminPassword }) {
     return inv;
   }
 
+  /* 한국 시간으로 하루에 한 번, 처음 상태를 받을 때 랜덤박스를 하나 줍니다. 마지막으로 준 날은 settings.dailyBox. */
+  const kstDay = (now = Date.now()) => new Date(now + 9 * 3600e3).toISOString().slice(0, 10);
+
+  function dailyBox(userId) {
+    return tx(db, () => {
+      const s = JSON.parse(S.userById.get(userId).settings);
+      const today = kstDay();
+      if (s.dailyBox === today) return false;
+      s.dailyBox = today;
+      S.setSettings.run(JSON.stringify(s), userId);
+      S.invAdd.run(userId, BOX.id);
+      return true;
+    });
+  }
+
   function me(user) {
+    const gift = dailyBox(user.id);
+    user = S.userById.get(user.id);
     const looks = {};
     for (const r of S.looks.all(user.id)) looks[r.char_key] = JSON.parse(r.equipped);
     return {
       user: { id: user.id, nickname: user.nickname, sparkles: user.sparkles, settings: JSON.parse(user.settings) },
       inventory: inventoryOf(user.id),
       characters: S.chars.all(user.id).map((c) => ({ key: 'p' + c.id, id: c.id, name: c.name })),
-      looks
+      looks,
+      gift
     };
   }
 
@@ -288,12 +306,41 @@ export function createApp({ db, dataDir, adminPassword }) {
     send(res, 200, { sparkles: S.userById.get(user.id).sparkles, inventory: inventoryOf(user.id) });
   });
 
+  /* 랜덤박스 열기: buy 면 Sparkles 로 사서 바로 열고, 아니면 가진 상자(매일 선물)를 하나 씁니다. */
+  route('POST', '/api/box/open', async (req, res) => {
+    const user = currentUser(req);
+    const { buy } = await readJson(req);
+    const prize = tx(db, () => {
+      const now = Date.now();
+      if (buy) {
+        if (S.userById.get(user.id).sparkles < BOX.price) fail(400, 'notEnough');
+        S.addSparkles.run(-BOX.price, user.id);
+        S.log.run(user.id, -BOX.price, 'buy', BOX.id, now);
+      } else if (!S.invUse.run(user.id, BOX.id).changes) fail(400, 'noItem');
+      const p = pickPrize(randomInt, (id) => owns(user.id, id));
+      if (p.kind === 'sparkles') {
+        S.addSparkles.run(p.amount, user.id);
+        S.log.run(user.id, p.amount, 'box', null, now);
+      } else S.invAdd.run(user.id, p.id);
+      return p;
+    });
+    send(res, 200, { prize, sparkles: S.userById.get(user.id).sparkles, inventory: inventoryOf(user.id) });
+  });
+
+  /* 아이템 쓰기. buy 면 가진 것 대신 그 자리에서 사서 바로 씁니다(게임 중 구매, 인벤토리는 그대로). */
   route('POST', '/api/items/use', async (req, res) => {
     const user = currentUser(req);
-    const { itemId } = await readJson(req);
+    const { itemId, buy } = await readJson(req);
     if (!Object.hasOwn(ITEMS, itemId)) fail(400, 'badItem');
-    if (!S.invUse.run(user.id, itemId).changes) fail(400, 'noItem');
-    send(res, 200, { qty: S.invQty.get(user.id, itemId).qty });
+    tx(db, () => {
+      if (buy) {
+        const price = ITEMS[itemId].price;
+        if (S.userById.get(user.id).sparkles < price) fail(400, 'notEnough');
+        S.addSparkles.run(-price, user.id);
+        S.log.run(user.id, -price, 'buy', itemId, Date.now());
+      } else if (!S.invUse.run(user.id, itemId).changes) fail(400, 'noItem');
+    });
+    send(res, 200, { qty: S.invQty.get(user.id, itemId)?.qty || 0, sparkles: S.userById.get(user.id).sparkles });
   });
 
   route('GET', '/api/progress/(\\w+)', async (req, res, m) => {

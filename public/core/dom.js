@@ -17,3 +17,12 @@ export function h(tag, attrs, ...children) {
   }
   return el;
 }
+
+/* 가운데 뜨는 팝업(.sheet dialog). 닫히면 스스로 지워집니다. */
+export function sheet(...children) {
+  const dlg = h('dialog', { class: 'sheet' }, h('div', { class: 'sheet-card' }, ...children));
+  dlg.addEventListener('close', () => dlg.remove());
+  document.body.append(dlg);
+  dlg.showModal();
+  return dlg;
+}

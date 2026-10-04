@@ -3,7 +3,7 @@
  * 한 판 10문제, 문제마다 10초. 답한 뒤에는 그 수도의 사진을 보여 줍니다(사진만 보고 답을 알 수 없게).
  * 규칙과 나라 목록은 rules.js(DOM 없음), 사진 출처는 credits.js 에 있습니다.
  */
-import { makeRound, pointsFor, starsFor, QUESTIONS, SECONDS } from './rules.js';
+import { makeRound, pointsFor, starsFor, judge, QUESTIONS, SECONDS } from './rules.js';
 import { CREDITS } from './credits.js';
 
 export const dict = {
@@ -21,6 +21,11 @@ export const dict = {
     other: '단계 바꾸기',
     quit: '그만하기',
     city: '{city} · {country}',
+    tipHint: "💡 '{c}'(으)로 시작해요",
+    tipTime: '⏳ 이번 문제는 시간이 멈췄어요',
+    tipShield: '🛡 보호막: 이번 판에서 한 번 틀려도 괜찮아요',
+    tipSaved: '🛡 보호막이 지켜 줬어요!',
+    tipPill: '💊 반짝이는 게 정답이에요 (이번 판은 별 2개까지)',
     next: '다음 ▶'
   },
   en: {
@@ -37,6 +42,11 @@ export const dict = {
     other: 'Change level',
     quit: 'Quit',
     city: '{city}, {country}',
+    tipHint: "💡 It starts with '{c}'",
+    tipTime: '⏳ Time is frozen for this question',
+    tipShield: '🛡 Shield: one mistake is OK this round',
+    tipSaved: '🛡 Your shield saved you!',
+    tipPill: '💊 The glowing one is right (max 2 stars this round)',
     next: 'Next ▶'
   }
 };
@@ -60,7 +70,9 @@ const HTML = `
     <div class="cq-face" aria-hidden="true"></div>
     <img class="cq-flag" alt="">
     <h2 class="cq-ask" aria-live="polite"></h2>
+    <p class="cq-tip" aria-live="polite"></p>
   </main>
+  <div class="cq-items"></div>
   <button type="button" class="cq-photo" hidden>
     <img alt="">
     <b class="cq-city"></b>
@@ -106,6 +118,31 @@ export function mount(el, ctx) {
   let S = null;        /* 한 판 상태 */
   let tick = 0;        /* 남은 시간 타이머 */
   let next = 0;        /* 다음 문제 타이머 */
+  const tip = $('.cq-tip');
+
+  /* 아이템(공통 5종). 문제마다 같은 아이템은 한 번, 보호막은 켜 둔 동안 다시 못 씀. 사는 동안(팝업)은 타이머를 멈춥니다. */
+  const canUse = (id) => !!S && !S.locked && overlay.hidden && !S.used.has(id);
+  const mark = (id, text) => { S.used.add(id); tip.textContent = text; };
+  const items = ctx.itemBar($('.cq-items'), {
+    hint: { can: () => canUse('hint'), apply: () => mark('hint', t('tipHint', { c: [...S.round[S.i].answer.capital[lang]][0] })) },
+    eraser: {
+      can: () => canUse('eraser'),
+      apply() {
+        const q = S.round[S.i];
+        const wrong = buttons.filter((b, k) => q.choices[k] !== q.answer && !b.disabled);
+        wrong.sort(() => Math.random() - 0.5).slice(0, 2).forEach((b) => { b.disabled = true; b.classList.add('gone'); });
+        S.used.add('eraser');
+      }
+    },
+    time: { can: () => canUse('time'), apply() { S.frozen = true; stopTick(); bar.classList.add('frozen'); mark('time', t('tipTime')); } },
+    shield: { can: () => canUse('shield') && !S.shield, apply() { S.shield = true; mark('shield', t('tipShield')); } },
+    pill: {
+      can: () => canUse('pill'),
+      apply() { const q = S.round[S.i]; buttons[q.choices.indexOf(q.answer)].classList.add('glow'); mark('pill', t('tipPill')); }
+    },
+    pause: () => stopTick(),
+    resume: () => { if (S && !S.locked && !S.frozen) startTick(); }
+  });
 
   function renderSound() {
     const b = $('.cq-sound');
@@ -129,7 +166,7 @@ export function mount(el, ctx) {
   function start(level) {
     const ac = ctx.audio.context();
     if (ac && ac.state !== 'running') ac.resume().catch(() => {});
-    S = { level, round: makeRound(level), i: -1, correct: 0, score: 0, prevBest: best };
+    S = { level, round: makeRound(level), i: -1, correct: 0, score: 0, prevBest: best, shield: false };
     overlay.hidden = true;
     overlay.classList.remove('new-best');
     ask();
@@ -141,6 +178,10 @@ export function mount(el, ctx) {
     const q = S.round[S.i];
     S.left = SECONDS;
     S.locked = false;
+    S.frozen = false;
+    S.used = new Set(S.shield ? ['shield'] : []);
+    tip.textContent = S.shield ? t('tipShield') : '';
+    bar.classList.remove('frozen');
     photo.hidden = true;
     hero.expression('neutral');
     /* 이번 문제의 사진과 다음 문제의 국기를 미리 받아 둡니다. */
@@ -156,7 +197,12 @@ export function mount(el, ctx) {
       b.disabled = false;
     });
     renderTimer();
-    /* 탭을 떠나면 타이머가 느려지는데, 한 번에 0.1초까지만 빼서 그동안은 사실상 멈춥니다. */
+    items.refresh();
+    startTick();
+  }
+
+  /* 탭을 떠나면 타이머가 느려지는데, 한 번에 0.1초까지만 빼서 그동안은 사실상 멈춥니다. */
+  function startTick() {
     let last = performance.now();
     clearInterval(tick);
     tick = setInterval(() => {
@@ -166,6 +212,10 @@ export function mount(el, ctx) {
       renderTimer();
       if (S.left <= 0) answer(-1);
     }, 100);
+  }
+
+  function stopTick() {
+    clearInterval(tick);
   }
 
   function renderTimer() {
@@ -178,12 +228,16 @@ export function mount(el, ctx) {
     if (S.locked) return;
     S.locked = true;
     clearInterval(tick);
+    items.refresh();
     const q = S.round[S.i];
     const right = q.choices.indexOf(q.answer);
     buttons.forEach((b) => { b.disabled = true; });
     buttons[right].classList.add('right');
+    const j = judge(k === right, S.shield);
+    S.shield = j.shield;
+    if (j.counts) S.correct++;
+    if (j.saved) tip.textContent = t('tipSaved');
     if (k === right) {
-      S.correct++;
       S.score += pointsFor(S.level, S.left);
       $('.cq-score').textContent = S.score;
       ctx.audio.correct();

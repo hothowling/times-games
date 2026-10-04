@@ -14,9 +14,9 @@ export const dict = {
     homeTagline: '반짝반짝 구구단 교실', readyTitle: '시험 볼 준비 됐나요?', readyHelp: '카드를 눌러 시작해요!',
     homeShop: '도움 아이템 사러 가기', homeFooter: '답을 고르고 <strong>DONE!</strong>을 눌러 보세요',
     boardMessage: '오늘도<br />할 수 있어! ✦',
-    dockCheat: '두 개 지우기', dockCookie: '풀이 힌트', dockPill: '정답 보기', dockProtect: '점수 보호',
+    dockCheat: '오답 지우기', dockCookie: '풀이 힌트', dockPill: '정답 보기', dockProtect: '보호막',
     grading: '채점 중', practiceTitle: '같이 연습해 봐요!', practiceHelp: '쉬운 문제 3개 중 2개를 맞히면<br />하트가 하나 돌아와요.',
-    quitTitle: '시험을 그만할까요?', shopAsk: '상점에 다녀올까요?', quitHelp: '지금까지 푼 답은 저장되지 않아요.',
+    quitTitle: '시험을 그만할까요?', quitHelp: '지금까지 푼 답은 저장되지 않아요.',
     continueQuiz: '계속 풀기', goHome: '로비로',
     round: '라운드', resultRound: '라운드 {round} 결과', questionNormal: '맞는 답을 골라요', questionBlank: '빈칸에 들어갈 수를 골라요',
     heartsAria: '하트 {count}개', soundAria: '소리 켜기 또는 끄기', homeAria: '로비로 돌아가기', quitAria: '시험 그만하기',
@@ -26,9 +26,9 @@ export const dict = {
     scoreDetail: '{total}문제 중 {correct}문제 정답!', protected: ' (보호 +1)', heartLost: '하트가 하나 줄었어요 · 남은 하트 {count}개',
     heartKept: '하트를 모두 지켰어요!', nextRound: '다음 라운드', retry: '다시 도전', home: '로비',
     reviewTitle: '틀린 문제 다시 보기', myAnswer: '내 답', correctAnswer: '정답', reviewContinue: '눌러서 계속하기',
-    hintProtect: '점수 보호: 이번 시험에서 틀린 문제 하나를 보호해요!', hintCheat: 'Cheat Sneak: 틀린 답 두 개를 지웠어요!',
-    hintCookie: 'Cookie: {a} × {left} = {first}, {a} × {right} = {second} · 둘을 더해 보세요!',
-    hintPill: 'Smart Pill: 정답은 {answer}예요. 직접 눌러 보세요!',
+    hintProtect: '보호막: 이번 시험에서 틀린 문제 하나를 보호해요!', hintCheat: '오답 지우기: 틀린 답 두 개를 지웠어요!',
+    hintCookie: '힌트 전구: {a} × {left} = {first}, {a} × {right} = {second} · 둘을 더해 보세요!',
+    hintPill: '정답 알약: 정답은 {answer}예요. 직접 눌러 보세요! (이번 시험은 별 2개까지)',
     practiceCorrect: '맞았어요! ✨', practiceWrong: '괜찮아요! 정답은 {answer}', practiceRecovered: '하트가 돌아왔어요! ♥',
     practiceAgain: '한 번 더 해보면 할 수 있어요!'
   },
@@ -36,9 +36,9 @@ export const dict = {
     homeTagline: 'A Sparkly Times-Table Classroom', readyTitle: 'Ready for the test?', readyHelp: 'Tap the card to begin!',
     homeShop: 'Get help items', homeFooter: 'Pick an answer and press <strong>DONE!</strong>',
     boardMessage: 'You can<br />do it! ✦',
-    dockCheat: 'Remove two', dockCookie: 'Math hint', dockPill: 'Show answer', dockProtect: 'Score shield',
+    dockCheat: 'Eraser', dockCookie: 'Math hint', dockPill: 'Show answer', dockProtect: 'Shield',
     grading: 'Grading', practiceTitle: "Let's practice together!", practiceHelp: 'Get 2 of 3 easy questions right<br />to win back one heart.',
-    quitTitle: 'Leave this test?', shopAsk: 'Visit the shop?', quitHelp: 'Your answers in this test will not be saved.',
+    quitTitle: 'Leave this test?', quitHelp: 'Your answers in this test will not be saved.',
     continueQuiz: 'Keep playing', goHome: 'Lobby',
     round: 'ROUND', resultRound: 'ROUND {round} RESULT', questionNormal: 'Choose the correct answer', questionBlank: 'Choose the missing number',
     heartsAria: '{count} hearts', soundAria: 'Turn sound on or off', homeAria: 'Back to lobby', quitAria: 'Leave the test',
@@ -48,9 +48,9 @@ export const dict = {
     scoreDetail: '{correct} out of {total} correct!', protected: ' (Shield +1)', heartLost: 'One heart used · {count} hearts left',
     heartKept: 'You kept all your hearts!', nextRound: 'Next Round', retry: 'Try Again', home: 'Lobby',
     reviewTitle: 'Review missed questions', myAnswer: 'Your answer', correctAnswer: 'Answer', reviewContinue: 'Tap to continue',
-    hintProtect: 'Score Protection: one wrong answer is protected!', hintCheat: 'Cheat Sneak: two wrong answers are gone!',
-    hintCookie: 'Cookie: {a} × {left} = {first}, {a} × {right} = {second} · Add them together!',
-    hintPill: 'Smart Pill: the answer is {answer}. Tap it yourself!',
+    hintProtect: 'Shield: one wrong answer is protected!', hintCheat: 'Eraser: two wrong answers are gone!',
+    hintCookie: 'Hint Bulb: {a} × {left} = {first}, {a} × {right} = {second} · Add them together!',
+    hintPill: 'Answer Pill: the answer is {answer}. Tap it yourself! (max 2 stars this test)',
     practiceCorrect: "That's right! ✨", practiceWrong: 'Nice try! The answer is {answer}', practiceRecovered: 'Your heart is back! ♥',
     practiceAgain: 'One more try—you can do it!'
   }
@@ -58,8 +58,9 @@ export const dict = {
 
 const FONT_HREF = 'https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nunito:wght@700;800;900&display=swap';
 const UI = 'assets/ui/';
-const ITEMS = { cheat: 'cheat-sneak', cookie: 'cookie', pill: 'smart-pill', protect: 'score-protection' };
-const DOCK_LABEL = { cheat: 'dockCheat', cookie: 'dockCookie', pill: 'dockPill', protect: 'dockProtect' };
+/* 공통 아이템(core/catalog.js) 중 교실에서 쓰는 4종: 아이콘 파일과 도크 이름 */
+const ITEMS = { eraser: 'cheat-sneak', hint: 'hint-bulb', pill: 'smart-pill', shield: 'score-protection' };
+const DOCK_LABEL = { eraser: 'dockCheat', hint: 'dockCookie', pill: 'dockPill', shield: 'dockProtect' };
 
 /* 효과음: 원본 playTone 의 음 높이 그대로. 한 음 = 0.16초, 0.09초 간격 */
 const TONES = {
@@ -218,7 +219,6 @@ export function mount(el, ctx) {
 
   let progress = normalizeProgress(ctx.progress);
   let quiz = null;
-  let confirmMode = 'quit';
   let hintTimer = null;
   let alive = true;
   const timers = new Set();
@@ -338,7 +338,7 @@ export function mount(el, ctx) {
 
   /* ---------- 도움 아이템 ---------- */
 
-  const itemUsed = (key) => quiz.questionItems.has(key) || (key === 'protect' && quiz.protection);
+  const itemUsed = (key) => quiz.questionItems.has(key) || (key === 'shield' && quiz.protection);
 
   function updateItemDock() {
     for (const button of $$('.item-button')) {
@@ -347,27 +347,29 @@ export function mount(el, ctx) {
       const used = itemUsed(key);
       button.querySelector('[data-count]').textContent = n;
       button.setAttribute('aria-label', t('itemUse', { name: t(DOCK_LABEL[key]) }));
-      /* 다 쓴 아이템은 흐리게 두고, 누르면 상점으로 갈지 묻습니다. */
+      /* 다 쓴 아이템은 흐리게 두고, 누르면 그 자리에서 살지 묻습니다(ctx.items.use). */
       button.classList.toggle('is-empty', n <= 0 && !used);
       button.classList.toggle('used', used);
       button.disabled = used;
     }
   }
 
+  /* 아이템을 먼저 쓰고(없으면 플랫폼이 그 자리에서 살지 묻습니다) 효과를 줍니다. 그사이 문제가 바뀌었으면 효과는 주지 않습니다. */
+  let itemBusy = false;
   async function useItem(key) {
-    if (!quiz?.questions || itemUsed(key)) return;
-    if (ctx.items.count(key) <= 0) { ask('shop'); return; }
+    if (!quiz?.questions || itemUsed(key) || itemBusy) return;
     const q = quiz.questions[quiz.index];
+    itemBusy = true;
+    const ok = await ctx.items.use(key);
+    itemBusy = false;
+    if (!alive || !ok || quiz?.questions?.[quiz.index] !== q) { if (alive && quiz?.questions) updateItemDock(); return; }
     const right = correctOption(q);
-    let undo;
-    /* 효과를 먼저 보여 주고, 서버가 거절하면 되돌립니다. */
-    if (key === 'protect') {
+    if (key === 'shield') {
       quiz.protection = true;
       showHint(t('hintProtect'));
-      undo = () => { quiz.protection = false; };
     } else {
       quiz.questionItems.add(key);
-      if (key === 'cheat') {
+      if (key === 'eraser') {
         const wrong = $$('.answer-button').filter((b) => Number(b.dataset.answer) !== right);
         for (const b of wrong) {
           b.classList.add('eliminated');
@@ -375,23 +377,14 @@ export function mount(el, ctx) {
           if (Number(b.dataset.answer) === quiz.selected) { quiz.selected = null; $('#done-button').disabled = true; }
         }
         showHint(t('hintCheat'));
-        undo = () => wrong.forEach((b) => b.classList.remove('eliminated'));
-      } else if (key === 'cookie') {
+      } else if (key === 'hint') {
         showHint(t('hintCookie', cookieHint(q)));
       } else if (key === 'pill') {
         showHint(t('hintPill', { answer: right }));
       }
     }
-    updateItemDock();
     playTone('item');
-    const ok = await ctx.items.use(key);
-    if (!alive) return;
-    if (!ok && quiz?.questions?.[quiz.index] === q) {
-      quiz.questionItems.delete(key);
-      undo?.();
-      hideHint();
-    }
-    if (quiz?.questions) updateItemDock();
+    updateItemDock();
   }
 
   function showHint(message) {
@@ -534,13 +527,12 @@ export function mount(el, ctx) {
     }
   }
 
-  /* ---------- 그만하기 / 상점 확인 창 ---------- */
+  /* ---------- 그만하기 확인 창 ---------- */
 
-  function ask(mode) {
-    confirmMode = mode;
-    $('#confirm-title').textContent = t(mode === 'shop' ? 'shopAsk' : 'quitTitle');
-    $('#quit-quiz').textContent = t(mode === 'shop' ? 'shop' : 'goHome');
-    $('#confirm-img').src = UI + (mode === 'shop' ? 'sparkle.webp' : 'home.webp');
+  function ask() {
+    $('#confirm-title').textContent = t('quitTitle');
+    $('#quit-quiz').textContent = t('goHome');
+    $('#confirm-img').src = UI + 'home.webp';
     $('#confirm-modal').hidden = false;
   }
 
@@ -560,12 +552,11 @@ export function mount(el, ctx) {
   });
   $('#done-button').addEventListener('click', submitAnswer);
   for (const b of $$('.item-button')) b.addEventListener('click', () => useItem(b.dataset.item));
-  $('#home-button').addEventListener('click', () => ask('quit'));
+  $('#home-button').addEventListener('click', ask);
   $('#continue-quiz').addEventListener('click', () => { $('#confirm-modal').hidden = true; });
   $('#quit-quiz').addEventListener('click', () => {
     $('#confirm-modal').hidden = true;
-    if (confirmMode === 'shop') ctx.openShop();
-    else ctx.exit();
+    ctx.exit();
   });
   $('#next-round').addEventListener('click', nextRound);
   $('#result-home').addEventListener('click', () => ctx.exit());

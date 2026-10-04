@@ -73,9 +73,9 @@ test('plays reward, idempotency, shop, looks', async () => {
   assert.equal(r.body.sparkles, 16);
   assert.equal(r.body.inventory.redCap, 1);
   assert.equal((await a('POST', '/api/shop/buy', { itemId: 'redCap' })).body.error, 'owned');
-  r = await a('POST', '/api/shop/buy', { itemId: 'classroom.cheat' });
-  assert.equal((await a('POST', '/api/items/use', { itemId: 'classroom.cheat' })).body.qty, 0);
-  assert.equal((await a('POST', '/api/items/use', { itemId: 'classroom.cheat' })).body.error, 'noItem');
+  r = await a('POST', '/api/shop/buy', { itemId: 'eraser' });
+  assert.equal((await a('POST', '/api/items/use', { itemId: 'eraser' })).body.qty, 0);
+  assert.equal((await a('POST', '/api/items/use', { itemId: 'eraser' })).body.error, 'noItem');
 
   assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { head: 'redCap' } })).status, 200);
   assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { face: 'glasses' } })).body.error, 'badLook', 'not owned');
@@ -199,4 +199,65 @@ test('ranking: week/all, ties, hidden users, photo users show a preset face', as
 
   assert.equal((await a('GET', '/api/ranking?board=nope')).status, 400);
   assert.equal((await client()('GET', '/api/ranking')).status, 401);
+});
+
+test('mystery box: one free box a day, buy-and-open costs 15, prizes are applied', async () => {
+  const a = client();
+  let r = await a('POST', '/api/signup', { nickname: 'boxkid', pin: '1234' });
+  assert.equal(r.body.gift, true);
+  assert.equal(r.body.inventory.box, 1);
+  r = await a('GET', '/api/me');
+  assert.equal(r.body.gift, false, 'only once a day');
+  assert.equal(r.body.inventory.box, 1);
+
+  r = await a('POST', '/api/box/open', {});
+  assert.equal(r.status, 200);
+  assert.ok(!r.body.inventory.box);
+  assert.ok(['sparkles', 'item', 'cosmetic'].includes(r.body.prize.kind));
+  assert.equal((await a('POST', '/api/box/open', {})).body.error, 'noItem');
+  assert.equal((await a('POST', '/api/box/open', { buy: true })).body.error, 'notEnough');
+
+  db.prepare("update users set sparkles = 1000 where nickname = 'boxkid'").run();
+  for (let i = 0; i < 20; i++) {
+    const before = (await a('GET', '/api/me')).body;
+    r = await a('POST', '/api/box/open', { buy: true });
+    const p = r.body.prize;
+    if (p.kind === 'sparkles') assert.equal(r.body.sparkles, before.user.sparkles - 15 + p.amount);
+    else {
+      assert.equal(r.body.sparkles, before.user.sparkles - 15);
+      assert.equal(r.body.inventory[p.id], (p.kind === 'item' ? before.inventory[p.id] || 0 : 0) + 1, JSON.stringify(p));
+    }
+  }
+
+  /* 다음 날이 되면 또 하나 */
+  const s = JSON.parse(db.prepare("select settings from users where nickname = 'boxkid'").get().settings);
+  s.dailyBox = '2000-01-01';
+  db.prepare("update users set settings = ? where nickname = 'boxkid'").run(JSON.stringify(s));
+  r = await a('GET', '/api/me');
+  assert.equal(r.body.gift, true);
+  assert.equal(r.body.inventory.box, 1);
+});
+
+test('items: buy-and-use in place, old per-game item ids are migrated', async () => {
+  const a = client();
+  await a('POST', '/api/signup', { nickname: 'itemkid', pin: '1234' });
+  assert.equal((await a('POST', '/api/items/use', { itemId: 'time', buy: true })).body.error, 'notEnough');
+  db.prepare("update users set sparkles = 40 where nickname = 'itemkid'").run();
+  let r = await a('POST', '/api/items/use', { itemId: 'shield', buy: true });
+  assert.deepEqual(r.body, { qty: 0, sparkles: 20 });
+  assert.equal((await a('POST', '/api/items/use', { itemId: 'classroom.cheat' })).body.error, 'badItem');
+
+  /* 예전 id 로 들어 있던 인벤토리: cookie 2 + blocks.hint 1 → hint 3, cheat 1 → eraser 1 */
+  const file = join(dir, 'migrate.db');
+  const old = openDb(file);
+  old.prepare("insert into users (nickname, pin, created_at) values ('m', 'x', 0)").run();
+  const ins = old.prepare('insert into inventory (user_id, item_id, qty) values (1, ?, ?)');
+  ins.run('classroom.cookie', 2); ins.run('blocks.hint', 1); ins.run('classroom.cheat', 1); ins.run('hint', 1);
+  old.close();
+  for (let i = 0; i < 2; i++) {
+    const again = openDb(file);
+    const inv = Object.fromEntries(again.prepare('select item_id, qty from inventory order by item_id').all().map((r) => [r.item_id, r.qty]));
+    assert.deepEqual(inv, { eraser: 1, hint: 4 });
+    again.close();
+  }
 });

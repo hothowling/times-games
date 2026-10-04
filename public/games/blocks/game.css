@@ -255,16 +255,45 @@
   position: relative;
   width: min(100cqw, 100cqh * var(--w) / var(--h));
   aspect-ratio: var(--w) / var(--h);
-  background-color: var(--surface);
-  background-image:
-    linear-gradient(to right, var(--grid) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-  background-size: calc(100% / var(--w)) calc(100% / var(--h));
-  border: 2px solid var(--grid);
-  border-radius: 6px;
-  box-shadow: 0 6px 0 var(--line);
   touch-action: none;
   cursor: crosshair;
+}
+
+/* 땅: 채울 칸만 칸마다 그리고, 판 모양 전체에 테두리와 그림자를 줍니다(구멍은 비어 있음). */
+.game-blocks .land {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--w), 1fr);
+  grid-template-rows: repeat(var(--h), 1fr);
+  filter: drop-shadow(0 0 1px var(--lavender)) drop-shadow(0 5px 0 var(--line));
+}
+
+.game-blocks .land i {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 0.5px var(--grid);
+}
+
+/* 힌트: 다음에 그릴 자리를 반짝이는 점선으로 */
+.game-blocks .hint {
+  position: absolute;
+  left: calc(100% * var(--x) / var(--w) + 2px);
+  top: calc(100% * var(--y) / var(--h) + 2px);
+  width: calc(100% * var(--pw) / var(--w) - 4px);
+  height: calc(100% * var(--ph) / var(--h) - 4px);
+  border: 3px dashed var(--yellow);
+  border-radius: 8px;
+  background: rgba(244, 192, 32, 0.22);
+  pointer-events: none;
+  animation: bk-hint 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes bk-hint {
+  to { background: rgba(244, 192, 32, 0.5); transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-blocks .hint { animation: none; }
 }
 
 /* 조각과 그리는 중인 미리보기 */
@@ -452,6 +481,38 @@
   min-height: 48px;
   font-size: 17px;
 }
+
+/* 상단 판 번호 버튼과 판 고르기 */
+.game-blocks .level-btn {
+  font-family: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.game-blocks .level-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  max-height: 50vh;
+  overflow: auto;
+  margin: 12px 0;
+  padding: 2px;
+}
+
+.game-blocks .level-pick {
+  min-height: 48px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.game-blocks .level-pick.is-cleared { color: var(--green); }
+.game-blocks .level-pick.is-current { border-color: var(--primary); background: var(--primary); color: #fff; }
 
 /* ---------- 모달 ---------- */
 

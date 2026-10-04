@@ -3,11 +3,12 @@
  */
 import { t, pick } from '../core/i18n.js';
 import { h } from '../core/dom.js';
-import { lookFor } from '../core/state.js';
+import { state, lookFor } from '../core/state.js';
+import { showGift } from '../core/box.js';
 import { createCharacter } from '../core/character.js';
 import { GAMES } from '../games/index.js';
 
-export function render(view, { go }) {
+export function render(view, { go, toast, errorText }) {
   const hero = h('div');
   const btn = (key, path) => h('button', { type: 'button', class: 'btn btn-sub', onclick: () => go(path) }, t(key));
   view.append(
@@ -20,5 +21,10 @@ export function render(view, { go }) {
         h('span', null, h('b', null, pick(g.title)), h('span', null, pick(g.desc))))))
   );
   const c = createCharacter(hero, lookFor());
+  /* 오늘 처음 들어왔으면 서버가 랜덤박스를 하나 넣어 주고 gift 를 켭니다. 팝업은 한 번만. */
+  if (state.me.gift) {
+    state.me.gift = false;
+    showGift({ buy: false, toast, errorText });
+  }
   return () => c.destroy();
 }

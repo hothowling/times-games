@@ -397,6 +397,7 @@
  * 캐릭터 동작은 transform 만 써서 문제/키패드가 밀리지 않습니다.
  */
 .game-master .mascot-row {
+  position: relative;
   display: flex;
   flex: none;
   justify-content: center;
@@ -593,3 +594,10 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* 아이템 버튼(ctx.itemBar): 캐릭터 오른쪽에 세로로 */
+.game-master .m-items { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); }
+.game-master .m-items .item-bar { flex-direction: column; }
+.game-master .m-items .item-btn { width: 46px; height: 46px; }
+.game-master .q-slot.is-hint { opacity: .45; }
+.game-master .feedback.is-tip { color: var(--ink, #3b2a63); font-size: 22px; }

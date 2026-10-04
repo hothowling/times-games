@@ -37,7 +37,11 @@ const CORE = {
     ranking: '랭킹', rankWeek: '이번 주', rankAll: '명예의 전당', rankTotal: '전체', rankStars: '★ {n}',
     rankMe: '내 순위', rankNth: '{n}위', rankNone: '아직 기록이 없어요', rankEmpty: '아직 아무도 없어요. 첫 번째 주인공이 되어 볼까요?',
     rankHiddenNote: '이름 숨김 중', rankHide: '랭킹에서 내 이름 숨기기', rankResets: '매주 월요일 0시에 새로 시작해요.',
-    earnedRank: '+{n} Sparkles! · 이번 주 {r}위'
+    earnedRank: '+{n} Sparkles! · 이번 주 {r}위',
+    boxOpen: '열기', boxLater: '나중에', boxOk: '좋아요!', boxGot: '{name}을(를) 받았어요!', boxHave: '{n}개 있어요',
+    itemBuyAsk: '가진 게 없어요. {price} Sparkles 로 사서 바로 쓸까요? (내 Sparkles {n})', itemBuy: '{price} 로 사서 쓰기',
+    itemWhere: '쓰는 곳: {games}', itemsTitle: '아이템',
+    boxGift: '오늘의 선물!', boxGiftText: '매일 처음 들어오면 랜덤박스를 하나 줘요. 지금 열어 볼까요?', noItem: '가진 게 없어요.'
   },
   en: {
     appTitle: 'Smart Playground',
@@ -71,7 +75,11 @@ const CORE = {
     ranking: 'Ranking', rankWeek: 'This week', rankAll: 'Hall of Fame', rankTotal: 'All', rankStars: '★ {n}',
     rankMe: 'My rank', rankNth: '#{n}', rankNone: 'No record yet', rankEmpty: 'Nobody yet. Be the first star!',
     rankHiddenNote: 'Name hidden', rankHide: 'Hide my name in rankings', rankResets: 'Starts fresh every Monday.',
-    earnedRank: '+{n} Sparkles! · #{r} this week'
+    earnedRank: '+{n} Sparkles! · #{r} this week',
+    boxOpen: 'Open', boxLater: 'Later', boxOk: 'Yay!', boxGot: 'You got {name}!', boxHave: 'You have {n}',
+    itemBuyAsk: "You don't have one. Buy it for {price} Sparkles and use it now? (You have {n})", itemBuy: 'Buy for {price} and use',
+    itemWhere: 'Used in: {games}', itemsTitle: 'Items',
+    boxGift: "Today's gift!", boxGiftText: 'You get a free Mystery Box every day. Open it now?', noItem: "You don't have one."
   }
 };
 

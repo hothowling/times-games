@@ -54,11 +54,11 @@
 
 <script type="module">
 import { GAMES } from '../games/index.js';
-import { COSMETICS, ITEMS } from '../core/catalog.js';
+import { COSMETICS, ITEMS, BOX } from '../core/catalog.js';
 
 const $ = (id) => document.getElementById(id);
 const gameName = (id) => GAMES.find((g) => g.id === id)?.title.ko || id;
-const itemName = (id) => (COSMETICS[id] || ITEMS[id])?.name.ko || id;
+const itemName = (id) => (COSMETICS[id] || ITEMS[id] || (id === BOX.id && BOX))?.name.ko || id;
 const charName = (k) => ({ sooji: '수지', jiho: '지호' }[k] || (k ? '사진 ' + k.slice(1) : '-'));
 const when = (ms) => (ms ? new Date(ms).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' }) : '-');
 

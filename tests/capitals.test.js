@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
-import { COUNTRIES, makeRound, pointsFor, starsFor, QUESTIONS, CHOICES } from '../public/games/capitals/rules.js';
+import { COUNTRIES, makeRound, pointsFor, starsFor, judge, QUESTIONS, CHOICES } from '../public/games/capitals/rules.js';
 import { CREDITS } from '../public/games/capitals/credits.js';
 
 test('country data: unique codes and capitals, every level has enough countries', () => {
@@ -43,4 +43,12 @@ test('every country has a flag, a city photo and a photo credit', () => {
     const [artist, license, url] = CREDITS[c.code] || [];
     assert.ok(artist && license && url?.startsWith('https://commons.wikimedia.org/'), `credit ${c.code}`);
   }
+});
+
+test('judge: shield turns the first miss into a counted answer without points', () => {
+  assert.deepEqual(judge(true, false), { counts: true, points: true, shield: false });
+  assert.deepEqual(judge(false, false), { counts: false, points: false, shield: false });
+  const saved = judge(false, true);
+  assert.ok(saved.counts && !saved.points && saved.saved && !saved.shield);
+  assert.equal(judge(true, true).shield, true, 'a right answer keeps the shield');
 });

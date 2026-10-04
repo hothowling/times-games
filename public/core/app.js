@@ -8,6 +8,7 @@ import * as i18n from './i18n.js';
 import { state, bus, loadMe, settings, patch, lookFor, currentKey, characterName } from './state.js';
 import { createCharacter } from './character.js';
 import { ITEMS } from './catalog.js';
+import { askBuy, createItemBar } from './items.js';
 import { GAMES } from '../games/index.js';
 
 const $ = (id) => document.getElementById(id);
@@ -130,7 +131,7 @@ function gameCss(id) {
  *   audio, setSound(on)                    효과음·숫자 음성(core/audio.js). 소리 켜기/끄기는 설정에 저장
  *   look, characterName, character(el, opts)  현재 캐릭터
  *   progress, saveProgress(data)           게임별 진행도(서버 저장)
- *   items.count(name), items.use(name)     이 게임의 소모품('<게임>.<name>')
+ *   items.count(id), items.use(id)         공통 아이템(없으면 그 자리에서 구매), itemBar(el, handlers) 버튼 줄
  *   finish({ stars, score, detail })       결과 보고 → { earned, sparkles }. 보상 토스트는 플랫폼이 띄웁니다.
  *   openShop(), exit()
  */
@@ -153,7 +154,8 @@ async function launch(view, id, token) {
   const dict = mod.dict;
   const key = currentKey();
   const chars = [];
-  const itemId = (name) => `${id}.${name}`;
+  const usable = new Set(meta.items || []);
+  let usedItems = {};  /* 이번 판에 쓴 아이템 개수. finish 에 실어 보내고 비웁니다. */
   const ctx = {
     id,
     lang: i18n.getLang(),
@@ -173,21 +175,34 @@ async function launch(view, id, token) {
     saveProgress: (data) => api('PUT', 'progress/' + id, { data }).catch(() => {}),
     sparkles: () => state.me.user.sparkles,
     items: {
-      count: (name) => state.me.inventory[itemId(name)] || 0,
-      async use(name) {
-        const iid = itemId(name);
-        if (!(state.me.inventory[iid] > 0) || !ITEMS[iid]) return false;
-        patch((me) => { me.inventory[iid] -= 1; });
+      count: (iid) => state.me.inventory[iid] || 0,
+      /* 가진 게 있으면 하나 쓰고, 없으면 그 자리에서 살지 물어본 뒤 사서 바로 씁니다. 쓰면 true. */
+      async use(iid) {
+        if (!usable.has(iid) || !ITEMS[iid]) return false;
+        const buy = !(state.me.inventory[iid] > 0);
+        if (buy) {
+          if (state.me.user.sparkles < ITEMS[iid].price) { toast(t('notEnough')); return false; }
+          if (!(await askBuy(iid))) return false;
+        } else patch((me) => { me.inventory[iid] -= 1; });
         try {
-          await api('POST', 'items/use', { itemId: iid });
+          const r = await api('POST', 'items/use', { itemId: iid, buy });
+          patch((me) => { me.user.sparkles = r.sparkles; });
+          usedItems[iid] = (usedItems[iid] || 0) + 1;
           return true;
-        } catch {
-          patch((me) => { me.inventory[iid] += 1; });
+        } catch (err) {
+          if (!buy) patch((me) => { me.inventory[iid] += 1; });
+          toast(errorText(err));
           return false;
         }
       }
     },
+    /* 아이템 버튼 줄: 이 게임이 쓰는 아이템 중 handlers 에 있는 것만 그립니다(core/items.js). */
+    itemBar: (target, handlers) => createItemBar(target, [...usable], ctx.items, handlers),
     async finish({ stars, score, detail }) {
+      /* 정답 알약을 쓴 판은 별 최대 2개. 쓴 아이템은 기록(detail.items)에 남깁니다. */
+      if (usedItems.pill) stars = Math.min(stars, 2);
+      if (Object.keys(usedItems).length) detail = { ...detail, items: usedItems };
+      usedItems = {};
       try {
         const r = await api('POST', 'plays', {
           game: id, roundKey: crypto.randomUUID(), stars, score, detail, character: key

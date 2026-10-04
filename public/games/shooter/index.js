@@ -46,6 +46,8 @@ const RELOAD_SEC = 0.25;   /* 발사 직후 잠깐 쉼: 두 번 눌러 새 보�
 const WRONG_SEC = 0.6;     /* 오답 뒤 쉼: 아무 버튼이나 마구 누르지 않게 */
 const WRONGS_PER_HEART = 3; /* 오답을 이만큼 연달아 누르면 하트 하나를 잃습니다 */
 const BANNER_SEC = 1.6;    /* 라운드 안내가 보이는 동안은 문제를 내지 않습니다 */
+const SLOW = 0.5;         /* 모래시계를 쓴 동안 떨어지는 속도 배수 */
+const SLOW_SEC = 10;
 const COLORS = ['#ffd54a', '#ff9ec0', '#7ee0c3', '#9fd3ff', '#ffb870'];
 
 const HTML = `
@@ -59,6 +61,7 @@ const HTML = `
   <div class="sh-banner" aria-live="polite"></div>
   <footer class="sh-panel">
     <div class="sh-hero" aria-hidden="true"><div class="sh-face"></div></div>
+    <div class="sh-items"></div>
     <div class="sh-hearts" role="img">${'<span>❤️</span>'.repeat(LIVES)}</div>
     <div class="sh-choices">${'<button type="button" class="choice"></button>'.repeat(5)}</div>
   </footer>
@@ -107,6 +110,8 @@ export function mount(el, ctx) {
       wrongs: 0,       /* 연달아 누른 오답 수: 정답을 맞히거나 하트를 잃으면 0 */
       prevBest: best,  /* 이번 판을 시작할 때의 최고 점수: 넘으면 '새 기록' */
       eqs: [], missiles: [], target: null,
+      hold: false,     /* 아이템을 사는 동안(팝업) 잠깐 멈춤 */
+      slowUntil: 0,    /* 모래시계: 이 게임 시간까지 떨어지는 속도 절반 */
       spawned: 0, nextSpawn: 0, readyAt: 0, lockUntil: 0, lastX: Math.random()
     };
   }
@@ -454,7 +459,7 @@ export function mount(el, ctx) {
     if (S.t >= S.readyAt && S.spawned < cfg.count && (S.t >= S.nextSpawn || !falling)) spawn();
 
     for (const e of S.eqs) {
-      if (e.state === 'fall') e.y = Math.min(1, e.y + dt / cfg.fallSec);
+      if (e.state === 'fall') e.y = Math.min(1, e.y + dt * (S.t < S.slowUntil ? SLOW : 1) / cfg.fallSec);
       place(e);
       if (e.state === 'fall' && e.y >= 1 && S.playing) land(e);
     }
@@ -493,8 +498,19 @@ export function mount(el, ctx) {
     /* 다른 앱/탭에 다녀오면 시간이 크게 튀므로 한 프레임은 0.05초까지만 셉니다(그동안 사실상 일시정지). */
     const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
     last = now;
-    if (S.playing && !S.paused) update(dt);
+    if (S.playing && !S.paused && !S.hold) update(dt);
+    app.classList.toggle('slow', S.t < S.slowUntil);
   }
+
+  /* 아이템(공통: 모래시계·보호막). 사는 동안(팝업)은 게임 시간을 멈춥니다. */
+  const playing = () => S.playing && !S.paused;
+  const itemBar = ctx.itemBar($('.sh-items'), {
+    time: { can: () => playing() && S.t >= S.slowUntil, apply: () => { S.slowUntil = S.t + SLOW_SEC; } },
+    shield: { can: () => playing() && S.lives < LIVES, apply: () => { S.lives++; renderHearts(); } },
+    pause: () => { S.hold = true; },
+    resume: () => { S.hold = false; }
+  });
+  const itemTimer = setInterval(() => itemBar.refresh(), 500);
 
   /* 다른 앱이나 탭으로 가면 멈춰 두었다가, 돌아와서 '계속하기'로 이어 합니다. */
   const onVisibility = () => { if (document.hidden) pause(); };
@@ -522,6 +538,7 @@ export function mount(el, ctx) {
   return {
     destroy() {
       cancelAnimationFrame(raf);
+      clearInterval(itemTimer);
       clearTimeout(moodTimer);
       clearTimeout(overTimer);
       document.removeEventListener('visibilitychange', onVisibility);

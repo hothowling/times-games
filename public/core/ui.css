@@ -573,3 +573,83 @@ body.playing #view { max-width: none; padding: 0; }
 /* 찍을 때 번쩍 */
 .cam.flash::after { content: ''; position: absolute; inset: 0; background: #fff; animation: cam-flash 300ms ease-out forwards; pointer-events: none; }
 @keyframes cam-flash { from { opacity: .9; } to { opacity: 0; } }
+
+/* ---------- 랜덤박스(core/box.js) ---------- */
+
+.box-sheet .sheet-card { justify-items: center; }
+.box-sheet .btn { width: 100%; }
+.box-gift { width: 112px; height: 112px; animation: box-bounce 1.2s ease-in-out infinite; }
+
+/* 슬롯머신 창: 칸 하나만 보이고 띠(box-strip)가 위로 올라갑니다. */
+.box-reel {
+  --cell: 132px;
+  position: relative;
+  width: 100%;
+  height: var(--cell);
+  overflow: hidden;
+  border: 4px solid var(--primary);
+  border-radius: 20px;
+  background: var(--bg);
+  box-shadow: inset 0 12px 14px -10px rgb(46 16 101 / 35%), inset 0 -12px 14px -10px rgb(46 16 101 / 35%);
+}
+
+.box-strip { will-change: transform; }
+
+.box-cell {
+  height: var(--cell);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: var(--font-fun);
+  font-size: 18px;
+}
+
+.box-cell img { width: 68px; height: 68px; object-fit: contain; }
+.box-cell.is-win { animation: box-win .5s ease-out 2; }
+.box-result { color: var(--primary) !important; font-family: var(--font-fun); font-size: 22px; }
+
+@keyframes box-win { 50% { transform: scale(1.18); } }
+@keyframes box-bounce { 50% { transform: translateY(-8px) rotate(-4deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .box-gift, .box-cell.is-win { animation: none; }
+}
+
+/* ---------- 게임 안 아이템(core/items.js) ---------- */
+
+.shop-item .where { color: var(--primary); font-size: 11px; }
+
+.item-bar { display: flex; justify-content: center; gap: 8px; }
+
+.item-btn {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  padding: 4px;
+  border: 2px solid rgb(255 255 255 / 70%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 88%);
+  box-shadow: 0 3px 0 rgb(46 16 101 / 18%);
+  cursor: pointer;
+}
+
+.item-btn img { width: 100%; height: 100%; object-fit: contain; }
+.item-btn b {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  min-width: 22px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font: 13px/18px var(--font-fun);
+}
+.item-btn.is-empty b { background: #9a8fb5; }
+.item-btn:disabled { opacity: .4; cursor: default; }
+.item-btn:active:not(:disabled) { transform: translateY(2px); }
+
+.item-ask-icon { width: 72px; height: 72px; margin: 0 auto; object-fit: contain; }
+.item-ask-spark { width: 20px; height: 20px; vertical-align: -4px; }

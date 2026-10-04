@@ -389,6 +389,12 @@
   font-weight: 800;
 }
 
+/* 아이템 버튼(ctx.itemBar): 언덕 오른쪽 위 */
+.game-shooter .sh-items { position: absolute; top: 8px; right: 10px; }
+.game-shooter .sh-items .item-bar { flex-direction: column; gap: 6px; }
+.game-shooter .sh-items .item-btn { width: 44px; height: 44px; }
+.game-shooter .sh-app.slow { filter: hue-rotate(-25deg) saturate(1.2); }
+
 @media (prefers-reduced-motion: reduce) {
   .game-shooter .sh-hero,
   .game-shooter .eq.target { animation: none; }

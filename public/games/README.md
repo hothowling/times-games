@@ -3,7 +3,7 @@
 새 게임을 추가하려면 세 가지를 하면 됩니다.
 
 1. `games/<id>/` 폴더를 만듭니다.
-2. `games/index.js`에 한 줄을 추가합니다(제목, 설명, 썸네일).
+2. `games/index.js`에 한 줄을 추가합니다(제목, 설명, 썸네일, 쓸 아이템 `items`).
 3. `core/catalog.js`의 `GAMES`에 id를 넣습니다. 서버는 여기에 있는 게임의 결과만 받습니다.
 
 ## 폴더 구성
@@ -28,8 +28,9 @@ games/<id>/
 | `ctx.character(el, { body })` | 현재 캐릭터를 그립니다. 크기는 `el`의 CSS `width`로 정합니다. `body: false`면 얼굴만 그립니다. 돌려받은 객체로 `.react('correct'\|'wrong'\|'timeout'\|'clear'\|'fail'\|'idle')`, `.expression('neutral'\|'happy'\|'angry'\|'surprised'\|'sad')`를 씁니다. |
 | `ctx.characterName`, `ctx.look` | 캐릭터 이름과 모양 정보입니다. |
 | `ctx.progress`, `ctx.saveProgress(data)` | 게임별 진행도(JSON, 32KB 이하)입니다. 처음이면 `null`이고, 서버에 저장됩니다. |
-| `ctx.items.count(name)`, `await ctx.items.use(name)` | 이 게임의 소모품(`catalog.js`의 `ITEMS['<id>.<name>']`)입니다. `use`는 성공하면 true를 돌려줍니다. |
-| `await ctx.finish({ stars, score, detail })` | 한 판(라운드)이 끝날 때 한 번 부릅니다. `stars`는 0~3 정수입니다. 서버가 Sparkles를 1/3/6/10만큼 주고, 플랫폼이 토스트를 띄웁니다. 돌려받는 값은 `{ earned, sparkles }`입니다. |
+| `ctx.items.count(id)`, `await ctx.items.use(id)` | 공통 아이템 5종(`catalog.js`의 `ITEMS`: `hint`, `eraser`, `time`, `shield`, `pill`) 중 `games/index.js`의 `items`에 적은 것만 씁니다. 가진 게 없으면 `use`가 그 자리에서 살지 묻고, 사거나 쓰면 true입니다. 효과는 게임이 정합니다. |
+| `ctx.itemBar(el, handlers)` | 아이템 버튼 줄을 그립니다. `handlers = { time: { can: () => bool, apply() {} }, pause() {}, resume() {} }`. 누르면 `can` → `use`(그동안 `pause`) → `resume` → `apply` 순서입니다. 돌려받은 `refresh()`로 문제가 바뀔 때 버튼 상태를 다시 그립니다. |
+| `await ctx.finish({ stars, score, detail })` | 한 판(라운드)이 끝날 때 한 번 부릅니다. `stars`는 0~3 정수입니다. 서버가 Sparkles를 1/3/6/10만큼 주고, 플랫폼이 토스트를 띄웁니다. 돌려받는 값은 `{ earned, sparkles }`입니다. 그 판에 정답 알약(`pill`)을 썼으면 플랫폼이 별을 2개로 줄이고, 쓴 아이템을 `detail.items`에 붙입니다. |
 | `ctx.sparkles()` | 현재 Sparkles 잔액입니다. |
 | `ctx.openShop()`, `ctx.exit()` | 상점(이 게임의 아이템 탭)이나 로비로 갑니다. |
 

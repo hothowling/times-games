@@ -60,6 +60,7 @@
 }
 
 .game-capitals .cq-timer i.low { background: #ff5a5a; }
+.game-capitals .cq-timer i.frozen { background: #7cc8ff; }
 
 .game-capitals .cq-stage {
   flex: 1;
@@ -101,6 +102,10 @@
 
 .game-capitals .cq-choice:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #9cc3e6; }
 .game-capitals .cq-choice:disabled { opacity: .55; }
+.game-capitals .cq-tip { min-height: 1.4em; margin: 0; color: #1d6fd1; font-size: min(4.4vw, 18px); }
+.game-capitals .cq-choice.gone { visibility: hidden; }
+.game-capitals .cq-choice.glow { animation: cq-glow .8s ease-in-out infinite alternate; }
+@keyframes cq-glow { to { box-shadow: 0 0 0 4px #ffd54a, 0 5px 0 #9cc3e6; } }
 .game-capitals .cq-choice.right { opacity: 1; background: #34c27a; color: #fff; box-shadow: 0 5px 0 #1f8a54; }
 .game-capitals .cq-choice.wrong { opacity: 1; background: #ff5a5a; color: #fff; box-shadow: 0 5px 0 #c23434; }
 

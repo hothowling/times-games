@@ -1,7 +1,8 @@
 /*
  * blocks/index.js - 구구단 땅따먹기(원본 times-block/js/game.js). 화면, 판 그리기(끌기), 카드, 소리/캐릭터 연결.
  * 규칙 판정은 rules.js, 효과음·숫자 읽기는 ctx.audio, 캐릭터는 ctx.character 가 맡습니다.
- * 진행도: { level } (ctx.saveProgress). 판을 다 채우면 ctx.finish 로 별(지운 땅 수 기준)을 보고합니다.
+ * 진행도: { level: 아직 못 깬 판, puzzle: 그 판의 문제 } (ctx.saveProgress). 판을 다 채우면 ctx.finish 로 별(지운 땅 수 기준)을 보고합니다.
+ * 못 깬 판의 문제는 저장해 두어 나갔다 와도 같은 문제가 나옵니다(건너뛰기 없음). 깬 판은 상단 판 번호를 눌러 골라 다시 할 수 있습니다.
  */
 import * as P from './rules.js';
 
@@ -18,12 +19,17 @@ export const dict = {
     help: '숫자 카드만큼 칸을 끌어서 그려요.',
     big: '가로·세로는 9칸까지예요.',
     overlap: '이미 채운 칸과 겹쳐요.',
+    outside: '판 밖으로 나갔어요.',
     nocard: '{n} 카드가 없어요.',
+    hintBtn: '💡 힌트 {n}',
+    hintShow: '반짝이는 곳에 {w}×{h}={n}!',
+    hintNone: '지금 놓은 땅으로는 다 채울 수 없어요. 땅을 하나 지워 보세요.',
     removedMsg: '땅을 지웠어요.',
     card: '{n} 카드',
     cardUsed: '{n} 카드, 사용함',
     clearAll: '모두 지우기',
-    newPuzzle: '다른 문제',
+    pickLevel: '몇 판을 할까요?',
+    close: '닫기',
     boardLabel: '땅따먹기 판',
     soundOff: '소리 끄기',
     soundOn: '소리 켜기',
@@ -49,12 +55,17 @@ export const dict = {
     help: 'Drag to draw a block that matches a card.',
     big: 'Each side can be at most 9 squares.',
     overlap: 'That overlaps a filled square.',
+    outside: 'That goes off the board.',
     nocard: 'There’s no {n} card.',
+    hintBtn: '💡 Hint {n}',
+    hintShow: 'Try {w}×{h}={n} on the glowing spot!',
+    hintNone: 'These blocks can’t fill the board. Try removing one.',
     removedMsg: 'Block removed.',
     card: 'Card {n}',
     cardUsed: 'Card {n}, used',
     clearAll: 'Clear all',
-    newPuzzle: 'New puzzle',
+    pickLevel: 'Pick a level',
+    close: 'Close',
     boardLabel: 'Game board',
     soundOff: 'Sound off',
     soundOn: 'Sound on',
@@ -89,7 +100,7 @@ const HTML = `
 
   <section class="screen screen-game" data-screen="game">
     <div class="bar">
-      <span class="badge" data-ref="level"></span>
+      <button type="button" class="badge level-btn" data-ref="level" aria-haspopup="dialog"></button>
       <span class="badge" data-ref="time">0:00</span>
       <button type="button" class="icon-btn" data-ref="sound"></button>
       <button type="button" class="icon-btn" data-ref="quit" data-i18n-aria="quit">✕</button>
@@ -103,8 +114,8 @@ const HTML = `
     </div>
     <div class="cards" data-ref="cards"></div>
     <div class="actions">
+      <button type="button" class="btn btn-ghost" data-ref="hint"></button>
       <button type="button" class="btn btn-ghost" data-ref="clear" data-i18n="clearAll"></button>
-      <button type="button" class="btn btn-ghost" data-ref="new" data-i18n="newPuzzle"></button>
     </div>
   </section>
 </div>
@@ -120,6 +131,14 @@ const HTML = `
     </ul>
     <button type="button" class="btn btn-primary" data-ref="next" data-i18n="next"></button>
     <button type="button" class="btn btn-ghost" data-ref="exitWin" data-i18n="goLobby"></button>
+  </div>
+</div>
+
+<div class="modal" data-ref="levelModal" hidden>
+  <div class="modal-card">
+    <p class="modal-title" data-i18n="pickLevel"></p>
+    <div class="level-grid" data-ref="levelGrid"></div>
+    <button type="button" class="btn btn-ghost" data-ref="levelClose" data-i18n="close"></button>
   </div>
 </div>
 
@@ -147,7 +166,9 @@ export function mount(el, ctx) {
     result: ctx.character(el.querySelector('.mascot-result'), { body: false })
   };
 
-  let level = Math.max(1, Number(ctx.progress?.level) || 1);
+  let level = Math.max(1, Number(ctx.progress?.level) || 1);  /* 아직 못 깬 판(지금까지 연 마지막 판) */
+  let current = level;                                         /* 지금 하는 판 */
+  let saved = ctx.progress?.puzzle?.level === level ? ctx.progress.puzzle : null;
   let W = 6;
   let H = 6;
   let cards = [];
@@ -202,19 +223,41 @@ export function mount(el, ctx) {
   /* ---------- 새 판 ---------- */
 
   function newPuzzle() {
-    W = H = P.boardSize(level);
-    cards = P.cardsFor(P.generate(W, H));
+    W = H = P.boardSize(current);
+    let shape = current === level ? saved : null;
+    if (!shape) {
+      shape = P.carve(P.generate(W, H), W, H, current);
+      if (current === level) {
+        saved = { level, pieces: shape.pieces, holes: shape.holes };
+        ctx.saveProgress({ level, puzzle: saved });
+      }
+    }
+    cards = P.cardsFor(shape.pieces);
     used = cards.map(() => false);
     owner = new Array(W * H).fill(-1);
+    for (const r of shape.holes) {
+      for (let y = r.y; y < r.y + r.h; y++) for (let x = r.x; x < r.x + r.w; x++) owner[y * W + x] = P.HOLE;
+    }
     pieces = [];
     removed = 0;
     done = false;
     drag = null;
-    board.textContent = '';
     preview = null;
+    hintEl = null;
+    /* 땅(채울 칸)만 칸마다 그립니다. 구멍은 비워 두어 판이 L·T·U 모양이나 가운데가 빈 모양이 됩니다. */
+    const land = document.createElement('div');
+    land.className = 'land';
+    owner.forEach((v, i) => {
+      if (v === P.HOLE) return;
+      const c = document.createElement('i');
+      c.style.gridArea = `${Math.floor(i / W) + 1} / ${i % W + 1}`;
+      land.appendChild(c);
+    });
+    board.replaceChildren(land);
+    renderHint();
     board.style.setProperty('--w', W);
     board.style.setProperty('--h', H);
-    $.level.textContent = t('level', { n: level });
+    $.level.textContent = t('level', { n: current }) + ' ▾';
     renderCards();
     say(t('help'));
     startedAt = Date.now();
@@ -314,6 +357,41 @@ export function mount(el, ctx) {
     }
   }
 
+  /* ---------- 힌트(공통 아이템 hint) ---------- */
+
+  let hintEl = null;
+  let hintBusy = false;
+
+  function renderHint() {
+    $.hint.textContent = t('hintBtn', { n: ctx.items.count('hint') });
+  }
+
+  function clearHint() {
+    if (hintEl) hintEl.remove();
+    hintEl = null;
+  }
+
+  /* 지금 놓은 땅으로 끝까지 채울 수 있는 다음 조각을 보여 줍니다. 채울 수 없으면 아이템을 쓰지 않고 알려 줍니다.
+     힌트 전구가 없으면 ctx.items.use 가 그 자리에서 살지 묻습니다. */
+  async function useHint() {
+    if (done || hintBusy) return;
+    A.unlock();
+    const r = P.hint(W, H, owner, cards, used);
+    if (!r) { say(t('hintNone'), 'bad'); chars.game.react('wrong'); return; }
+    hintBusy = true;
+    const ok = await ctx.items.use('hint');
+    hintBusy = false;
+    renderHint();
+    if (!ok) return;
+    clearHint();
+    hintEl = document.createElement('div');
+    hintEl.className = 'hint';
+    place(hintEl, r);
+    board.appendChild(hintEl);
+    A.nextFx();
+    say(t('hintShow', { w: r.w, h: r.h, n: r.w * r.h }), 'good');
+  }
+
   function removePiece(id) {
     const p = pieces[id];
     if (!p) return;
@@ -339,13 +417,14 @@ export function mount(el, ctx) {
       return;
     }
     dropPreview(false);
+    clearHint();
     addPiece(r, res.card);
     renderCards();
     A.correct();
     chars.game.react('correct');
     say(r.w + ' × ' + r.h + ' = ' + r.w * r.h + '!', 'good');
     speak([r.w, r.h, r.w * r.h], { delay: A.FX_CORRECT_SEC });
-    if (owner.every((v) => v >= 0)) win();
+    if (!owner.includes(-1)) win();
   }
 
   /* ---------- 끌기 ---------- */
@@ -355,6 +434,7 @@ export function mount(el, ctx) {
     A.unlock();
     const c = cellAt(e);
     const id = owner[c.y * W + c.x];
+    if (id === P.HOLE) return;
     try { board.setPointerCapture(e.pointerId); } catch { /* 무시 */ }
     drag = { pid: e.pointerId, start: c, cur: c, piece: id };
     if (id < 0) updatePreview();
@@ -416,9 +496,12 @@ export function mount(el, ctx) {
     $.winRemoved.textContent = t('times', { n: removed });
     $.winStars.innerHTML = '★★★'.slice(0, stars) + '<span class="off">' + '★★★'.slice(stars) + '</span>';
     $.winStars.setAttribute('aria-label', t('stars', { n: stars }));
-    ctx.finish({ stars, score: level, detail: { level, timeMs, removed } });
-    level++;
-    ctx.saveProgress({ level });
+    ctx.finish({ stars, score: current, detail: { level: current, timeMs, removed } });
+    if (current === level) {
+      level++;
+      saved = null;
+      ctx.saveProgress({ level });
+    }
     later(() => {
       $.win.hidden = false;
       A.fanfare();
@@ -440,6 +523,7 @@ export function mount(el, ctx) {
     A.unlock();
     A.preloadVoices(ctx.lang);
     show('game');
+    current = level;
     newPuzzle();
   });
 
@@ -447,20 +531,39 @@ export function mount(el, ctx) {
     $.win.hidden = true;
     chars.result.react('idle');
     A.nextFx();
+    current = Math.min(current + 1, level);
     newPuzzle();
   });
+
+  /* 판 고르기: 깬 판(✓)과 지금 열린 판. 고르면 그 판을 새로 시작합니다. */
+  on($.level, () => {
+    if (done) return;
+    $.levelGrid.replaceChildren(...Array.from({ length: level }, (_, i) => {
+      const n = i + 1;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'level-pick' + (n === current ? ' is-current' : '') + (n < level ? ' is-cleared' : '');
+      b.textContent = n < level ? n + '✓' : n;
+      b.addEventListener('click', () => {
+        $.levelModal.hidden = true;
+        if (n === current) return;
+        current = n;
+        A.nextFx();
+        newPuzzle();
+      });
+      return b;
+    }).reverse());
+    $.levelModal.hidden = false;
+  });
+  on($.levelClose, () => { $.levelModal.hidden = true; });
+
+  on($.hint, useHint);
 
   on($.clear, () => {
     if (done) return;
     for (let i = 0; i < pieces.length; i++) if (pieces[i]) removePiece(i);
     renderCards();
     say(t('help'));
-  });
-
-  on($.new, () => {
-    if (done) return;
-    A.nextFx();
-    newPuzzle();
   });
 
   on($.sound, () => {

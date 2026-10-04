@@ -127,3 +127,9 @@ export const pointsFor = (level, secsLeft) => level * 10 + Math.ceil(Math.max(0,
 
 /* 별: 10문제 중 10개 → 3, 8개 이상 → 2, 5개 이상 → 1. */
 export const starsFor = (correct) => (correct >= QUESTIONS ? 3 : correct >= 8 ? 2 : correct >= 5 ? 1 : 0);
+
+/* 보호막: 켜 둔 상태에서 틀리면(시간 초과 포함) 한 번은 맞은 것으로 치고 보호막이 꺼집니다. 점수는 맞힌 문제만 받습니다. */
+export function judge(right, shield) {
+  if (right) return { counts: true, points: true, shield };
+  return shield ? { counts: true, points: false, shield: false, saved: true } : { counts: false, points: false, shield };
+}

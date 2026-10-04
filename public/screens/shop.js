@@ -7,7 +7,8 @@ import { t, pick } from '../core/i18n.js';
 import { h } from '../core/dom.js';
 import { state, patch, lookFor, currentKey } from '../core/state.js';
 import { createCharacter } from '../core/character.js';
-import { COSMETICS, ITEMS, SLOTS } from '../core/catalog.js';
+import { COSMETICS, ITEMS, SLOTS, BOX } from '../core/catalog.js';
+import { openBox } from '../core/box.js';
 import { audio } from '../core/audio.js';
 import { GAMES } from '../games/index.js';
 
@@ -86,17 +87,34 @@ export function render(view, { go, toast, errorText, params }) {
       }))));
   }
 
+  /* 랜덤박스: 사면 바로 열고, 매일 받은 상자가 있으면 '열기'. 열고 나면 개수·잔액을 다시 그립니다. */
+  function box() {
+    const have = state.me.inventory[BOX.id] || 0;
+    const open = (buy) => openBox({ buy, toast, errorText }).then(draw);
+    return h('div', { class: 'shop-section' },
+      h('h3', null, pick(BOX.name)),
+      h('div', { class: 'shop-grid' },
+        h('button', { type: 'button', class: 'shop-item', onclick: () => open(true) },
+          h('img', { src: BOX.icon, alt: '' }), pick(BOX.name), h('span', { class: 'desc' }, pick(BOX.desc)), price(BOX.price)),
+        have ? h('button', { type: 'button', class: 'shop-item', onclick: () => open(false) },
+          h('img', { src: BOX.icon, alt: '' }), t('boxOpen'), h('span', { class: 'tag' }, t('boxHave', { n: have }))) : null));
+  }
+
+  /* 아이템 5종은 모든 게임이 같이 씁니다. '쓰는 곳'은 games/index.js 의 items. 게임에서 왔으면 그 게임 아이템을 강조합니다. */
   function items() {
-    const games = [...new Set(Object.values(ITEMS).map((i) => i.game))];
-    return games.map((gid) => h('div', { class: 'shop-section' },
-      h('h3', null, pick(GAMES.find((g) => g.id === gid)?.title)),
-      h('div', { class: 'shop-grid' }, Object.entries(ITEMS).filter(([, i]) => i.game === gid).map(([id, i]) =>
-        h('button', { type: 'button', class: 'shop-item', onclick: async () => { if (await buy(id, pick(i.name))) draw(); } },
+    return [box(), h('div', { class: 'shop-section' },
+      h('h3', null, t('itemsTitle')),
+      h('div', { class: 'shop-grid' }, Object.entries(ITEMS).map(([id, i]) => {
+        const where = GAMES.filter((g) => g.items?.includes(id));
+        return h('button', { type: 'button', class: 'shop-item' + (fromGame && where.some((g) => g.id === fromGame) ? ' is-worn' : ''),
+          onclick: async () => { if (await buy(id, pick(i.name))) draw(); } },
           h('img', { src: i.icon, alt: '' }),
           pick(i.name),
           h('span', { class: 'desc' }, pick(i.desc)),
+          h('span', { class: 'where' }, t('itemWhere', { games: where.map((g) => pick(g.short)).join(' · ') })),
           price(i.price),
-          h('span', { class: 'tag' }, `${t('owned')} ${t('qty', { n: state.me.inventory[id] || 0 })}`))))));
+          h('span', { class: 'tag' }, `${t('owned')} ${t('qty', { n: state.me.inventory[id] || 0 })}`));
+      })))];
   }
 
   function draw() {

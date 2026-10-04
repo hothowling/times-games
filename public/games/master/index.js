@@ -18,6 +18,7 @@ export const dict = {
     round: '라운드 {n}',
     progress: '{i} / {n}',
     timeUp: '시간 초과!',
+    tipHint: '💡 첫 자리는 {d}', tipTime: '⏳ +5초', tipPill: '💊 정답 {n} (이번 판은 별 2개까지)',
     great: '정답!',
     roundClear: '라운드 클리어!',
     next: '다음 라운드',
@@ -46,6 +47,7 @@ export const dict = {
     round: 'Round {n}',
     progress: '{i} / {n}',
     timeUp: "Time's up!",
+    tipHint: '💡 Starts with {d}', tipTime: '⏳ +5 seconds', tipPill: '💊 Answer {n} (max 2 stars this round)',
     great: 'Correct!',
     roundClear: 'Round Clear!',
     next: 'Next Round',
@@ -106,6 +108,7 @@ const HTML = `
     <!-- 작은 캐릭터: 문제 카드와 키패드 사이. 움직임은 transform 만 써서 레이아웃이 밀리지 않습니다 -->
     <div class="mascot-row" data-ref="mascotRow">
       <div class="mascot mascot-game" data-ref="mascotGame"></div>
+      <div class="m-items" data-ref="items"></div>
     </div>
     <div class="keypad" data-ref="keypad">
       ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => `<button type="button" class="key" data-digit="${d}">${d}</button>`).join('')}
@@ -304,7 +307,30 @@ export function mount(root, ctx) {
     el.qCard.classList.add('is-leaving');
   }
 
+  /* ---------- 아이템(공통: 힌트·모래시계·정답 알약). 문제마다 같은 아이템은 한 번. ---------- */
+
+  let curAnswer = 0;
+  let slotHint = '';           /* 답 칸에 흐리게 보여 줄 글자(힌트: 첫 자리, 알약: 정답) */
+  let usedHere = new Set();
+  const canUse = (id) => game.state() === 'question' && el.modalQuit.hidden && !usedHere.has(id);
+  const showHint = (id, text, slot) => {
+    usedHere.add(id);
+    setFeedback(text, 'is-tip');
+    if (slot !== undefined) { slotHint = slot; onInput(''); }
+  };
+  const itemBar = ctx.itemBar(el.items, {
+    hint: { can: () => canUse('hint') && !usedHere.has('pill'), apply: () => { const d = String(curAnswer)[0]; showHint('hint', t('tipHint', { d }), String(curAnswer).length > 1 ? d + '_' : d); } },
+    time: { can: () => canUse('time'), apply: () => { game.addTime(5); showHint('time', t('tipTime')); } },
+    pill: { can: () => canUse('pill'), apply: () => showHint('pill', t('tipPill', { n: curAnswer }), String(curAnswer)) },
+    pause: () => game.pause(),
+    resume: () => { if (el.modalQuit.hidden && !document.hidden) game.resume(); }
+  });
+
   function onQuestion(info) {
+    curAnswer = info.answer;
+    slotHint = '';
+    usedHere = new Set();
+    itemBar.refresh();
     renderTop(info);
     el.qa.textContent = String(info.a);
     el.qb.textContent = String(info.b);
@@ -325,8 +351,8 @@ export function mount(root, ctx) {
   }
 
   function onInput(buffer) {
-    el.qSlot.className = 'q-slot';
-    el.qSlot.textContent = buffer || '?';
+    el.qSlot.className = 'q-slot' + (!buffer && slotHint ? ' is-hint' : '');
+    el.qSlot.textContent = buffer || slotHint || '?';
   }
 
   /*
@@ -339,6 +365,7 @@ export function mount(root, ctx) {
   }
 
   function onCorrect(info) {
+    itemBar.refresh();
     el.qSlot.className = 'q-slot is-answer';
     el.qSlot.textContent = String(info.answer);
     setFeedback(t('great') + ' +' + info.points + (info.points === 2 ? '!' : ''), null);
@@ -349,6 +376,7 @@ export function mount(root, ctx) {
   }
 
   function onTimeout(info) {
+    itemBar.refresh();
     el.qSlot.className = 'q-slot is-answer';
     el.qSlot.textContent = String(info.answer);
     setFeedback(t('timeUp') + ' = ' + info.answer, 'is-late');
