@@ -1,0 +1,204 @@
+/*
+ * game.css - 구구단 디펜스. 모든 선택자는 .game-defense 아래에 둡니다.
+ * 들판·좀비·울타리·미사일은 캔버스(index.js draw), 점수판·캐릭터·카드는 DOM 입니다.
+ */
+
+.game-defense {
+  --ink: #2f2a1f;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  touch-action: manipulation;
+  font-family: var(--font-fun);
+  color: var(--ink);
+  background: #5b7f4a;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game-defense * { box-sizing: border-box; }
+.game-defense button { font-family: inherit; color: inherit; cursor: pointer; }
+
+.game-defense .df-canvas { position: absolute; inset: 0; display: block; }
+
+.game-defense .df-hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: calc(8px + env(safe-area-inset-top)) 10px 8px;
+}
+
+.game-defense .df-pill {
+  flex: none;
+  padding: 6px 11px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 88%);
+  font-size: 16px;
+  box-shadow: 0 3px 0 rgb(0 0 0 / 15%);
+}
+
+/* 울타리 체력 막대 */
+.game-defense .df-fence {
+  flex: 1;
+  height: 14px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 30%);
+  overflow: hidden;
+}
+
+.game-defense .df-fence i {
+  display: block;
+  height: 100%;
+  background: #c48a50;
+  transform-origin: left;
+  transition: transform .2s;
+}
+
+.game-defense .df-fence.low i { background: #ff5a5a; }
+
+.game-defense .df-banner {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff;
+  font-size: min(9vw, 40px);
+  text-shadow: 0 3px 0 rgb(0 0 0 / 35%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.game-defense .df-banner.show { animation: df-banner 1.6s ease-out; }
+@keyframes df-banner { 15% { opacity: 1; transform: scale(1.1); } 25% { transform: scale(1); } 80% { opacity: 1; } 100% { opacity: 0; } }
+
+/* 캐릭터: 울타리 아래 가운데(미사일이 나가는 곳). 캔버스와 같은 위치를 --fence-y 로 맞춥니다. */
+.game-defense .df-hero {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--fence-y, 70vh) + 10px);
+  width: min(26vw, 110px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.game-defense .df-items {
+  position: absolute;
+  right: 10px;
+  bottom: calc(14px + env(safe-area-inset-bottom));
+}
+
+/* ---------- 시작 / 일시정지 / 끝 / 퀴즈 / 업그레이드 ---------- */
+
+.game-defense .df-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(30 22 10 / 55%);
+}
+
+.game-defense .df-overlay[hidden],
+.game-defense .df-overlay[data-mode="start"] [data-show]:not([data-show~="start"]),
+.game-defense .df-overlay[data-mode="over"] [data-show]:not([data-show~="over"]),
+.game-defense .df-overlay[data-mode="pause"] [data-show]:not([data-show~="pause"]),
+.game-defense .df-overlay[data-mode="quiz"] [data-show]:not([data-show~="quiz"]),
+.game-defense .df-overlay[data-mode="pick"] [data-show]:not([data-show~="pick"]),
+.game-defense .df-overlay:not(.new-best) .df-record { display: none; }
+
+/* 퀴즈·업그레이드 중에도 아이템(정답 알약)은 누를 수 있게 위에 둡니다. */
+.game-defense .df-app:has(~ .df-overlay[data-mode="quiz"]:not([hidden])) .df-items { z-index: 11; }
+
+.game-defense .df-card {
+  width: min(100%, 400px);
+  max-height: 100%;
+  overflow: auto;
+  padding: 18px 20px 22px;
+  border-radius: 28px;
+  background: #fffaf0;
+  text-align: center;
+  word-break: keep-all;
+  box-shadow: 0 10px 0 rgb(0 0 0 / 25%);
+}
+
+.game-defense .df-card h1 { margin: 4px 0 8px; color: #4f7a2e; font-size: min(9vw, 36px); font-weight: normal; }
+.game-defense .df-card-face { width: min(30vw, 116px); margin: 0 auto; }
+.game-defense .df-card p { margin: 6px 0; font-size: 17px; line-height: 1.45; }
+.game-defense .df-result { font-size: 21px !important; }
+.game-defense .df-record { color: #e0314b; font-size: 22px !important; }
+.game-defense .df-best { color: #4f7a2e; }
+
+.game-defense .df-q { font-size: min(12vw, 48px) !important; margin: 4px 0 12px !important; }
+.game-defense .df-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.game-defense .df-choice {
+  min-height: 64px;
+  border: 0;
+  border-radius: 18px;
+  background: #fff;
+  font-size: 30px;
+  box-shadow: 0 5px 0 #d8c7a3;
+}
+
+.game-defense .df-choice.right { background: #34c27a; color: #fff; box-shadow: 0 5px 0 #1f8a54; }
+.game-defense .df-choice.wrong { background: #ff5a5a; color: #fff; box-shadow: 0 5px 0 #c23434; }
+.game-defense .df-choice:disabled:not(.right):not(.wrong) { opacity: .5; }
+.game-defense .df-quiz-msg { min-height: 1.5em; color: #4f7a2e; }
+
+.game-defense .df-picks { display: grid; gap: 10px; }
+
+.game-defense .df-pick {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 10px;
+  padding: 12px 14px;
+  border: 3px solid #e6d3a8;
+  border-radius: 20px;
+  background: #fff;
+  text-align: left;
+  box-shadow: 0 5px 0 #d8c7a3;
+}
+
+.game-defense .df-pick:active { transform: translateY(3px); box-shadow: 0 2px 0 #d8c7a3; }
+.game-defense .df-pick-icon { grid-row: span 2; font-size: 40px; text-align: center; }
+.game-defense .df-pick b { font-size: 21px; font-weight: normal; }
+.game-defense .df-pick small { grid-column: 2; color: #7a6a4a; font-family: system-ui, sans-serif; font-size: 13px; }
+.game-defense .df-pick em { grid-row: 1 / span 2; grid-column: 3; color: #4f7a2e; font-style: normal; font-size: 15px; }
+
+.game-defense .df-main {
+  width: 100%;
+  margin-top: 14px;
+  padding: 13px;
+  border: 0;
+  border-radius: 20px;
+  background: #5fa83a;
+  color: #fff;
+  font-size: min(7vw, 28px);
+  box-shadow: 0 6px 0 #3c7421;
+}
+
+.game-defense .df-main:active { transform: translateY(4px); box-shadow: 0 2px 0 #3c7421; }
+
+.game-defense .df-sub {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 2px solid #e6d3a8;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 19px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-defense .df-banner.show { animation: none; opacity: 1; }
+}
