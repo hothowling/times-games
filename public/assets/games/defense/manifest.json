@@ -1,7 +1,7 @@
 {
   "version": 1,
   "basePath": "assets/games/defense/",
-  "format": "png",
+  "format": "png (background: webp)",
   "frameIndexBase": 0,
   "spriteLayout": "horizontal",
   "generationTool": "built-in image_gen",
@@ -139,7 +139,7 @@
       ]
     },
     "background": {
-      "file": "background.png",
+      "file": "background.webp",
       "width": 720,
       "height": 1600,
       "transparent": false,
@@ -177,12 +177,6 @@
         0.5,
         0.5
       ]
-    },
-    "thumbnail": {
-      "file": "thumbnail.png",
-      "width": 234,
-      "height": 234,
-      "transparent": false
     },
     "fence-cracked": {
       "file": "fence-cracked.png",

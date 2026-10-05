@@ -2,7 +2,7 @@
  * 구구단 디펜스 - 울타리 뒤의 캐릭터가 미사일을 자동으로 쏘고, 위에서 끝없이 내려오는 좀비를 막는 게임.
  * 좀비가 울타리에 닿으면 울타리가 조금씩 부서지고, 다 부서지면 끝. 금빛 퀴즈 좀비를 잡으면 구구단 퀴즈가 나오고,
  * 맞히면 미사일 업그레이드 카드 3장 중 하나를 고릅니다. 정답 알약을 쓰면 퀴즈 없이 바로 업그레이드.
- * 규칙·수치는 rules.js(DOM 없음). 그림은 캔버스에 직접 그립니다(ART: 나중에 그림 파일로 바꿀 자리).
+ * 규칙·수치는 rules.js(DOM 없음). 들판·좀비·울타리·미사일·폭발은 assets/games/defense/ 그림을 캔버스에 그립니다.
  */
 import { WORLD_W, FENCE_HP, WAVE_SEC, QUIZ_EVERY, ZOMBIES, UPGRADES, waveConfig, pickType, stats, upgradeChoices, makeQuiz, starsFor } from './rules.js';
 
@@ -226,118 +226,91 @@ export function mount(el, ctx) {
     z.hitT = 0.12;
   }
 
-  /* ---------- 그리기(ART: 나중에 그림 파일로 바꿀 자리) ---------- */
+  /* ---------- 그리기(그림: assets/games/defense/, 크기·프레임은 그 폴더의 manifest.json) ---------- */
+
+  const ART = 'assets/games/defense/';
+  const art = (f) => Object.assign(new Image(), { src: ART + f });
+  const IMG = {
+    bg: art('background.webp'), rail: art('fence-rail.png'), boom: art('explosion.png'),
+    fence: [art('fence-intact.png'), art('fence-cracked.png'), art('fence-broken.png')],
+    missile: [0, 1, 2, 3, 4, 5].map((n) => art(`missile-${n}.png`)),
+    zombie: Object.fromEntries(Object.keys(ZOMBIES).map((k) => [k, art(`zombie-${k}.png`)]))
+  };
+  /* 좀비 스트립: 프레임 크기(px), 걷기 fps. 프레임 0~3 걷기, 4~5 갉기. */
+  const SPRITE = { normal: [96, 8], fast: [80, 12], tank: [140, 8], quiz: [104, 8] };
+  const ok = (im) => im.complete && im.naturalWidth > 0;
 
   function draw() {
     g.clearRect(0, 0, W, H);
-    /* 땅: 위는 들판, 울타리 아래는 마당 */
-    const sky = g.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, '#5b7f4a');
-    sky.addColorStop(0.7, '#7aa35d');
-    sky.addColorStop(1, '#c9a46a');
-    g.fillStyle = sky;
-    g.fillRect(0, 0, W, H);
-    g.fillStyle = 'rgba(0,0,0,.06)';
-    for (let y = ((G?.t || 0) * 6) % 40 - 40; y < fenceY; y += 40) g.fillRect(0, y, W, 2);
-    g.fillStyle = '#d8b67c';
-    g.fillRect(0, fenceY + 20, W, H - fenceY - 20);
-    if (!G) { drawFence(FENCE_HP); return; }
-
-    for (const f of G.fx) {
-      const k = f.t / 0.4;
-      g.globalAlpha = 1 - k;
-      g.fillStyle = f.kind === 'blast' ? '#ffb347' : '#b6ff9e';
-      g.beginPath();
-      g.arc(f.x, f.y, f.r * (0.5 + k), 0, Math.PI * 2);
-      g.fill();
-      g.globalAlpha = 1;
+    /* 배경: 들판(위 1120px)은 울타리까지, 마당(아래 480px)은 울타리부터 끝까지 늘려 붙입니다. */
+    const yard = fenceY + 10;
+    if (ok(IMG.bg)) {
+      g.drawImage(IMG.bg, 0, 0, 720, 1120, 0, 0, W, yard);
+      g.drawImage(IMG.bg, 0, 1120, 720, 480, 0, yard, W, H - yard);
+    } else {
+      g.fillStyle = '#7aa35d';
+      g.fillRect(0, 0, W, yard);
+      g.fillStyle = '#d8b67c';
+      g.fillRect(0, yard, W, H - yard);
     }
+    if (!G) { drawFence(FENCE_HP); return; }
     for (const z of G.zombies) drawZombie(z);
     drawFence(G.fence);
     for (const m of G.missiles) drawMissile(m);
+    /* 폭발: 8프레임(20fps) = fx 수명 0.4초 */
+    for (const f of G.fx) {
+      if (!ok(IMG.boom)) continue;
+      const size = f.kind === 'blast' ? f.r * 2.4 : f.r * 3;
+      g.drawImage(IMG.boom, Math.min(7, Math.floor(f.t * 20)) * 128, 0, 128, 128, f.x - size / 2, f.y - size / 2, size, size);
+    }
   }
 
   function drawZombie(z) {
-    const bob = Math.sin(G.t * (z.biting ? 14 : 6) + z.phase) * (z.biting ? 2 : 3);
-    if (z.type === 'quiz') {
-      g.fillStyle = 'rgba(255, 213, 74, .55)';
-      g.beginPath();
-      g.arc(z.x, z.y + bob, z.r + 7 + Math.sin(G.t * 8) * 2, 0, Math.PI * 2);
-      g.fill();
-    }
-    g.font = `${z.r * 2.1}px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
-    g.textAlign = 'center';
-    g.textBaseline = 'middle';
+    const im = IMG.zombie[z.type];
+    const [px, fps] = SPRITE[z.type];
+    const frame = z.biting ? 4 + Math.floor(G.t * 8 + z.phase) % 2 : Math.floor(G.t * fps + z.phase) % 4;
+    const size = z.r * 2.8;
+    /* 앵커(0.5, 0.9) = 발. 좀비의 발은 중심(z.y)에서 반지름만큼 아래. */
     g.globalAlpha = z.hitT > 0 ? 0.55 : 1;
-    g.fillText('🧟', z.x, z.y + bob);
+    if (ok(im)) g.drawImage(im, frame * px, 0, px, px, z.x - size / 2, z.y + z.r - size * 0.9, size, size);
     g.globalAlpha = 1;
-    if (z.type === 'quiz') {
-      g.font = `bold ${z.r}px system-ui, sans-serif`;
-      g.fillText('❓', z.x + z.r * 0.8, z.y - z.r * 0.8 + bob);
-    }
-    if (z.type === 'fast') { g.font = `${z.r}px system-ui, sans-serif`; g.fillText('💨', z.x - z.r, z.y + bob); }
     if (z.hp < z.maxHp) {
       const w = z.r * 1.6;
+      const top = z.y + z.r - size * 0.9 - 2;
       g.fillStyle = 'rgba(0,0,0,.45)';
-      g.fillRect(z.x - w / 2, z.y - z.r - 8, w, 4);
+      g.fillRect(z.x - w / 2, top, w, 4);
       g.fillStyle = z.type === 'quiz' ? '#ffd54a' : '#ff5a5a';
-      g.fillRect(z.x - w / 2, z.y - z.r - 8, w * Math.max(0, z.hp / z.maxHp), 4);
+      g.fillRect(z.x - w / 2, top, w * Math.max(0, z.hp / z.maxHp), 4);
     }
   }
 
-  /* 울타리: 나무판 12장. 체력이 줄면 판이 정해진 순서로 금 가고 빠집니다. */
+  /* 울타리: 가로대 2개 위에 나무판 12장. 체력이 줄면 판이 정해진 순서로 금 가고(cracked) 부서집니다(broken). */
   const PLANK_ORDER = [5, 2, 9, 0, 7, 11, 3, 8, 1, 10, 4, 6];
   function drawFence(hp) {
     const n = 12;
     const pw = W / n;
+    const ph = pw * 112 / 64;
+    const bottom = fenceY + ph / 2;
     const lost = (1 - hp / FENCE_HP) * n;          /* 부서진 정도(판 개수 단위) */
-    g.fillStyle = '#7a4f2a';
-    g.fillRect(0, fenceY - 4, W, 6);
-    g.fillRect(0, fenceY + 12, W, 6);
+    if (ok(IMG.rail)) {
+      g.drawImage(IMG.rail, 0, fenceY - ph * 0.28, W, 10);
+      g.drawImage(IMG.rail, 0, fenceY + ph * 0.18, W, 10);
+    }
     for (let i = 0; i < n; i++) {
       const rank = PLANK_ORDER.indexOf(i);
-      if (rank < lost - 1) continue;              /* 빠진 판 */
-      const cracked = rank < lost;
-      const x = i * pw + 2;
-      g.fillStyle = cracked ? '#a77a4c' : '#c48a50';
-      g.beginPath();
-      g.moveTo(x, fenceY + 26);
-      g.lineTo(x, fenceY - 18);
-      g.lineTo(x + (pw - 4) / 2, fenceY - 26);
-      g.lineTo(x + pw - 4, fenceY - 18);
-      g.lineTo(x + pw - 4, fenceY + 26);
-      g.closePath();
-      g.fill();
-      g.strokeStyle = '#6b4323';
-      g.lineWidth = 1.5;
-      g.stroke();
-      if (cracked) {
-        g.beginPath();
-        g.moveTo(x + 4, fenceY - 12);
-        g.lineTo(x + pw / 2, fenceY);
-        g.lineTo(x + 6, fenceY + 14);
-        g.stroke();
-      }
+      const im = IMG.fence[rank < lost - 1 ? 2 : rank < lost ? 1 : 0];
+      if (ok(im)) g.drawImage(im, i * pw, bottom - ph, pw, ph);
     }
   }
 
+  /* 미사일: 공격력 레벨(0~5)마다 다른 그림, 오른쪽을 보는 그림을 날아가는 방향으로 돌립니다. */
   function drawMissile(m) {
-    const lvl = G.lv.power || 0;
+    const im = IMG.missile[Math.min(5, G.lv.power || 0)];
+    if (!ok(im)) return;
     g.save();
     g.translate(m.x, m.y);
     g.rotate(Math.atan2(m.vy, m.vx));
-    g.fillStyle = '#ff9a3c';
-    g.beginPath();
-    g.moveTo(-10, -3); g.lineTo(-18 - Math.random() * 5, 0); g.lineTo(-10, 3);
-    g.fill();
-    g.fillStyle = ['#e9edf5', '#9fd3ff', '#ffd54a', '#ff8fc7', '#b38cff', '#ff5a5a'][lvl];
-    g.beginPath();
-    g.roundRect(-10, -3.5, 16, 7, 3.5);
-    g.fill();
-    g.fillStyle = '#e5484d';
-    g.beginPath();
-    g.moveTo(6, -3.5); g.lineTo(11, 0); g.lineTo(6, 3.5);
-    g.fill();
+    g.drawImage(im, -14, -6, 28, 12);
     g.restore();
   }
 
@@ -474,8 +447,8 @@ export function mount(el, ctx) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'df-pick';
-      b.innerHTML = '<span class="df-pick-icon"></span><b></b><small></small><em></em>';
-      b.querySelector('.df-pick-icon').textContent = u.icon;
+      b.innerHTML = '<img class="df-pick-icon" alt=""><b></b><small></small><em></em>';
+      b.querySelector('.df-pick-icon').src = `${ART}icon-${id}.png`;
       b.querySelector('b').textContent = u.name[lang];
       b.querySelector('small').textContent = u.desc[lang];
       b.querySelector('em').textContent = t('level', { a: lv, b: lv + 1 });
