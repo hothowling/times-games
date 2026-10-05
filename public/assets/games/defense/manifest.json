@@ -1,0 +1,310 @@
+{
+  "version": 1,
+  "basePath": "assets/games/defense/",
+  "format": "png",
+  "frameIndexBase": 0,
+  "spriteLayout": "horizontal",
+  "generationTool": "built-in image_gen",
+  "assets": {
+    "normal": {
+      "file": "zombie-normal.png",
+      "width": 576,
+      "height": 96,
+      "transparent": true,
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "frameCount": 6,
+      "animations": {
+        "walk": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fps": 8,
+          "loop": true
+        },
+        "bite": {
+          "frames": [
+            4,
+            5
+          ],
+          "fps": 8,
+          "loop": true
+        }
+      },
+      "anchor": [
+        0.5,
+        0.9
+      ]
+    },
+    "fast": {
+      "file": "zombie-fast.png",
+      "width": 480,
+      "height": 80,
+      "transparent": true,
+      "frameWidth": 80,
+      "frameHeight": 80,
+      "frameCount": 6,
+      "animations": {
+        "walk": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fps": 12,
+          "loop": true
+        },
+        "bite": {
+          "frames": [
+            4,
+            5
+          ],
+          "fps": 8,
+          "loop": true
+        }
+      },
+      "anchor": [
+        0.5,
+        0.9
+      ]
+    },
+    "tank": {
+      "file": "zombie-tank.png",
+      "width": 840,
+      "height": 140,
+      "transparent": true,
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "frameCount": 6,
+      "animations": {
+        "walk": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fps": 8,
+          "loop": true
+        },
+        "bite": {
+          "frames": [
+            4,
+            5
+          ],
+          "fps": 8,
+          "loop": true
+        }
+      },
+      "anchor": [
+        0.5,
+        0.9
+      ]
+    },
+    "quiz": {
+      "file": "zombie-quiz.png",
+      "width": 624,
+      "height": 104,
+      "transparent": true,
+      "frameWidth": 104,
+      "frameHeight": 104,
+      "frameCount": 6,
+      "animations": {
+        "walk": {
+          "frames": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fps": 8,
+          "loop": true
+        },
+        "bite": {
+          "frames": [
+            4,
+            5
+          ],
+          "fps": 8,
+          "loop": true
+        }
+      },
+      "anchor": [
+        0.5,
+        0.9
+      ]
+    },
+    "background": {
+      "file": "background.png",
+      "width": 720,
+      "height": 1600,
+      "transparent": false,
+      "fieldHeight": 1120,
+      "yardHeight": 480,
+      "yardStart": 1120
+    },
+    "fence-intact": {
+      "file": "fence-intact.png",
+      "width": 64,
+      "height": 112,
+      "transparent": true,
+      "anchor": [
+        0.5,
+        1
+      ]
+    },
+    "fence-rail": {
+      "file": "fence-rail.png",
+      "width": 360,
+      "height": 24,
+      "transparent": true
+    },
+    "explosion": {
+      "file": "explosion.png",
+      "width": 1024,
+      "height": 128,
+      "transparent": true,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frameCount": 8,
+      "fps": 20,
+      "loop": false,
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "thumbnail": {
+      "file": "thumbnail.png",
+      "width": 234,
+      "height": 234,
+      "transparent": false
+    },
+    "fence-cracked": {
+      "file": "fence-cracked.png",
+      "width": 64,
+      "height": 112,
+      "transparent": true,
+      "anchor": [
+        0.5,
+        1
+      ]
+    },
+    "fence-broken": {
+      "file": "fence-broken.png",
+      "width": 64,
+      "height": 112,
+      "transparent": true,
+      "anchor": [
+        0.5,
+        1
+      ]
+    },
+    "missile-0": {
+      "file": "missile-0.png",
+      "width": 48,
+      "height": 20,
+      "transparent": true,
+      "level": 0,
+      "facing": "right",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "missile-1": {
+      "file": "missile-1.png",
+      "width": 48,
+      "height": 20,
+      "transparent": true,
+      "level": 1,
+      "facing": "right",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "missile-2": {
+      "file": "missile-2.png",
+      "width": 48,
+      "height": 20,
+      "transparent": true,
+      "level": 2,
+      "facing": "right",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "missile-3": {
+      "file": "missile-3.png",
+      "width": 48,
+      "height": 20,
+      "transparent": true,
+      "level": 3,
+      "facing": "right",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "missile-4": {
+      "file": "missile-4.png",
+      "width": 48,
+      "height": 20,
+      "transparent": true,
+      "level": 4,
+      "facing": "right",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "missile-5": {
+      "file": "missile-5.png",
+      "width": 48,
+      "height": 20,
+      "transparent": true,
+      "level": 5,
+      "facing": "right",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "icon-power": {
+      "file": "icon-power.png",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    "icon-rapid": {
+      "file": "icon-rapid.png",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    "icon-multi": {
+      "file": "icon-multi.png",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    "icon-pierce": {
+      "file": "icon-pierce.png",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    "icon-blast": {
+      "file": "icon-blast.png",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    }
+  }
+}
