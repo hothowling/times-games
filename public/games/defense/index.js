@@ -14,8 +14,12 @@ export const dict = {
     how3: '화면을 누르거나 좌우로 끌면 캐릭터가 움직여요.',
     start: '시작!', again: '다시 하기', resume: '계속하기', pause: '일시정지', paused: '일시정지', over: '울타리가 무너졌어요!',
     wave: '{n} 웨이브', result: '{w} 웨이브 · 좀비 {k}마리 · {s}점', best: '🏆 최고 기록 {n}점', record: '🎉 새 기록!',
-    quizTitle: '구구단 퀴즈!', quizRight: '정답! 업그레이드를 골라요', quizWrong: '아쉬워요, 정답은 {n}',
+    quizTitle: '구구단 퀴즈!', quizRight: '정답! 업그레이드를 골라요', quizWrong: '아쉬워요, 정답은 {n}', quizLate: '시간이 지났어요! 정답은 {n}',
     pickTitle: '업그레이드 고르기', level: 'Lv {a} → {b}', allMax: '모든 미사일이 최고 레벨이에요!',
+    bonusLine: '보너스 +{n} Sparkles', rewardTitle: '보상 고르기',
+    rewardBonus: '+{n} Sparkles', rewardBonusDesc: '게임이 끝나면 받아요',
+    rewardShield: '보호막', rewardShieldDesc: '울타리를 바로 고쳐요',
+    rewardFriend: '{name} 부르기', rewardFriendDesc: '30초 동안 같이 싸워요',
     slow: '⏳ 좀비가 느려졌어요', repaired: '🛡 울타리를 고쳤어요', fence: '울타리',
     friendCome: '{name}이(가) 도와주러 왔어요!', friendBye: '{name}이(가) 돌아갔어요'
   },
@@ -26,8 +30,12 @@ export const dict = {
     how3: 'Tap or drag left and right to move your character.',
     start: 'Start!', again: 'Play again', resume: 'Resume', pause: 'Pause', paused: 'Paused', over: 'The fence fell!',
     wave: 'Wave {n}', result: 'Wave {w} · {k} zombies · {s} pts', best: '🏆 Best {n} pts', record: '🎉 New record!',
-    quizTitle: 'Times table quiz!', quizRight: 'Correct! Pick an upgrade', quizWrong: 'So close! The answer is {n}',
+    quizTitle: 'Times table quiz!', quizRight: 'Correct! Pick an upgrade', quizWrong: 'So close! The answer is {n}', quizLate: "Time's up! The answer is {n}",
     pickTitle: 'Pick an upgrade', level: 'Lv {a} → {b}', allMax: 'Every missile upgrade is maxed!',
+    bonusLine: 'Bonus +{n} Sparkles', rewardTitle: 'Pick a reward',
+    rewardBonus: '+{n} Sparkles', rewardBonusDesc: 'Paid when the game ends',
+    rewardShield: 'Shield', rewardShieldDesc: 'Repairs the fence now',
+    rewardFriend: 'Call {name}', rewardFriendDesc: 'Fights with you for 30 seconds',
     slow: '⏳ Zombies slowed down', repaired: '🛡 Fence repaired', fence: 'Fence',
     friendCome: '{name} is here to help!', friendBye: '{name} went home'
   }
@@ -40,6 +48,8 @@ const BAR_PLANKS = 3;
 const BAR_PW = 24;               /* 작은 울타리 판 너비(메인은 30) */
 const BAR_ABOVE = 170;
 const BAR_HP = 40;
+const QUIZ_SEC = 5;              /* 퀴즈를 푸는 시간. 지나면 틀린 것으로 닫힘 */
+const QUIZ_BONUS = 3;            /* 업그레이드를 다 채운 뒤 퀴즈 정답마다 Sparkles(서버 상한 BONUS_MAX) */
 const FRIEND_SEC = 30;           /* 친구 부르기: 같이 싸우는 시간 */
 const FRIEND_DX = 100;           /* 친구 자리: 캐릭터와의 간격 */
 const HERO_SPEED = 260;          /* 캐릭터가 걷는 속도(논리 px/초) */
@@ -78,6 +88,7 @@ const HTML = `
     <p data-show="start" data-i18n="how2"></p>
     <p data-show="start" data-i18n="how3"></p>
     <div class="df-quiz" data-show="quiz">
+      <div class="df-qtimer"><i></i></div>
       <p class="df-q"></p>
       <div class="df-choices"></div>
       <p class="df-quiz-msg" aria-live="polite"></p>
@@ -119,7 +130,7 @@ export function mount(el, ctx) {
   function newGame() {
     return {
       mode: 'play', t: 0, wave: 1, waveT: 0, spawnT: 1, quizT: QUIZ_EVERY * 0.6, cool: 0.4, friendCool: 0.6, friendUntil: 0,
-      heroX: WORLD_W / 2, heroTo: WORLD_W / 2, keyDir: 0,
+      heroX: WORLD_W / 2, heroTo: WORLD_W / 2, keyDir: 0, bonus: 0,
       zombies: [], missiles: [], fx: [], fence: FENCE_HP, lv: {}, kills: 0, score: 0, slowUntil: 0,
       bars: BARS.map((b) => ({ ...b, hp: BAR_HP })),
       hold: false, prevBest: best, quiz: null
@@ -422,7 +433,7 @@ export function mount(el, ctx) {
     $('.df-go').textContent = t(mode === 'start' ? 'start' : mode === 'over' ? 'again' : 'resume');
     $('.df-best').textContent = t('best', { n: best });
     $('.df-best').hidden = !best;
-    if (G) $('.df-result').textContent = t('result', { w: G.wave, k: G.kills, s: G.score });
+    if (G) $('.df-result').textContent = t('result', { w: G.wave, k: G.kills, s: G.score }) + (G.bonus ? ' · ' + t('bonusLine', { n: G.bonus }) : '');
     cardHero.expression(mode === 'over' ? (G.score > G.prevBest ? 'happy' : 'sad') : 'happy');
   }
 
@@ -459,7 +470,7 @@ export function mount(el, ctx) {
       ctx.saveProgress({ best });
     }
     overlay.classList.toggle('new-best', G.score > G.prevBest);
-    ctx.finish({ stars: starsFor(G.wave), score: G.score, detail: { wave: G.wave, kills: G.kills, lv: G.lv } });
+    ctx.finish({ stars: starsFor(G.wave), score: G.score, bonus: G.bonus, detail: { wave: G.wave, kills: G.kills, lv: G.lv, bonus: G.bonus } });
     draw();
     setTimeout(() => { if (G?.mode === 'over') showOverlay('over'); }, 900);
   }
@@ -468,8 +479,9 @@ export function mount(el, ctx) {
 
   function openQuiz() {
     G.mode = 'quiz';
-    G.quiz = makeQuiz();
+    G.quiz = { ...makeQuiz(), left: QUIZ_SEC };
     const q = G.quiz;
+    tickQuiz(0);
     $('.df-q').textContent = `${q.a} × ${q.b} = ?`;
     $('.df-quiz-msg').textContent = '';
     $('.df-choices').replaceChildren(...q.choices.map((n) => {
@@ -485,6 +497,16 @@ export function mount(el, ctx) {
     items.refresh();
   }
 
+  /* 퀴즈 남은 시간: 막대를 줄이고, 다 되면 틀린 것으로(정답을 보여 주고 닫힘). 사는 팝업(hold) 동안은 멈춤. */
+  function tickQuiz(dt) {
+    const q = G.quiz;
+    q.left = Math.max(0, q.left - dt);
+    const bar = $('.df-qtimer i');
+    bar.style.transform = `scaleX(${q.left / QUIZ_SEC})`;
+    bar.classList.toggle('low', q.left < 2);
+    if (!q.left) answerQuiz(null, null);
+  }
+
   function answerQuiz(n, button) {
     if (!G.quiz || G.quiz.done) return;
     const q = G.quiz;
@@ -496,15 +518,52 @@ export function mount(el, ctx) {
     if (n === q.answer) {
       ctx.audio.correct();
       hero.react('correct');
+      /* 업그레이드를 다 채웠으면 업그레이드 대신 Sparkles 를 모아 두었다가 finish 의 bonus 로 받습니다. */
+      if (!upgradeChoices(G.lv).length) {
+        $('.df-quiz-msg').textContent = t('quizRight');
+        setTimeout(openReward, 700);
+        return;
+      }
       $('.df-quiz-msg').textContent = t('quizRight');
       setTimeout(openPick, 700);
     } else {
       button?.classList.add('wrong');
       ctx.audio.wrong();
       hero.react('wrong');
-      $('.df-quiz-msg').textContent = t('quizWrong', { n: q.answer });
+      $('.df-quiz-msg').textContent = t(n === null ? 'quizLate' : 'quizWrong', { n: q.answer });
       setTimeout(() => { if (G?.mode === 'quiz') resume(); }, 1400);
     }
+  }
+
+  /*
+   * 업그레이드를 다 채운 뒤의 퀴즈 보상: Sparkles(게임이 끝나면 finish 의 bonus 로) / 보호막 / 친구 부르기 중 하나.
+   * 보호막·친구는 가방에 넣지 않고 바로 씁니다(지금 쓸 수 없으면 카드가 나오지 않음).
+   */
+  function openReward() {
+    const cards = [
+      ['bonus', 'assets/ui/sparkle.webp', t('rewardBonus', { n: QUIZ_BONUS }), t('rewardBonusDesc'), () => { G.bonus += QUIZ_BONUS; say(`✨ +${QUIZ_BONUS}`); }],
+      needRepair() && ['shield', 'assets/ui/score-protection.webp', t('rewardShield'), t('rewardShieldDesc'), repair],
+      G.t >= G.friendUntil && ['friend', 'assets/ui/call-friend.webp', t('rewardFriend', { name: friendName }), t('rewardFriendDesc'), callFriend]
+    ].filter(Boolean);
+    G.mode = 'pick';
+    $('h1[data-show="pick"]').textContent = t('rewardTitle');
+    $('.df-picks').replaceChildren(...cards.map(([, icon, name, desc, use]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'df-pick';
+      b.innerHTML = '<img class="df-pick-icon" alt=""><b></b><small></small><em></em>';
+      b.querySelector('.df-pick-icon').src = icon;
+      b.querySelector('b').textContent = name;
+      b.querySelector('small').textContent = desc;
+      b.addEventListener('click', () => {
+        ctx.audio.fanfare();
+        resume();
+        use();
+        items.refresh();
+      });
+      return b;
+    }));
+    showOverlay('pick');
   }
 
   function openPick() {
@@ -515,6 +574,7 @@ export function mount(el, ctx) {
       return;
     }
     G.mode = 'pick';
+    $('h1[data-show="pick"]').textContent = t('pickTitle');
     $('.df-picks').replaceChildren(...ids.map((id) => {
       const u = UPGRADES[id];
       const lv = G.lv[id] || 0;
@@ -538,15 +598,30 @@ export function mount(el, ctx) {
     showOverlay('pick');
   }
 
-  /* ---------- 아이템(공통: 모래시계·보호막·정답 알약) ---------- */
+  /* 보호막 효과(아이템·퀴즈 보상 공통): 메인 울타리를 고치고 작은 울타리는 새것으로 */
+  const needRepair = () => G.fence < FENCE_HP || G.bars.some((b) => b.hp < BAR_HP);
+  function repair() {
+    G.fence = Math.min(FENCE_HP, G.fence + REPAIR);
+    G.bars.forEach((b) => { b.hp = BAR_HP; });
+    renderHud();
+    say(t('repaired'));
+  }
+
+  /* 친구 부르기 효과(아이템·퀴즈 보상 공통): 수지나 지호가 FRIEND_SEC 초 동안 같이 쏩니다. */
+  function callFriend() {
+    G.friendUntil = G.t + FRIEND_SEC;
+    G.friendCool = 0.3;
+    friendEl.hidden = false;
+    friend.react('correct');
+    say(t('friendCome', { name: friendName }));
+  }
+
+  /* ---------- 아이템(공통: 모래시계·보호막·정답 알약·친구 부르기) ---------- */
 
   const items = ctx.itemBar($('.df-items'), {
     time: { can: () => G?.mode === 'play' && G.t >= G.slowUntil, apply() { G.slowUntil = G.t + SLOW_SEC; say(t('slow')); } },
     /* 보호막: 메인 울타리를 고치고 작은 울타리는 새것으로 */
-    shield: {
-      can: () => G?.mode === 'play' && (G.fence < FENCE_HP || G.bars.some((b) => b.hp < BAR_HP)),
-      apply() { G.fence = Math.min(FENCE_HP, G.fence + REPAIR); G.bars.forEach((b) => { b.hp = BAR_HP; }); renderHud(); say(t('repaired')); }
-    },
+    shield: { can: () => G?.mode === 'play' && needRepair(), apply: repair },
     /* 정답 알약: 퀴즈 중이면 정답 처리, 아니면 바로 업그레이드 고르기 */
     pill: {
       can: () => (G?.mode === 'play' || (G?.mode === 'quiz' && !G.quiz.done)) && upgradeChoices(G.lv).length > 0,
@@ -556,16 +631,7 @@ export function mount(el, ctx) {
       }
     },
     /* 친구 부르기: 수지나 지호가 FRIEND_SEC 초 동안 같이 쏩니다. */
-    friend: {
-      can: () => G?.mode === 'play' && G.t >= G.friendUntil,
-      apply() {
-        G.friendUntil = G.t + FRIEND_SEC;
-        G.friendCool = 0.3;
-        friendEl.hidden = false;
-        friend.react('correct');
-        say(t('friendCome', { name: friendName }));
-      }
-    },
+    friend: { can: () => G?.mode === 'play' && G.t >= G.friendUntil, apply: callFriend },
     pause: () => { if (G) G.hold = true; },
     resume: () => { if (G) G.hold = false; }
   });
@@ -580,6 +646,7 @@ export function mount(el, ctx) {
     const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
     last = now;
     if (G?.mode === 'play' && !G.hold) { moveHero(dt); update(dt); }
+    else if (G?.mode === 'quiz' && !G.hold && !G.quiz.done) tickQuiz(dt);
     if (G?.mode !== 'over') draw();
   }
 

@@ -132,7 +132,7 @@ function gameCss(id) {
  *   look, characterName, character(el, opts)  현재 캐릭터
  *   progress, saveProgress(data)           게임별 진행도(서버 저장)
  *   items.count(id), items.use(id)         공통 아이템(없으면 그 자리에서 구매), itemBar(el, handlers) 버튼 줄
- *   finish({ stars, score, detail })       결과 보고 → { earned, sparkles }. 보상 토스트는 플랫폼이 띄웁니다.
+ *   finish({ stars, score, detail, bonus }) 결과 보고 → { earned, sparkles }. bonus 는 별 보상에 얹는 Sparkles(서버가 BONUS_MAX 로 자름)
  *   openShop(), exit()
  */
 async function launch(view, id, token) {
@@ -199,14 +199,14 @@ async function launch(view, id, token) {
     },
     /* 아이템 버튼 줄: 이 게임이 쓰는 아이템 중 handlers 에 있는 것만 그립니다(core/items.js). */
     itemBar: (target, handlers) => createItemBar(target, [...usable], ctx.items, handlers),
-    async finish({ stars, score, detail }) {
+    async finish({ stars, score, detail, bonus }) {
       /* 정답 알약을 쓴 판은 별 최대 2개. 쓴 아이템은 기록(detail.items)에 남깁니다. */
       if (usedItems.pill) stars = Math.min(stars, 2);
       if (Object.keys(usedItems).length) detail = { ...detail, items: usedItems };
       usedItems = {};
       try {
         const r = await api('POST', 'plays', {
-          game: id, roundKey: crypto.randomUUID(), stars, score, detail, character: key
+          game: id, roundKey: crypto.randomUUID(), stars, score, detail, bonus, character: key
         });
         patch((me) => { me.user.sparkles = r.sparkles; });
         toast(!r.earned ? t('noEarn') : r.weekRank ? t('earnedRank', { n: r.earned, r: r.weekRank }) : t('earned', { n: r.earned }));

@@ -89,6 +89,8 @@ export function pickPrize(rand, owned) {
 
 /* 게임 결과 별(0~3) → Sparkles. 모든 게임 공통. */
 export const REWARD = [1, 3, 6, 10];
+/* 게임이 한 판에 따로 얹어 줄 수 있는 Sparkles 의 상한(예: 디펜스의 업그레이드를 다 채운 뒤 퀴즈 정답). 서버가 자릅니다. */
+export const BONUS_MAX = 30;
 
 export const GAMES = ['master', 'blocks', 'shooter', 'classroom', 'capitals', 'defense'];
 

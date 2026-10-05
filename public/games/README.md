@@ -30,7 +30,7 @@ games/<id>/
 | `ctx.progress`, `ctx.saveProgress(data)` | 게임별 진행도(JSON, 32KB 이하)입니다. 처음이면 `null`이고, 서버에 저장됩니다. |
 | `ctx.items.count(id)`, `await ctx.items.use(id)` | 공통 아이템 5종(`catalog.js`의 `ITEMS`: `hint`, `eraser`, `time`, `shield`, `pill`) 중 `games/index.js`의 `items`에 적은 것만 씁니다. 가진 게 없으면 `use`가 그 자리에서 살지 묻고, 사거나 쓰면 true입니다. 효과는 게임이 정합니다. |
 | `ctx.itemBar(el, handlers)` | 아이템 버튼 줄을 그립니다. `handlers = { time: { can: () => bool, apply() {} }, pause() {}, resume() {} }`. 누르면 `can` → `use`(그동안 `pause`) → `resume` → `apply` 순서입니다. 돌려받은 `refresh()`로 문제가 바뀔 때 버튼 상태를 다시 그립니다. |
-| `await ctx.finish({ stars, score, detail })` | 한 판(라운드)이 끝날 때 한 번 부릅니다. `stars`는 0~3 정수입니다. 서버가 Sparkles를 1/3/6/10만큼 주고, 플랫폼이 토스트를 띄웁니다. 돌려받는 값은 `{ earned, sparkles }`입니다. 그 판에 정답 알약(`pill`)을 썼으면 플랫폼이 별을 2개로 줄이고, 쓴 아이템을 `detail.items`에 붙입니다. |
+| `await ctx.finish({ stars, score, detail })` | 한 판(라운드)이 끝날 때 한 번 부릅니다. `stars`는 0~3 정수입니다. 서버가 Sparkles를 1/3/6/10만큼 주고, 플랫폼이 토스트를 띄웁니다. 돌려받는 값은 `{ earned, sparkles }`입니다. `bonus`(선택)로 별 보상에 Sparkles를 더 얹을 수 있고, 서버가 한 판에 `BONUS_MAX`(30)까지만 줍니다. 그 판에 정답 알약(`pill`)을 썼으면 플랫폼이 별을 2개로 줄이고, 쓴 아이템을 `detail.items`에 붙입니다. |
 | `ctx.sparkles()` | 현재 Sparkles 잔액입니다. |
 | `ctx.openShop()`, `ctx.exit()` | 상점(이 게임의 아이템 탭)이나 로비로 갑니다. |
 

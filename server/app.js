@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { randomBytes, scryptSync, timingSafeEqual, createHash, randomInt } from 'node:crypto';
 import { tx } from './db.js';
 import { adminRoutes } from './admin.js';
-import { PRESETS, COSMETICS, ITEMS, REWARD, GAMES, DEFAULT_LOOK, BOX, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
+import { PRESETS, COSMETICS, ITEMS, REWARD, BONUS_MAX, GAMES, DEFAULT_LOOK, BOX, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const SESSION_DAYS = 180;
@@ -369,12 +369,13 @@ export function createApp({ db, dataDir, adminPassword }) {
     const score = Number.isFinite(Number(b.score)) ? Math.round(Number(b.score)) : null;
     const charKey = typeof b.character === 'string' && charExists(user.id, b.character) ? b.character : null;
     const detail = b.detail === undefined ? null : JSON.stringify(b.detail);
+    const bonus = Math.min(BONUS_MAX, Math.max(0, Math.floor(Number(b.bonus)) || 0));
     const earned = tx(db, () => {
       const prev = S.playByKey.get(user.id, b.game, b.roundKey);
       if (prev) return prev.sparkles;
       const now = Date.now();
       const last = S.lastReward.get(user.id, b.game).t || 0;
-      const sparkles = now - last < PLAY_GAP_MS ? 0 : REWARD[stars];
+      const sparkles = now - last < PLAY_GAP_MS ? 0 : REWARD[stars] + bonus;
       S.insertPlay.run(user.id, b.game, b.roundKey, charKey, stars, score, detail, sparkles, now);
       if (sparkles) {
         S.addSparkles.run(sparkles, user.id);

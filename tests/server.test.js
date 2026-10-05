@@ -261,3 +261,16 @@ test('items: buy-and-use in place, old per-game item ids are migrated', async ()
     again.close();
   }
 });
+
+test('plays: bonus Sparkles are added and capped by BONUS_MAX', async () => {
+  const a = client();
+  await a('POST', '/api/signup', { nickname: 'bonuskid', pin: '1234' });
+  let r = await a('POST', '/api/plays', { game: 'defense', roundKey: 'b1', stars: 1, bonus: 6 });
+  assert.equal(r.body.earned, 3 + 6);
+  db.prepare("update plays set created_at = 0 where round_key = 'b1'").run();
+  r = await a('POST', '/api/plays', { game: 'defense', roundKey: 'b2', stars: 0, bonus: 9999 });
+  assert.equal(r.body.earned, 1 + 30);
+  db.prepare("update plays set created_at = 0 where round_key = 'b2'").run();
+  r = await a('POST', '/api/plays', { game: 'defense', roundKey: 'b3', stars: 0, bonus: -5 });
+  assert.equal(r.body.earned, 1);
+});

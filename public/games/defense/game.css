@@ -170,6 +170,9 @@
 .game-defense .df-record { color: #e0314b; font-size: 22px !important; }
 .game-defense .df-best { color: #4f7a2e; }
 
+.game-defense .df-qtimer { height: 10px; margin: 2px 0 6px; border-radius: 999px; background: #eadfc6; overflow: hidden; }
+.game-defense .df-qtimer i { display: block; height: 100%; background: #5fa83a; transform-origin: left; }
+.game-defense .df-qtimer i.low { background: #ff5a5a; }
 .game-defense .df-q { font-size: min(12vw, 48px) !important; margin: 4px 0 12px !important; }
 .game-defense .df-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
