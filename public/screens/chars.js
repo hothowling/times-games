@@ -1,5 +1,5 @@
 /*
- * chars.js - 캐릭터 고르기(수지·지호 + 내 사진 캐릭터), 사진으로 만들기, 지우기.
+ * chars.js - 캐릭터 고르기(프리셋 + 내 사진 캐릭터), 사진으로 만들기, 지우기.
  */
 import { api } from '../core/api.js';
 import { t } from '../core/i18n.js';

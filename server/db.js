@@ -27,7 +27,7 @@ create table if not exists characters (    -- 사진 캐릭터만. 얼굴 그림
   mime text not null,
   created_at integer not null
 );
-create table if not exists looks (         -- 캐릭터별 착용 상태. char_key: 'sooji' | 'jiho' | 'p<id>'
+create table if not exists looks (         -- 캐릭터별 착용 상태. char_key: 프리셋 키 | 'p<id>'
   user_id integer not null references users(id) on delete cascade,
   char_key text not null,
   equipped text not null,

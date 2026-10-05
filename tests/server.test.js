@@ -88,6 +88,23 @@ test('plays reward, idempotency, shop, looks', async () => {
   assert.equal(r.body.plays.length, 4);
 });
 
+test('Nayeon preset can be selected, dressed and loaded without a photo upload', async () => {
+  const a = client();
+  await a('POST', '/api/signup', { nickname: 'nayeon-test', pin: '1234' });
+  const selected = await a('PATCH', '/api/settings', { character: 'nayeon' });
+  assert.equal(selected.status, 200);
+  assert.equal(selected.body.settings.character, 'nayeon');
+  assert.equal(selected.body.settings.rankFace, 'nayeon');
+  assert.equal((await a('PUT', '/api/looks/nayeon', { equipped: { outfit: 'uniform' } })).status, 200);
+  const me = (await a('GET', '/api/me')).body;
+  assert.equal(me.user.settings.character, 'nayeon');
+  assert.equal(me.looks.nayeon.outfit, 'uniform');
+  const asset = await client()('GET', '/assets/characters/nayeon.webp');
+  assert.equal(asset.status, 200);
+  assert.equal(asset.body.subarray(0, 4).toString(), 'RIFF');
+  assert.equal(asset.body.subarray(8, 12).toString(), 'WEBP');
+});
+
 test('photo faces are private to their owner', async () => {
   const a = client();
   const b = client();
@@ -215,6 +232,8 @@ test('mystery box: one free box a day, buy-and-open costs 15, prizes are applied
   assert.ok(!r.body.inventory.box);
   assert.ok(['sparkles', 'item', 'cosmetic'].includes(r.body.prize.kind));
   assert.equal((await a('POST', '/api/box/open', {})).body.error, 'noItem');
+  /* 무료 상자가 Sparkles를 줬더라도 잔액 부족 조건을 확실히 만듭니다. */
+  db.prepare("update users set sparkles = 0 where nickname = 'boxkid'").run();
   assert.equal((await a('POST', '/api/box/open', { buy: true })).body.error, 'notEnough');
 
   db.prepare("update users set sparkles = 1000 where nickname = 'boxkid'").run();
