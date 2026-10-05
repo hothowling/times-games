@@ -7,7 +7,7 @@
  */
 export const GAMES = [
    {
-    id: 'defense', items: ['time', 'shield', 'pill'], thumb: 'assets/thumbs/defense.jpg',
+    id: 'defense', items: ['time', 'shield', 'pill', 'friend'], thumb: 'assets/thumbs/defense.jpg',
     title: { ko: '구구단 디펜스', en: 'Times Table Defense' },
     short: { ko: '디펜스', en: 'Defense' }, rank: { ko: '{n}점', en: '{n} pts' },
     desc: { ko: '울타리를 지키고 퀴즈로 미사일을 키워요.', en: 'Guard the fence and power up with quizzes.' }

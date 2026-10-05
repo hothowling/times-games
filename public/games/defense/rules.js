@@ -19,15 +19,20 @@ export const ZOMBIES = {
 /*
  * 웨이브가 오를수록 자주, 세게, 조금 빠르게. 빠른 좀비는 2웨이브, 튼튼한 좀비는 3웨이브부터.
  * 체력은 웨이브마다 1.25배(곱): 업그레이드를 다 채워도 언젠가는 무너지게 합니다.
- * 대략(시뮬레이션): 퀴즈를 못 맞히면 4웨이브, 절반 맞히면 6웨이브, 거의 다 맞히면 18웨이브쯤.
+ * 대략(시뮬레이션, 작은 울타리·친구·아이템 없이): 퀴즈를 못 맞히면 4웨이브, 절반 맞히면 5웨이브, 거의 다 맞히면 10웨이브쯤.
  */
+/* 5웨이브부터는 더 가파르게: 웨이브마다 체력 ×LATE.hp, 출현 간격 ×LATE.spawn, 튼튼한 좀비 비중 +LATE.tank */
+export const LATE_FROM = 5;
+export const LATE = { hp: 1.18, spawn: 0.9, tank: 0.8 };
+
 export function waveConfig(wave) {
   const w = Math.max(1, Math.floor(wave) || 1);
+  const late = Math.max(0, w - LATE_FROM + 1);   /* 5웨이브부터 1, 2, 3… */
   return {
-    spawnGap: Math.max(0.4, 3.0 * 0.88 ** (w - 1)),
-    hpMul: 1.25 ** (w - 1),
-    speedMul: Math.min(1.6, 1 + 0.05 * (w - 1)),
-    weights: { normal: 6, fast: w >= 2 ? 2 + w * 0.3 : 0, tank: w >= 3 ? 1 + w * 0.2 : 0 }
+    spawnGap: Math.max(0.35, 3.0 * 0.88 ** (w - 1) * LATE.spawn ** late),
+    hpMul: 1.25 ** (w - 1) * LATE.hp ** late,
+    speedMul: Math.min(1.7, 1 + 0.05 * (w - 1) + 0.03 * late),
+    weights: { normal: 6, fast: w >= 2 ? 2 + w * 0.3 : 0, tank: w >= 3 ? 1 + w * 0.2 + late * LATE.tank : 0 }
   };
 }
 

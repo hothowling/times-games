@@ -20,7 +20,7 @@
 .game-defense * { box-sizing: border-box; }
 .game-defense button { font-family: inherit; color: inherit; cursor: pointer; }
 
-.game-defense .df-canvas { position: absolute; inset: 0; display: block; }
+.game-defense .df-canvas { position: absolute; inset: 0; display: block; touch-action: none; }
 
 .game-defense .df-hud {
   position: absolute;
@@ -93,6 +93,40 @@
   right: 10px;
   bottom: calc(14px + env(safe-area-inset-bottom));
 }
+
+/* 아이템 4개: 마당 오른쪽에 2×2 */
+.game-defense .df-items .item-bar { display: grid; grid-template-columns: repeat(2, auto); gap: 8px; }
+.game-defense .df-items .item-btn { width: 48px; height: 48px; }
+
+/* 친구(친구 부르기): 캐릭터 왼쪽, 남은 초를 머리 위에 */
+.game-defense .df-friend {
+  position: absolute;
+  left: 30%;
+  top: calc(var(--fence-y, 70vh) + 14px);
+  width: min(22vw, 92px);
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: df-friend-in .4s ease-out;
+}
+
+.game-defense .df-friend[hidden] { display: none; }
+.game-defense .df-friend-time {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  z-index: 1;
+  min-width: 30px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #fff;
+  color: #4f7a2e;
+  font-weight: normal;
+  text-align: center;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 0 rgb(0 0 0 / 20%);
+}
+
+@keyframes df-friend-in { from { opacity: 0; transform: translate(-50%, 20px) scale(.6); } }
 
 /* ---------- 시작 / 일시정지 / 끝 / 퀴즈 / 업그레이드 ---------- */
 

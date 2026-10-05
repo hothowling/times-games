@@ -7,7 +7,7 @@ import { audio } from './audio.js';
 import * as i18n from './i18n.js';
 import { state, bus, loadMe, settings, patch, lookFor, currentKey, characterName } from './state.js';
 import { createCharacter } from './character.js';
-import { ITEMS } from './catalog.js';
+import { ITEMS, PRESETS } from './catalog.js';
 import { askBuy, createItemBar } from './items.js';
 import { GAMES } from '../games/index.js';
 
@@ -166,8 +166,9 @@ async function launch(view, id, token) {
     setSound(on) { audio.setSound(on); saveSetting({ sound: !!on }); },
     look: lookFor(key),
     characterName: characterName(key, t),
+    /* opts.key 로 프리셋(수지·지호)을 그릴 수도 있습니다(디펜스의 친구 부르기). 사진 캐릭터는 지금 캐릭터만. */
     character(target, opts) {
-      const c = createCharacter(target, lookFor(key), opts);
+      const c = createCharacter(target, lookFor(PRESETS.includes(opts?.key) ? opts.key : key), opts);
       chars.push(c);
       return c;
     },

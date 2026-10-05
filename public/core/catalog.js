@@ -38,7 +38,7 @@ export const COSMETICS = {
 };
 
 /*
- * 아이템(소모품): 모든 게임이 같은 5종을 쓰고, 효과는 게임마다 다릅니다. 어느 게임이 무엇을 쓰는지는 games/index.js 의 items.
+ * 아이템(소모품): 모든 게임이 같은 종류를 쓰고, 효과는 게임마다 다릅니다. 어느 게임이 무엇을 쓰는지는 games/index.js 의 items.
  * 사면 개수가 늘고, 게임 안에서 쓰면 줄어듭니다. 게임 중에 없으면 그 자리에서 사서 바로 씁니다(ctx.items.use).
  * 정답 알약(pill)을 쓴 판은 별을 최대 2개만 받습니다(core/app.js 의 finish).
  */
@@ -51,7 +51,8 @@ export const ITEMS = {
   eraser: item('cheat-sneak.webp', 10, '오답 지우기', 'Eraser', '틀린 보기 2개를 지워 줘요.', 'Removes two wrong choices.'),
   time: item('hourglass.webp', 15, '모래시계', 'Hourglass', '시간을 더 주거나 천천히 흐르게 해요.', 'Gives you more time.'),
   shield: item('score-protection.webp', 20, '보호막', 'Shield', '실수 하나를 지켜 줘요.', 'Protects you from one mistake.'),
-  pill: item('smart-pill.webp', 30, '정답 알약', 'Answer Pill', '정답을 보여 줘요. 쓴 판은 별을 2개까지만 받아요.', 'Shows the answer. That round gets at most 2 stars.')
+  pill: item('smart-pill.webp', 30, '정답 알약', 'Answer Pill', '정답을 보여 줘요. 쓴 판은 별을 2개까지만 받아요.', 'Shows the answer. That round gets at most 2 stars.'),
+  friend: item('call-friend.webp', 25, '친구 부르기', 'Call a Friend', '수지나 지호가 와서 30초 동안 같이 싸워요.', 'Sooji or Jiho joins the fight for 30 seconds.')
 };
 
 /* 예전 게임별 아이템 id → 지금 id. 서버가 시작할 때 인벤토리를 옮깁니다(server/db.js). */
@@ -71,7 +72,7 @@ export const BOX = {
 };
 export const BOX_PRIZES = [
   ['sparkles', 5, 30], ['sparkles', 10, 20], ['sparkles', 30, 6], ['sparkles', 50, 2],
-  ['item', 'hint', 8], ['item', 'eraser', 8], ['item', 'time', 6], ['item', 'shield', 5], ['item', 'pill', 3],
+  ['item', 'hint', 8], ['item', 'eraser', 8], ['item', 'time', 6], ['item', 'shield', 5], ['item', 'pill', 3], ['item', 'friend', 4],
   ['cosmetic', null, 8]
 ];
 
