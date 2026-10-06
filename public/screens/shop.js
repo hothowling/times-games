@@ -133,16 +133,11 @@ export function render(view, { go, toast, errorText, params }) {
     };
     const section = (title, list, cls = '') => h('div', { class: 'shop-section ' + cls },
       h('h3', null, title), h('div', { class: 'shop-grid' }, list.map(card)));
-    /* 최신 머리 장식부터 보여 주고, 기존 분류에는 신규 아이템을 중복해서 놓지 않습니다. */
-    const order = { pet: -1, head: 0, face: 1, outfit: 2 };
-    const recent = entries.filter(([, c]) => c.isNew).sort((a, b) => order[a[1].slot] - order[b[1].slot]);
-    return [
-      recent.length ? section(t('newItems'), recent, 'shop-new-items') : null,
-      ...SLOTS.flatMap((slot) => {
-        const list = entries.filter(([, c]) => c.slot === slot && !c.isNew);
-        return list.length ? [section(t('slot_' + slot), list)] : [];
-      })
-    ].filter(Boolean);
+    /* 분류(옷·머리 장식·안경·가방·펫)별로 보여 줍니다. 새 아이템은 따로 모으지 않고 각 분류 맨 앞에 NEW 배지로. */
+    return SLOTS.flatMap((slot) => {
+      const list = entries.filter(([, c]) => c.slot === slot).sort((a, b) => Number(!!b[1].isNew) - Number(!!a[1].isNew));
+      return list.length ? [section(t('slot_' + slot), list)] : [];
+    });
   }
 
   /* 랜덤박스: 사면 바로 열고, 매일 받은 상자가 있으면 '열기'. 열고 나면 개수·잔액을 다시 그립니다. */
