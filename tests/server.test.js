@@ -41,6 +41,7 @@ test('signup, login, lockout', async () => {
   assert.equal(r.status, 200);
   assert.equal(r.body.user.sparkles, 0);
   assert.equal(r.body.inventory.uniform, 1);
+  assert.equal(r.body.inventory.whiteTee, 1);
   assert.equal((await a('GET', '/api/me')).status, 200);
   assert.equal((await client()('GET', '/api/me')).status, 401);
   assert.equal((await client()('POST', '/api/signup', { nickname: '수지', pin: '1111' })).status, 409);
@@ -82,7 +83,7 @@ test('plays reward, idempotency, shop, looks', async () => {
   assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { face: 'redCap' } })).body.error, 'badLook', 'wrong slot');
   assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { outfit: null } })).body.error, 'badLook');
   assert.equal((await a('PUT', '/api/looks/nobody', { equipped: {} })).status, 404);
-  assert.deepEqual((await a('GET', '/api/me')).body.looks.jiho, { outfit: 'uniform', head: 'redCap', face: null, back: null });
+  assert.deepEqual((await a('GET', '/api/me')).body.looks.jiho, { outfit: 'whiteTee', head: 'redCap', face: null, back: null });
 
   r = await a('GET', '/api/records?days=1');
   assert.equal(r.body.plays.length, 4);
@@ -211,7 +212,7 @@ test('ranking: week/all, ties, hidden users, photo users show a preset face', as
   s = (await c('GET', '/api/ranking?board=shooter')).body;
   const ra = s.top.find((x) => x.nickname === 'rank-a');
   assert.equal(ra.look.face, 'jiho');
-  assert.equal(ra.look.equipped.outfit, 'uniform');
+  assert.equal(ra.look.equipped.outfit, 'whiteTee');
   assert.ok(!JSON.stringify(s).includes('/face'), 'no photo face urls');
 
   assert.equal((await a('GET', '/api/ranking?board=nope')).status, 400);

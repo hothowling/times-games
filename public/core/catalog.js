@@ -8,7 +8,7 @@ export const PRESETS = ['sooji', 'jiho', 'nayeon'];
 
 /* 착용 슬롯. outfit 은 항상 하나를 입고, 나머지는 비울 수 있습니다. */
 export const SLOTS = ['outfit', 'head', 'face', 'back'];
-export const DEFAULT_LOOK = { outfit: 'uniform', head: null, face: null, back: null };
+export const DEFAULT_LOOK = { outfit: 'whiteTee', head: null, face: null, back: null };
 
 const W = 'assets/wearables/';
 const cos = (slot, file, price, ko, en, extra) =>
@@ -16,6 +16,7 @@ const cos = (slot, file, price, ko, en, extra) =>
 
 /* 꾸미기: 계정 공유, 한 번 사면 계속 보유. price 0 은 처음부터 보유. */
 export const COSMETICS = {
+  whiteTee: cos('outfit', 'outfits/11-white-tee.webp', 0, '기본 흰색 반팔티', 'Plain White T-Shirt'),
   uniform: cos('outfit', 'outfits/01-school-uniform.webp', 0, '단정한 교복', 'Classic Uniform'),
   sailor: cos('outfit', 'outfits/02-sailor-uniform.webp', 18, '세일러 교복', 'Sailor Uniform'),
   hoodie: cos('outfit', 'outfits/03-casual-hoodie.webp', 20, '컬러 후드', 'Color Hoodie'),
@@ -26,6 +27,8 @@ export const COSMETICS = {
   heroSuit: cos('outfit', 'outfits/08-hero-suit.webp', 35, '별빛 히어로 슈트', 'Star Hero Suit'),
   jersey: cos('outfit', 'outfits/09-sports-jersey.webp', 28, '7번 스포츠 저지', 'Number 7 Jersey'),
   magic: cos('outfit', 'outfits/10-magic-costume.webp', 40, '마법학교 제복', 'Magic Academy Uniform'),
+  pinkFlowerDress: cos('outfit', 'outfits/12-pink-flower-dress.webp', 25, '핑크 플라워 드레스', 'Pink Flower Dress'),
+  purpleSunflowerDress: cos('outfit', 'outfits/13-purple-sunflower-dress.webp', 25, '해바라기 퍼플 드레스', 'Purple Sunflower Dress'),
   redCap: cos('head', 'red-cap.webp', 10, '빨간 모자', 'Red Cap'),
   bowRed: cos('head', 'hair-bows/01-classic-red-bow.webp', 10, '클래식 빨간 리본', 'Classic Red Bow', { style: 'bow' }),
   bowPink: cos('head', 'hair-bows/02-pink-polka-bow.webp', 10, '핑크 도트 리본', 'Pink Polka Bow', { style: 'bow' }),
