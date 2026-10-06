@@ -16,6 +16,7 @@ games/<id>/
 ```
 - `el`은 `<div class="game game-<id>">`입니다. 게임 중에는 상단 바가 숨겨집니다. 게임이 화면 전체(최소 `100dvh`)를 씁니다.
 - 플랫폼 `core/ui.css`의 전역 클래스(`.btn`, `.btn-sub`, `.icon-btn`, `.topbar`, `.sheet`, `.tab` 등)와 같은 이름은 게임 안에서 쓰지 않습니다. 그 스타일이 섞여 들어옵니다. 게임 클래스에는 짧은 접두어를 붙이세요(예: `.m-btn`).
+- 상단 바는 `core/game-hud.css`의 공통 클래스로 만듭니다: 줄 `.hud-bar`, 동그란 버튼 `.hud-btn`(44px), 정보 알약 `.hud-pill`(높이 36px), 오른쪽으로 밀기 `.hud-push`, 일시정지 그림 `.hud-pause`. 왼쪽 끝은 나가기(`iconMarkup('home')`, 시작 화면은 로비로·게임 중은 그만하기), 오른쪽 끝은 소리(`sound`/`sound-muted` 그림 + `aria-pressed`, 문구는 공통 `sound`), 일시정지가 있으면 그 오른쪽입니다. 버튼 모양(크기·색·그림자)은 게임 CSS에서 바꾸지 않고, 시간 부족 빨강처럼 뜻이 있는 색만 덧칠합니다.
 - `destroy()`는 로비로 나갈 때 불립니다. 이때 타이머, `requestAnimationFrame`, `document`/`window` 리스너를 모두 정리해야 합니다.
 - 그림·소리 경로는 `index.html` 기준입니다(`assets/ui/sparkle.webp` 등). 게임 전용 에셋은 `assets/games/<id>/`에 둡니다.
 

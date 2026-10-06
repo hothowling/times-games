@@ -1,7 +1,7 @@
 /*
  * game.css - 구구단 땅따먹기(원본 times-block/css/style.css). 색과 크기는 구구단 마스터의 보라 테마를 따릅니다.
  * 세로 모바일 기준(최대 너비 480px), 터치 영역은 최소 44px. 모든 선택자는 .game-blocks 아래에 둡니다.
- * ui.css 의 .btn / .icon-btn 공통 스타일이 섞이지 않도록 필요한 속성은 여기서 다시 정합니다.
+ * ui.css 의 .btn 공통 스타일이 섞이지 않도록 필요한 속성은 여기서 다시 정합니다. 상단 바는 core/game-hud.css 를 씁니다.
  */
 
 .game-blocks {
@@ -51,7 +51,7 @@
   max-width: 480px;
   height: 100dvh;
   margin: 0 auto;
-  padding: calc(8px + env(safe-area-inset-top, 0px)) var(--pad) calc(10px + env(safe-area-inset-bottom, 0px));
+  padding: 0 var(--pad) calc(10px + env(safe-area-inset-bottom, 0px));
 }
 
 .game-blocks .screen {
@@ -131,36 +131,6 @@
   transform: scale(0.97);
 }
 
-.game-blocks .icon-btn {
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  border: 2px solid var(--line);
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: none;
-  font-size: 20px;
-  line-height: 1;
-  cursor: pointer;
-  transition: transform 150ms ease;
-}
-
-.game-blocks .icon-btn:active {
-  transform: scale(0.92);
-}
-
-.game-blocks .badge {
-  background: var(--surface);
-  border: 2px solid var(--line);
-  border-radius: 999px;
-  padding: 5px 12px;
-  font-size: 16px;
-  font-weight: 800;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
 /* ---------- 시작 화면 ---------- */
 
 .game-blocks .title {
@@ -182,19 +152,11 @@
   margin-bottom: 6px;
 }
 
-/* 로비로 나가기(원본의 언어 버튼 자리) */
+/* 로비로 나가기(원본의 언어 버튼 자리): 게임 화면 상단 바의 나가기 버튼과 같은 자리 */
 .game-blocks .btn-exit {
   position: absolute;
-  top: 0;
-  left: 0;
-  padding: 8px;
-}
-
-.game-blocks .btn-exit img, .game-blocks .btn-exit .ui-icon {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  top: var(--hud-top);
+  left: calc(var(--hud-side) - var(--pad));
 }
 
 .game-blocks .level-line {
@@ -228,15 +190,11 @@
 
 /* ---------- 게임 화면 ---------- */
 
+/* 상단 바 모양은 core/game-hud.css. 바깥 여백(--pad) 대신 공통 좌우 여백에 맞춥니다. */
 .game-blocks .bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   flex: 0 0 auto;
-}
-
-.game-blocks .bar .badge:nth-child(2) {
-  margin-right: auto;
+  margin-inline: calc(-1 * var(--pad));
+  padding-bottom: 0;
 }
 
 /* 판은 남은 공간 안에서 가장 큰 정사각형(또는 W:H)으로 맞춥니다. */
@@ -482,13 +440,7 @@
   font-size: 17px;
 }
 
-/* 상단 판 번호 버튼과 판 고르기 */
-.game-blocks .level-btn {
-  font-family: inherit;
-  color: var(--ink);
-  cursor: pointer;
-}
-
+/* 판 고르기(상단 판 번호 버튼으로 엽니다) */
 .game-blocks .level-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

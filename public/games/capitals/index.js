@@ -75,11 +75,11 @@ export const sentenceFor = (c, l) => {
 
 const HTML = `
 <div class="cq-app">
-  <header class="cq-hud">
-    <button type="button" class="cq-pill cq-quit" data-i18n-aria="quit">✕</button>
-    <span class="cq-pill cq-count"></span>
-    <span class="cq-pill">${iconMarkup('star')} <b class="cq-score">0</b></span>
-    <button type="button" class="cq-pill cq-sound" data-i18n-aria="sound"></button>
+  <header class="cq-hud hud-bar">
+    <button type="button" class="hud-btn cq-quit" data-i18n-aria="quit">${iconMarkup('home')}</button>
+    <span class="hud-pill cq-count"></span>
+    <span class="hud-pill hud-push">${iconMarkup('star')}<b class="cq-score">0</b></span>
+    <button type="button" class="hud-btn cq-sound" data-i18n-aria="sound"></button>
   </header>
   <div class="cq-timer"><i></i></div>
   <main class="cq-stage">

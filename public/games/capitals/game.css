@@ -29,23 +29,13 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  padding: calc(8px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom));
+  padding: 0 14px calc(14px + env(safe-area-inset-bottom));
   gap: 10px;
 }
 
-.game-capitals .cq-hud { display: flex; align-items: center; gap: 8px; }
-.game-capitals .cq-hud .cq-count { margin-right: auto; }
+/* 상단 바 모양은 core/game-hud.css. 바깥 여백(14px) 대신 공통 좌우 여백(12px)에 맞춥니다. */
+.game-capitals .cq-hud { margin-inline: -14px; padding-bottom: 0; }
 .game-capitals .cq-count:empty { visibility: hidden; }
-
-.game-capitals .cq-pill {
-  padding: 6px 14px;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .85);
-  font-size: 18px;
-  font-weight: 800;
-  box-shadow: 0 3px 0 rgba(23, 54, 92, .15);
-}
 
 .game-capitals .cq-timer {
   height: 12px;

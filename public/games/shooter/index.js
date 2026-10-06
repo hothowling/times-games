@@ -53,11 +53,11 @@ const COLORS = ['#ffd54a', '#ff9ec0', '#7ee0c3', '#9fd3ff', '#ffb870'];
 
 const HTML = `
 <div class="sh-app">
-  <header class="sh-hud">
-    <span class="pill sh-round"></span>
-    <span class="pill">${iconMarkup('star')} <b class="sh-score">0</b></span>
-    <button type="button" class="pill sh-sound" data-i18n-aria="sound"></button>
-    <button type="button" class="pill sh-pause" data-i18n-aria="pause">⏸️</button>
+  <header class="sh-hud hud-bar">
+    <span class="hud-pill sh-round"></span>
+    <span class="hud-pill">${iconMarkup('star')}<b class="sh-score">0</b></span>
+    <button type="button" class="hud-btn hud-push sh-sound" data-i18n-aria="sound"></button>
+    <button type="button" class="hud-btn sh-pause" data-i18n-aria="pause"><span class="hud-pause" aria-hidden="true"></span></button>
   </header>
   <div class="sh-banner" aria-live="polite"></div>
   <footer class="sh-panel">

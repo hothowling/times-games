@@ -2,7 +2,7 @@
  * game.css - 구구단 마스터. 원본: times-table-game/css/style.css
  * 아이들이 쓰기 좋게 크고 둥글고 밝은 화면. 세로 모바일 기준(최대 너비 480px), 터치 영역은 최소 56px.
  * 모든 선택자는 .game-master 아래에 씁니다. 글꼴은 플랫폼의 --font-fun(Jua, 굵기 하나).
- * 플랫폼 ui.css 와 겹치지 않게 상단 줄·버튼은 .m-top / .m-icon / .m-btn 으로 이름을 바꿨습니다.
+ * 플랫폼 ui.css 와 겹치지 않게 버튼은 .m-btn 으로 이름을 바꿨습니다. 상단 줄(.m-top)의 버튼·알약은 core/game-hud.css 를 씁니다.
  */
 
 .game-master {
@@ -69,37 +69,11 @@
 
 /* ---------- 상단 줄 ---------- */
 
+/* 바깥 여백(--pad + 안전 영역)을 되돌려 다른 게임과 같은 자리(--hud-top, --hud-side)에 둡니다. */
 .game-master .m-top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 56px;
+  margin: calc(-1 * (var(--pad) + env(safe-area-inset-top, 0px))) calc(-1 * var(--pad)) 0;
+  padding-bottom: 0;
 }
-
-.game-master .m-top.game-top {
-  justify-content: space-between;
-  flex-wrap: nowrap;
-}
-
-.game-master .m-icon {
-  display: grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
-  flex: 0 0 56px;
-  padding: 0;
-  border: 2px solid var(--line);
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-  transition: transform 150ms ease;
-}
-
-.game-master .m-icon img, .game-master .m-icon .ui-icon { width: 32px; height: 32px; }
-.game-master .m-icon:active { transform: scale(0.92); }
 
 .game-master .badge {
   background: var(--surface);

@@ -32,8 +32,6 @@ export const dict = {
     pickLevel: '몇 판을 할까요?',
     close: '닫기',
     boardLabel: '땅따먹기 판',
-    soundOff: '소리 끄기',
-    soundOn: '소리 켜기',
     quit: '나가기',
     winTitle: '다 채웠어요!',
     timeTaken: '걸린 시간',
@@ -68,8 +66,6 @@ export const dict = {
     pickLevel: 'Pick a level',
     close: 'Close',
     boardLabel: 'Game board',
-    soundOff: 'Sound off',
-    soundOn: 'Sound on',
     quit: 'Quit',
     winTitle: 'Board filled!',
     timeTaken: 'Time',
@@ -86,7 +82,7 @@ export const dict = {
 const HTML = `
 <div class="app">
   <section class="screen screen-home is-active" data-screen="home">
-    <button type="button" class="icon-btn btn-exit" data-i18n-aria="goLobby">${iconMarkup('home')}</button>
+    <button type="button" class="hud-btn btn-exit" data-i18n-aria="goLobby">${iconMarkup('home')}</button>
     <h1 class="title" data-i18n-html="titleHtml"></h1>
     <div class="mascot mascot-home"></div>
     <p class="level-line" data-ref="homeLevel"></p>
@@ -100,11 +96,11 @@ const HTML = `
   </section>
 
   <section class="screen screen-game" data-screen="game">
-    <div class="bar">
-      <button type="button" class="badge level-btn" data-ref="level" aria-haspopup="dialog"></button>
-      <span class="badge" data-ref="time">0:00</span>
-      <button type="button" class="icon-btn" data-ref="sound"></button>
-      <button type="button" class="icon-btn" data-ref="quit" data-i18n-aria="quit">✕</button>
+    <div class="bar hud-bar">
+      <button type="button" class="hud-btn" data-ref="quit" data-i18n-aria="quit">${iconMarkup('home')}</button>
+      <button type="button" class="hud-pill level-btn" data-ref="level" aria-haspopup="dialog"></button>
+      <span class="hud-pill" data-ref="time">0:00</span>
+      <button type="button" class="hud-btn hud-push" data-ref="sound" data-i18n-aria="sound"></button>
     </div>
     <div class="board-wrap">
       <div class="board" data-ref="board" role="application" data-i18n-aria="boardLabel"></div>
@@ -515,7 +511,7 @@ export function mount(el, ctx) {
   function renderSound() {
     const on = A.getSound();
     $.sound.replaceChildren(icon(on ? 'sound' : 'sound-muted'));
-    $.sound.setAttribute('aria-label', t(on ? 'soundOff' : 'soundOn'));
+    $.sound.setAttribute('aria-pressed', String(on));
   }
 
   function on(node, fn) { node.addEventListener('click', fn); }

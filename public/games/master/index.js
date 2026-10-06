@@ -1,4 +1,4 @@
-import { iconMarkup, setIconText } from '../../core/icons.js';
+import { icon, iconMarkup, setIconText } from '../../core/icons.js';
 /*
  * index.js - 구구단 마스터: 화면 그리기, 화면 전환, 애니메이션, 입력 받기.
  * 원본: times-table-game/js/ui.js. 게임 규칙은 rules.js, 진행은 game.js 가 맡고 여기서는 화면에 옮깁니다.
@@ -74,8 +74,8 @@ export const dict = {
 
 const HTML = `
   <section class="screen" data-screen="home">
-    <div class="m-top">
-      <button type="button" class="m-icon" data-act="exit" data-i18n-aria="home">${iconMarkup('home')}</button>
+    <div class="m-top hud-bar">
+      <button type="button" class="hud-btn" data-act="exit" data-i18n-aria="home">${iconMarkup('home')}</button>
     </div>
     <h1 class="title" data-i18n="title"></h1>
     <p class="tagline" data-i18n="tagline"></p>
@@ -89,11 +89,12 @@ const HTML = `
   </section>
 
   <section class="screen" data-screen="game">
-    <div class="m-top game-top">
-      <span class="badge" data-ref="gameRound"></span>
-      <span class="badge" data-ref="gameProgress"></span>
+    <div class="m-top hud-bar">
+      <button type="button" class="hud-btn" data-act="quit" data-i18n-aria="quit">${iconMarkup('home')}</button>
+      <span class="hud-pill" data-ref="gameRound"></span>
+      <span class="hud-pill" data-ref="gameProgress"></span>
       <div class="stars-row stars-small" data-ref="gameStars"></div>
-      <button type="button" class="m-icon" data-act="quit" data-i18n-aria="quit">✕</button>
+      <button type="button" class="hud-btn" data-act="sound" data-ref="sound" data-i18n-aria="sound"></button>
     </div>
     <div class="timer-track"><div class="timer-bar is-green" data-ref="timerBar"></div></div>
     <div class="q-area">
@@ -464,6 +465,19 @@ export function mount(root, ctx) {
     game.resume();
   }
 
+  /* 상단 소리 버튼: 설정의 '소리'와 같은 값입니다. */
+  function renderSound() {
+    const on = audio.getSound();
+    el.sound.replaceChildren(icon(on ? 'sound' : 'sound-muted'));
+    el.sound.setAttribute('aria-pressed', String(on));
+  }
+
+  function toggleSound() {
+    ctx.setSound(!audio.getSound());
+    if (!audio.getSound()) audio.cancelSpeech();
+    renderSound();
+  }
+
   /* ---------- 이벤트 연결 ---------- */
 
   const actions = {
@@ -471,6 +485,7 @@ export function mount(root, ctx) {
     next: () => game.nextRound(),
     quit: openQuit,
     keep: closeQuit,
+    sound: toggleSound,
     exit: () => ctx.exit()
   };
 
@@ -511,6 +526,7 @@ export function mount(root, ctx) {
 
   /* 지금 언어의 숫자 음성 파일을 미리 받아 둡니다. */
   audio.preloadVoices(ctx.lang);
+  renderSound();
   showScreen('home');
 
   return {

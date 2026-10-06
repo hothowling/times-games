@@ -313,126 +313,31 @@ html[lang="en"] .game-classroom .title-card p {
   color: #76572e;
 }
 
-.game-classroom .round-icon {
+/* 시작 화면의 나가기·소리: 모양은 core/game-hud.css(.hud-btn), 자리는 다른 게임 상단 바와 같게 */
+.game-classroom .home-exit,
+.game-classroom .home-sound {
   position: absolute;
   z-index: 5;
-  right: 17px;
-  top: max(17px, env(safe-area-inset-top));
-  width: 44px;
-  height: 44px;
-  border: 2px solid white;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 75%);
-  box-shadow: 0 4px 12px rgb(32 64 88 / 15%);
-  cursor: pointer;
+  top: var(--hud-top);
 }
-
-.game-classroom .exit-button {
-  right: auto;
-  left: 17px;
-  overflow: hidden;
-  padding: 6px;
-}
-
-.game-classroom .exit-button img, .game-classroom .exit-button .ui-icon {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.game-classroom .sound-button {
-  overflow: hidden;
-  padding: 0;
-}
-
-.game-classroom .sound-button img, .game-classroom .sound-button .ui-icon {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.game-classroom .sound-button.is-muted img, .game-classroom .sound-button.is-muted .ui-icon {
-  filter: grayscale(1);
-  opacity: .45;
-}
-
-.game-classroom .sound-button.is-muted::after {
-  content: "";
-  position: absolute;
-  left: 8px;
-  top: 20px;
-  width: 28px;
-  height: 3px;
-  border-radius: 3px;
-  background: #ec3555;
-  transform: rotate(-45deg);
-}
+.game-classroom .home-exit { left: var(--hud-side); }
+.game-classroom .home-sound { right: var(--hud-side); }
 
 .game-classroom .game-screen {
   background: linear-gradient(#c7eeff 0 36%, #f2d094 36% 100%);
   padding-bottom: calc(106px + env(safe-area-inset-bottom));
 }
 
+/* 게임 화면 상단 바: 모양은 core/game-hud.css. 아래 여백은 예전 프로필 칩 높이만큼 두어 교실 그림·시험지 자리를 그대로 둡니다. */
 .game-classroom .hud {
   position: relative;
   z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: max(12px, env(safe-area-inset-top)) 13px 7px;
-  background: rgb(255 255 255 / 85%);
-  box-shadow: 0 3px 10px rgb(30 72 95 / 10%);
-  backdrop-filter: blur(10px);
+  padding-bottom: 23px;
 }
 
-.game-classroom .hud-profile {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 108px;
-  padding: 3px 9px 3px 3px;
-  border: 0;
-  border-radius: 30px;
-  background: #fff;
-  color: var(--ink);
-  box-shadow: 0 2px 7px rgb(39 64 90 / 15%);
-  cursor: pointer;
-}
-
-/* 얼굴만 그린 캐릭터(ctx.character body:false)를 동그라미 안에 넣습니다. */
-.game-classroom .mini-avatar {
-  width: 52px;
-  height: 52px;
-  flex: 0 0 52px;
-  overflow: hidden;
-  border-radius: 50%;
-  background-color: #ffe9d4;
-}
-
-.game-classroom .mini-avatar .chr-stage {
-  margin-top: -3px;
-}
-
-.game-classroom #hud-name {
-  font-size: 14px;
-}
-
-.game-classroom .hud-stat {
-  height: 37px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  background: white;
-  box-shadow: 0 2px 7px rgb(39 64 90 / 13%);
-}
-
-.game-classroom .hud-stat.hearts {
-  flex: 1;
+.game-classroom .hud-hearts {
   gap: 1px;
-  padding: 0 7px;
+  padding: 0 8px;
 }
 
 .game-classroom .heart-icon {
@@ -445,20 +350,6 @@ html[lang="en"] .game-classroom .title-card p {
 
 .game-classroom .heart-icon.is-empty {
   opacity: .72;
-}
-
-.game-classroom .sparkles {
-  min-width: 65px;
-  padding: 0 8px;
-  gap: 3px;
-  color: #d99700;
-}
-
-.game-classroom .sparkles img, .game-classroom .sparkles .ui-icon {
-  width: 31px;
-  height: 31px;
-  object-fit: cover;
-  border-radius: 11px;
 }
 
 .game-classroom .round-strip {

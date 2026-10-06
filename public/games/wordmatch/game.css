@@ -33,24 +33,13 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  padding: calc(8px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));
+  padding: 0 10px calc(10px + env(safe-area-inset-bottom));
   gap: 8px;
 }
 
-.game-wordmatch .wm-hud { display: flex; align-items: center; gap: 6px; }
-.game-wordmatch .wm-left { margin-right: auto; }
+/* 상단 바 모양은 core/game-hud.css. 바깥 여백(10px) 대신 공통 좌우 여백(12px)에 맞춥니다. */
+.game-wordmatch .wm-hud { margin-inline: -10px; padding-bottom: 0; }
 .game-wordmatch .wm-left:empty { visibility: hidden; }
-
-.game-wordmatch .wm-pill {
-  padding: 6px 12px;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .9);
-  font-size: 17px;
-  font-weight: 800;
-  white-space: nowrap;
-  box-shadow: 0 3px 0 rgba(43, 47, 92, .15);
-}
 
 .game-wordmatch .wm-time { font-variant-numeric: tabular-nums; }
 

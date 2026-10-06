@@ -1,4 +1,4 @@
-import { icon, setIconText } from '../../core/icons.js';
+import { icon, iconMarkup, setIconText } from '../../core/icons.js';
 /*
  * 영단어 짝맞추기 - 펼쳐진 영어 카드와 한글 카드에서 같은 뜻 두 장을 골라 없애는 게임.
  * 맞히면 그림 카드(사진 → 없으면 이모지 → 없으면 글자만)가 뜨고 영어 → 한글 순서로 읽어 줍니다(core/audio.js speak).
@@ -106,11 +106,11 @@ const TIME_FLASH_MS = 500;
 
 const HTML = `
 <div class="wm-app">
-  <header class="wm-hud">
-    <button type="button" class="wm-pill wm-quit" data-i18n-aria="quit">✕</button>
-    <span class="wm-pill wm-left"></span>
-    <span class="wm-pill wm-time">0:00</span>
-    <button type="button" class="wm-pill wm-sound" data-i18n-aria="sound"></button>
+  <header class="wm-hud hud-bar">
+    <button type="button" class="hud-btn wm-quit" data-i18n-aria="quit">${iconMarkup('home')}</button>
+    <span class="hud-pill wm-left"></span>
+    <span class="hud-pill hud-push wm-time">0:00</span>
+    <button type="button" class="hud-btn wm-sound" data-i18n-aria="sound"></button>
   </header>
   <div class="wm-bar">
     <div class="wm-face" aria-hidden="true"></div>

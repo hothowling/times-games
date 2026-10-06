@@ -1,0 +1,112 @@
+/*
+ * game-hud.css - 모든 게임이 같이 쓰는 상단 바(HUD) 버튼과 정보 알약.
+ * 게임마다 모양이 조금씩 달랐던(✕/집, 40~56px, 흰 유리/진한 보라, 테두리·그림자 제각각) 상단 컨트롤을 하나로 맞춥니다.
+ *
+ * 규칙
+ *   자리   왼쪽 끝: 나가기(집 그림 'home'). 게임의 시작 화면에서는 로비로, 게임 중에는 '그만하기'(확인 창 또는 시작 화면).
+ *          가운데: 정보 알약(라운드·웨이브·점수·남은 수·시간)과 게임만의 막대(울타리 체력 등).
+ *          오른쪽 끝: 소리, 일시정지가 있는 게임은 그 오른쪽에 일시정지.
+ *          위 여백은 max(10px, 안전 영역), 좌우 12px, 사이 8px(로비 상단 바와 같은 높이).
+ *   버튼   .hud-btn  44px 동그라미(터치 영역 44px 이상), 흰 유리 + 옅은 테두리 + 아래 그림자, 그림은 아틀라스 30px.
+ *          소리는 'sound' / 'sound-muted' 그림 + aria-pressed, 일시정지는 .hud-pause 그림(아틀라스와 같은 남색 타일).
+ *          ✕ 대신 집을 쓰는 까닭: 이미 세 게임이 집을 썼고, 아이들에게 '돌아가기'로 바로 읽히며 글자(✕)가 아니라 그림이라 기기마다 같게 보입니다.
+ *   알약   .hud-pill 높이 36px, Jua(--font-fun) 18px, 그림 22px + 숫자. 같은 흰 유리.
+ *          색은 뜻이 있을 때만 게임이 덧칠합니다(시간 부족 빨강, 시간 +/- 깜빡임 등).
+ * 게임 CSS 의 `.game-<id> button { … }` 보다 앞서도록 `.game` 아래에 씁니다.
+ */
+
+.game {
+  --hud-size: 44px;
+  --hud-pill-h: 36px;
+  --hud-icon: 30px;
+  --hud-top: max(10px, env(safe-area-inset-top));
+  --hud-side: 12px;
+  --hud-gap: 8px;
+  --hud-ink: #2e1065;
+  --hud-bg: rgb(255 255 255 / 92%);
+  --hud-line: rgb(46 16 101 / 10%);
+  --hud-shadow: 0 3px 0 rgb(46 16 101 / 14%), 0 6px 14px rgb(46 16 101 / 10%);
+}
+
+.game .hud-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--hud-gap);
+  padding: var(--hud-top) var(--hud-side) 8px;
+}
+
+.game .hud-btn,
+.game .hud-pill {
+  box-sizing: border-box;
+  flex: none;
+  margin: 0;
+  border: 1px solid var(--hud-line);
+  background: var(--hud-bg);
+  color: var(--hud-ink);
+  box-shadow: var(--hud-shadow);
+  font-family: var(--font-fun);
+  font-weight: normal;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.game .hud-btn {
+  --icon-size: var(--hud-icon);
+  display: inline-grid;
+  place-items: center;
+  width: var(--hud-size);
+  height: var(--hud-size);
+  padding: 0;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game .hud-pill {
+  --icon-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: var(--hud-pill-h);
+  min-width: var(--hud-pill-h);
+  padding: 0 13px;
+  border-radius: 999px;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.game .hud-pill b { font-weight: normal; }
+.game button.hud-pill { cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease; }
+
+.game .hud-btn:active:not(:disabled),
+.game button.hud-pill:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgb(46 16 101 / 14%), 0 3px 8px rgb(46 16 101 / 10%);
+}
+
+.game .hud-btn:disabled { cursor: default; opacity: .5; }
+
+/* 이 요소부터 오른쪽 끝으로 붙입니다(소리 버튼 등). 위의 margin: 0 보다 뒤에 둡니다. */
+.game .hud-push { margin-inline-start: auto; }
+
+/* 일시정지 그림: 아틀라스의 집·소리 타일과 같은 남색 둥근 네모에 흰 막대 두 개 */
+.game .hud-pause {
+  position: relative;
+  display: block;
+  width: calc(var(--hud-icon) * .84);
+  height: calc(var(--hud-icon) * .84);
+  border-radius: 28%;
+  background: linear-gradient(#56698b, #2d3a54);
+  box-shadow: inset 0 0 0 2px #c3cede;
+}
+
+.game .hud-pause::before {
+  content: '';
+  position: absolute;
+  inset: 28% 29%;
+  border-inline: 4px solid #fff;
+  border-radius: 1px;
+}

@@ -63,12 +63,12 @@ const MISSILE_SPEED = 320;        /* 미사일이 날아가는 속도(논리 px/
 const HTML = `
 <div class="df-app">
   <canvas class="df-canvas"></canvas>
-  <header class="df-hud">
-    <span class="df-pill df-wave"></span>
-    <span class="df-pill">${iconMarkup('star')} <b class="df-score">0</b></span>
+  <header class="df-hud hud-bar">
+    <span class="hud-pill df-wave"></span>
+    <span class="hud-pill">${iconMarkup('star')}<b class="df-score">0</b></span>
     <span class="df-fence" role="meter" aria-valuemin="0" aria-valuemax="100" data-i18n-aria="fence"><i></i></span>
-    <button type="button" class="df-pill df-sound" data-i18n-aria="sound"></button>
-    <button type="button" class="df-pill df-pause" data-i18n-aria="pause">⏸️</button>
+    <button type="button" class="hud-btn df-sound" data-i18n-aria="sound"></button>
+    <button type="button" class="hud-btn df-pause" data-i18n-aria="pause"><span class="hud-pause" aria-hidden="true"></span></button>
   </header>
   <div class="df-banner" aria-live="polite"></div>
   <div class="df-hero" aria-hidden="true"></div>

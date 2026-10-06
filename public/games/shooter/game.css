@@ -48,31 +48,10 @@
   flex-direction: column;
 }
 
+/* 상단 바 모양은 core/game-hud.css(.hud-bar/.hud-pill/.hud-btn) */
 .game-shooter .sh-hud {
   position: relative;
   z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: min(8px, 1.8vw);
-  padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
-}
-
-.game-shooter .pill {
-  padding: 6px min(14px, 3vw);
-  border: 0;
-  border-radius: 999px;
-  background: #3a2c7d;
-  color: #fff;
-  font: 800 min(18px, 4.6vw)/1.2 var(--font);
-  white-space: nowrap;
-}
-
-.game-shooter .sh-sound { margin-left: auto; }
-
-.game-shooter .sh-sound,
-.game-shooter .sh-pause {
-  padding: 6px min(10px, 2.4vw);
-  font-size: min(20px, 5.2vw);
 }
 
 /* 일시정지: JS 루프가 멈추고, CSS 애니메이션(폭발·라운드 안내·캐릭터)도 그 자리에서 멈춥니다 */

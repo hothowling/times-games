@@ -1,4 +1,4 @@
-import { iconMarkup } from '../../core/icons.js';
+import { icon, iconMarkup } from '../../core/icons.js';
 /*
  * classroom - 수지와 지호의 교실. 시험지를 풀고(DONE!) 선생님께 채점받아요.
  *   시험 → 제출 → 채점 → 선생님 반응 → 보상(ctx.finish) → 다음 라운드
@@ -20,7 +20,7 @@ export const dict = {
     quitTitle: '시험을 그만할까요?', quitHelp: '지금까지 푼 답은 저장되지 않아요.',
     continueQuiz: '계속 풀기', goHome: '로비로',
     round: '라운드', resultRound: '라운드 {round} 결과', questionNormal: '맞는 답을 골라요', questionBlank: '빈칸에 들어갈 수를 골라요',
-    heartsAria: '하트 {count}개', soundAria: '소리 켜기 또는 끄기', homeAria: '로비로 돌아가기', quitAria: '시험 그만하기',
+    heartsAria: '하트 {count}개', homeAria: '로비로 돌아가기', quitAria: '시험 그만하기',
     itemDockAria: '도움 아이템', itemUse: '{name} 사용', startAria: '{name}(으)로 시작',
     messageA: '완벽해!', messageB: '잘했어!', messageC: '조금만 더!', messageF: '다시 해보자!',
     ribbonA: '완벽해요!', ribbonB: '참 잘했어요!', ribbonC: '계속 연습해요!', ribbonF: '같이 연습해요!',
@@ -42,7 +42,7 @@ export const dict = {
     quitTitle: 'Leave this test?', quitHelp: 'Your answers in this test will not be saved.',
     continueQuiz: 'Keep playing', goHome: 'Lobby',
     round: 'ROUND', resultRound: 'ROUND {round} RESULT', questionNormal: 'Choose the correct answer', questionBlank: 'Choose the missing number',
-    heartsAria: '{count} hearts', soundAria: 'Turn sound on or off', homeAria: 'Back to lobby', quitAria: 'Leave the test',
+    heartsAria: '{count} hearts', homeAria: 'Back to lobby', quitAria: 'Leave the test',
     itemDockAria: 'Help items', itemUse: 'Use {name}', startAria: 'Start as {name}',
     messageA: 'Amazing!', messageB: 'Good job!', messageC: 'Keep practicing!', messageF: 'Try again!',
     ribbonA: 'Perfect!', ribbonB: 'Great work!', ribbonC: 'Keep practicing!', ribbonF: "Let's practice!",
@@ -95,19 +95,17 @@ const TEMPLATE = `
       </button>
       <button id="home-shop" class="home-shop-button">${iconMarkup('cookie')}<span data-i18n="homeShop"></span><b>→</b></button>
     </div>
-    <button id="home-exit" class="round-icon exit-button" data-i18n-aria="homeAria">${iconMarkup('home')}</button>
-    <button id="home-sound" class="round-icon sound-button" data-i18n-aria="soundAria">${iconMarkup('sound')}</button>
+    <button id="home-exit" class="hud-btn home-exit" data-i18n-aria="homeAria">${iconMarkup('home')}</button>
+    <button id="home-sound" class="hud-btn home-sound sound-toggle" data-i18n-aria="sound"></button>
     <p class="home-footer" data-i18n-html="homeFooter"></p>
   </section>
 
   <section id="game-screen" class="screen game-screen">
-    <header class="hud">
-      <button id="home-button" class="hud-profile" data-i18n-aria="quitAria">
-        <span id="hud-avatar" class="mini-avatar"></span>
-        <span id="hud-name"></span>
-      </button>
-      <div class="hud-stat hearts" id="hud-hearts"></div>
-      <div class="hud-stat sparkles">${iconMarkup('sparkle')}<b id="hud-sparkles">0</b></div>
+    <header class="hud hud-bar">
+      <button id="home-button" class="hud-btn" data-i18n-aria="quitAria">${iconMarkup('home')}</button>
+      <div class="hud-pill hud-hearts" id="hud-hearts" role="img"></div>
+      <div class="hud-pill hud-push">${iconMarkup('sparkle')}<b id="hud-sparkles">0</b></div>
+      <button id="play-sound" class="hud-btn sound-toggle" data-i18n-aria="sound"></button>
     </header>
     <div class="round-strip">
       <span id="round-label"></span>
@@ -232,7 +230,6 @@ export function mount(el, ctx) {
   const homeChr = ctx.character($('#home-character'));
   const quizChr = ctx.character($('#quiz-character'));
   const resultChr = ctx.character($('#result-character'));
-  ctx.character($('#hud-avatar'), { body: false }).expression('happy');
   homeChr.expression('happy');
   quizChr.expression('happy');
 
@@ -253,7 +250,16 @@ export function mount(el, ctx) {
     $('#player-name').textContent = ctx.characterName;
     $('#player-progress').textContent = `${t('round')} ${progress.round} · ♥ ${progress.hearts}`;
     $('#start-card').setAttribute('aria-label', t('startAria', { name: ctx.characterName }));
-    $('#home-sound').classList.toggle('is-muted', !ctx.audio.getSound());
+    renderSound();
+  }
+
+  /* 소리 버튼(시작 화면·게임 화면 둘 다): 켜짐/꺼짐 그림과 aria-pressed */
+  function renderSound() {
+    const on = ctx.audio.getSound();
+    for (const b of $$('.sound-toggle')) {
+      b.replaceChildren(icon(on ? 'sound' : 'sound-muted'));
+      b.setAttribute('aria-pressed', String(on));
+    }
   }
 
   function start() {
@@ -327,7 +333,6 @@ export function mount(el, ctx) {
   }
 
   function updateGameHUD() {
-    $('#hud-name').textContent = ctx.characterName;
     $('#hud-sparkles').textContent = ctx.sparkles();
     $('#hud-hearts').innerHTML = Array.from({ length: MAX_HEARTS }, (_, i) => {
       const full = i < progress.hearts;
@@ -540,9 +545,9 @@ export function mount(el, ctx) {
   $('#start-card').addEventListener('click', start);
   $('#home-shop').addEventListener('click', () => ctx.openShop());
   $('#home-exit').addEventListener('click', () => ctx.exit());
-  $('#home-sound').addEventListener('click', () => {
+  for (const b of $$('.sound-toggle')) b.addEventListener('click', () => {
     ctx.setSound(!ctx.audio.getSound());
-    updateHome();
+    renderSound();
     playTone('select');
   });
   $('#answers').addEventListener('click', (e) => {
