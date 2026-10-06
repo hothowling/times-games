@@ -106,7 +106,7 @@ function drawUsers() {
     head([['닉네임'], ['Sparkles', 'num'], ['플레이', 'num'], ['마지막 플레이'], ['가입'], ['사진 캐릭터', 'num'], ['상태']]),
     el('tbody', null, list.map((u) => {
       const tr = el('tr', { className: 'click' + (u.id === selected ? ' on' : '') },
-        td(u.nickname), td(u.sparkles, 'num'), td(u.plays, 'num'), td(when(u.last_play)), td(when(u.created_at)),
+        td(u.guest ? u.nickname + ' (손님)' : u.nickname), td(u.sparkles, 'num'), td(u.plays, 'num'), td(when(u.last_play)), td(when(u.created_at)),
         td(u.photos, 'num'), td(u.locked_until > Date.now() ? '잠김' : '', 'bad'));
       tr.addEventListener('click', () => showUser(u.id));
       return tr;

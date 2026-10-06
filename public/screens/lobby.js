@@ -18,6 +18,9 @@ export function render(view, { go, toast, errorText }) {
     h('section', { class: 'lobby-hero' }, hero,
       h('nav', { class: 'lobby-actions' },
         btn('ranking', 'ranking', 'ranking'), btn('characters', 'characters', 'chars'), btn('shop', 'shop', 'shop'), btn('records', 'records', 'records'))),
+    /* 손님이면 계정 만들기를 권합니다(모은 것이 그대로 남음). */
+    state.me.user.guest ? h('button', { type: 'button', class: 'guest-note', onclick: () => go('login?upgrade=1') },
+      h('span', null, t('guestNote')), h('b', null, t('guestMake') + ' ›')) : null,
     h('h2', { class: 'screen-title' }, t('games')),
     h('div', { class: 'game-list' }, GAMES.map((g) =>
       h('button', { type: 'button', class: 'game-card', onclick: () => go('play/' + g.id) },

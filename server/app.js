@@ -20,6 +20,7 @@ const MAX_FACE_BYTES = 3 * 1024 * 1024; // Safari 는 WebP 를 못 만들어 PNG
 const MAX_JSON_BYTES = 32 * 1024;
 // ponytail: 같은 게임 보상은 8초에 한 번. 클라이언트가 결과를 꾸미면 막을 수 없음, 필요하면 게임별 서버 검증으로.
 const PLAY_GAP_MS = 8000;
+const GUEST_PER_HOUR = 20;     /* 한 IP 에서 1시간에 만들 수 있는 손님 계정 수 */
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
@@ -92,6 +93,8 @@ export function createApp({ db, dataDir, adminPassword }) {
     userById: q('select * from users where id = ?'),
     userByNick: q('select * from users where nickname = ?'),
     insertUser: q('insert into users (nickname, pin, settings, created_at) values (?, ?, ?, ?)'),
+    insertGuest: q('insert into users (nickname, pin, settings, created_at, guest) values (?, ?, ?, ?, 1)'),
+    upgradeGuest: q('update users set nickname = ?, pin = ?, guest = 0 where id = ? and guest = 1'),
     setFails: q('update users set fails = ?, locked_until = ? where id = ?'),
     setSettings: q('update users set settings = ? where id = ?'),
     addSparkles: q('update users set sparkles = sparkles + ? where id = ?'),
@@ -168,7 +171,7 @@ export function createApp({ db, dataDir, adminPassword }) {
     const looks = {};
     for (const r of S.looks.all(user.id)) looks[r.char_key] = JSON.parse(r.equipped);
     return {
-      user: { id: user.id, nickname: user.nickname, sparkles: user.sparkles, settings: JSON.parse(user.settings) },
+      user: { id: user.id, nickname: user.nickname, sparkles: user.sparkles, settings: JSON.parse(user.settings), guest: !!user.guest },
       inventory: inventoryOf(user.id),
       characters: S.chars.all(user.id).map((c) => ({ key: 'p' + c.id, id: c.id, name: c.name })),
       looks,
@@ -184,16 +187,53 @@ export function createApp({ db, dataDir, adminPassword }) {
   const routes = [];
   const route = (method, pattern, fn) => routes.push({ method, re: new RegExp('^' + pattern + '$'), fn });
 
-  route('POST', '/api/signup', async (req, res) => {
-    const { nickname, pin } = await readJson(req);
+  /* 가입·손님 전환 공통: 닉네임 2~12글자, 비밀번호 숫자 4자리, 다른 사람이 쓰지 않는 닉네임 */
+  function checkNewAccount({ nickname, pin }, selfId) {
     const nick = typeof nickname === 'string' ? nickname.trim() : '';
     if ([...nick].length < 2 || [...nick].length > 12 || /[\u0000-\u001f<>]/.test(nick)) fail(400, 'badNickname');
     if (typeof pin !== 'string' || !/^\d{4}$/.test(pin)) fail(400, 'badPin');
-    if (S.userByNick.get(nick)) fail(409, 'nicknameTaken');
+    const taken = S.userByNick.get(nick);
+    if (taken && taken.id !== selfId) fail(409, 'nicknameTaken');
+    return nick;
+  }
+
+  route('POST', '/api/signup', async (req, res) => {
+    const body = await readJson(req);
+    const nick = checkNewAccount(body);
+    const pin = body.pin;
     const settings = JSON.stringify({ character: 'sooji' });
     const id = Number(S.insertUser.run(nick, hashPin(pin), settings, Date.now()).lastInsertRowid);
     login(res, req, id);
     send(res, 200, me(S.userById.get(id)));
+  });
+
+  /*
+   * 손님으로 해 보기: '손님1234' 같은 임시 계정을 만들고 바로 로그인합니다. 비밀번호는 아무도 모르는 값이라
+   * 쿠키(세션)가 있는 동안만 쓸 수 있고, /api/upgrade 로 닉네임·비밀번호를 정하면 정식 계정이 됩니다.
+   * 한 IP 에서 1시간에 GUEST_PER_HOUR 개까지(메모리, 서버를 다시 켜면 처음부터).
+   */
+  const guestLog = new Map();
+  route('POST', '/api/guest', async (req, res) => {
+    const ip = req.headers['x-real-ip'] || req.socket.remoteAddress;
+    const now = Date.now();
+    const recent = (guestLog.get(ip) || []).filter((t) => now - t < 3600e3);
+    if (recent.length >= GUEST_PER_HOUR) fail(429, 'tooManyGuests');
+    guestLog.set(ip, [...recent, now]);
+    let nick;
+    do nick = '손님' + randomInt(1000, 100000); while (S.userByNick.get(nick));
+    const id = Number(S.insertGuest.run(nick, hashPin(randomBytes(16).toString('hex')), JSON.stringify({ character: 'sooji' }), now).lastInsertRowid);
+    login(res, req, id);
+    send(res, 200, me(S.userById.get(id)));
+  });
+
+  /* 손님 → 정식 계정: 모은 것(Sparkles·아이템·기록)은 그대로, 닉네임과 비밀번호만 새로 정합니다. */
+  route('POST', '/api/upgrade', async (req, res) => {
+    const user = currentUser(req);
+    if (!user.guest) fail(400, 'notGuest');
+    const body = await readJson(req);
+    const nick = checkNewAccount(body, user.id);
+    S.upgradeGuest.run(nick, hashPin(body.pin), user.id);
+    send(res, 200, me(S.userById.get(user.id)));
   });
 
   route('POST', '/api/login', async (req, res) => {
@@ -400,7 +440,7 @@ export function createApp({ db, dataDir, adminPassword }) {
   const BOARD_SQL = Object.fromEntries([['all', 'sum(p.stars)'], ...GAMES.map((g) => [g, 'max(p.score)'])]);
   BOARD_SQL.classroom = "max(json_extract(p.detail, '$.round'))";
   const boardStmts = Object.fromEntries(Object.entries(BOARD_SQL).map(([board, expr]) => [board, q(
-    `select u.id, u.nickname, u.settings, ${expr} as value from plays p join users u on u.id = p.user_id
+    `select u.id, u.nickname, u.settings, u.guest, ${expr} as value from plays p join users u on u.id = p.user_id
      where p.created_at >= ? ${board === 'all' ? '' : 'and p.game_id = ?'}
      group by u.id having value > 0 order by value desc, u.id`)]));
   const lookOf = q('select equipped from looks where user_id = ? and char_key = ?');
@@ -413,6 +453,8 @@ export function createApp({ db, dataDir, adminPassword }) {
     let me = null;
     for (const r of rows) {
       const s = JSON.parse(r.settings);
+      /* 손님은 이름 숨김과 같이: 다른 사람 목록·순위에는 빠지고 자기 순위만 봅니다. */
+      if (r.guest) s.rankHidden = true;
       if (r.id === meId) me = { value: r.value };
       if (!s.rankHidden || r.id === meId) visible.push({ ...r, s });
     }

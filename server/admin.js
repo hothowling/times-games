@@ -38,7 +38,7 @@ export function adminRoutes(db, password, h) {
 
   const q = (sql) => db.prepare(sql);
   const S = {
-    users: q(`select u.id, u.nickname, u.sparkles, u.created_at, u.locked_until,
+    users: q(`select u.id, u.nickname, u.guest, u.sparkles, u.created_at, u.locked_until,
       (select count(*) from plays p where p.user_id = u.id) as plays,
       (select max(created_at) from plays p where p.user_id = u.id) as last_play,
       (select count(*) from characters c where c.user_id = u.id) as photos

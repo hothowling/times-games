@@ -7,7 +7,7 @@ import { icon } from '../core/icons.js';
 import { api } from '../core/api.js';
 import { t, pick } from '../core/i18n.js';
 import { h } from '../core/dom.js';
-import { settings } from '../core/state.js';
+import { state, settings } from '../core/state.js';
 import { createCharacter } from '../core/character.js';
 import { GAMES } from '../games/index.js';
 
@@ -88,7 +88,8 @@ export function render(view, { go, errorText }) {
       h('span', null, t('rankMe')),
       h('b', null, data.me ? t('rankNth', { n: data.me.rank }) : t('rankNone')),
       data.me ? h('span', null, fmt(data.me.value)) : null,
-      settings().rankHidden ? h('span', { class: 'rank-hidden' }, t('rankHiddenNote')) : null].filter(Boolean));
+      state.me.user.guest ? h('span', { class: 'rank-hidden' }, t('rankGuestNote'))
+        : settings().rankHidden ? h('span', { class: 'rank-hidden' }, t('rankHiddenNote')) : null].filter(Boolean));
   }
 
   load();

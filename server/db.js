@@ -74,6 +74,10 @@ export function openDb(file) {
   const db = new DatabaseSync(file);
   db.exec('pragma journal_mode = wal; pragma foreign_keys = on;');
   db.exec(SCHEMA);
+  /* 손님 계정(로그인 화면의 '손님으로 해 보기'). 예전 DB 에는 열이 없어서 더합니다. */
+  if (!db.prepare("select 1 from pragma_table_info('users') where name = 'guest'").get()) {
+    db.exec('alter table users add column guest integer not null default 0');
+  }
   migrateItems(db);
   /* 판매 종료된 가방을 해제해 이후 다른 장식으로 갈아입을 때도 유효한 착용 상태를 유지합니다. */
   db.exec("update looks set equipped = json_set(equipped, '$.back', null) where json_extract(equipped, '$.back') = 'backpack'");

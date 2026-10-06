@@ -331,3 +331,41 @@ test("odd request paths like '//' get an answer instead of crashing the server",
   }
   assert.equal(await raw('/'), 200, 'server still up');
 });
+
+test('guest: play right away, hidden from others in ranking, upgrade keeps everything', async () => {
+  const g = client();
+  let r = await g('POST', '/api/guest');
+  assert.equal(r.status, 200);
+  assert.equal(r.body.user.guest, true);
+  assert.match(r.body.user.nickname, /^손님\d+$/);
+  const guestNick = r.body.user.nickname;
+  await g('POST', '/api/plays', { game: 'master', roundKey: 'g1', stars: 3, score: 99 });
+  assert.equal((await g('GET', '/api/me')).body.user.sparkles, 10);
+
+  /* 다른 사람 랭킹에는 안 보이고, 자기 순위는 봅니다. */
+  const other = client();
+  await other('POST', '/api/signup', { nickname: 'rankwatch', pin: '1234' });
+  const seen = (await other('GET', '/api/ranking?board=master&period=all')).body.top.map((x) => x.nickname);
+  assert.ok(!seen.includes(guestNick));
+  assert.ok((await g('GET', '/api/ranking?board=master&period=all')).body.me.rank >= 1);
+
+  /* 손님 닉네임으로는 로그인할 수 없습니다(비밀번호를 아무도 모름). */
+  assert.equal((await client()('POST', '/api/login', { nickname: guestNick, pin: '0000' })).status, 401);
+
+  /* 정식 계정으로: 닉네임 중복·형식 검사, Sparkles 는 그대로 */
+  assert.equal((await g('POST', '/api/upgrade', { nickname: 'rankwatch', pin: '1111' })).body.error, 'nicknameTaken');
+  assert.equal((await g('POST', '/api/upgrade', { nickname: '새친구', pin: '11a1' })).body.error, 'badPin');
+  r = await g('POST', '/api/upgrade', { nickname: '새친구', pin: '1111' });
+  assert.equal(r.body.user.guest, false);
+  assert.equal(r.body.user.nickname, '새친구');
+  assert.equal(r.body.user.sparkles, 10);
+  assert.equal((await client()('POST', '/api/login', { nickname: '새친구', pin: '1111' })).status, 200);
+  assert.equal((await g('POST', '/api/upgrade', { nickname: '또다른', pin: '2222' })).body.error, 'notGuest');
+  assert.ok((await other('GET', '/api/ranking?board=master&period=all')).body.top.some((x) => x.nickname === '새친구'));
+});
+
+test('guest: at most 20 per IP per hour', async () => {
+  const codes = [];
+  for (let i = 0; i < 21; i++) codes.push((await fetch(base + '/api/guest', { method: 'POST', headers: { 'x-real-ip': '10.9.9.9' } })).status);
+  assert.deepEqual([codes.slice(0, 20).every((c) => c === 200), codes[20]], [true, 429]);
+});

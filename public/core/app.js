@@ -90,6 +90,7 @@ function bindSettings() {
     $('set-sound').checked = audio.getSound();
     $('set-tts').checked = audio.getTts();
     $('set-rank-hidden').checked = !!settings().rankHidden;
+    $('set-account').hidden = !state.me?.user.guest;
     dlg.showModal();
   });
   $('set-sound').addEventListener('change', (e) => { audio.setSound(e.target.checked); saveSetting({ sound: e.target.checked }); });
@@ -100,7 +101,9 @@ function bindSettings() {
     applySettings();
     route();
   });
+  $('set-account').addEventListener('click', () => { dlg.close(); go('login?upgrade=1'); });
   $('set-logout').addEventListener('click', async () => {
+    if (state.me?.user.guest && !confirm(t('guestLogoutAsk'))) return;
     dlg.close();
     await api('POST', 'logout').catch(() => {});
     state.me = null;
@@ -245,7 +248,7 @@ async function route() {
   window.scrollTo(0, 0);
 
   if (!state.me && name !== 'login') { go('login'); return; }
-  if (state.me && name === 'login') { go('lobby'); return; }
+  if (state.me && name === 'login' && !(params.get('upgrade') && state.me.user.guest)) { go('lobby'); return; }
   $('topbar').hidden = !state.me || name === 'play';
 
   if (!(name in SCREENS)) { go('lobby'); return; }

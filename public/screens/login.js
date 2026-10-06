@@ -1,15 +1,17 @@
 /*
- * login.js - 닉네임 + 비밀번호 4자리로 들어가기 / 처음 만들기.
+ * login.js - 닉네임 + 비밀번호 4자리로 들어가기 / 처음 만들기 / 손님으로 해 보기.
+ *   #/login?upgrade=1  손님이 닉네임·비밀번호를 정해 정식 계정으로 바꾸기(모은 것은 그대로)
  */
 import { api } from '../core/api.js';
 import { t } from '../core/i18n.js';
 import { h } from '../core/dom.js';
-import { setMe, lookFor } from '../core/state.js';
+import { state, setMe, lookFor } from '../core/state.js';
 import { createCharacter } from '../core/character.js';
-import { afterLogin } from '../core/app.js';
+import { afterLogin, go } from '../core/app.js';
 
-export function render(view, { errorText }) {
-  let mode = 'login';
+export function render(view, { errorText, params }) {
+  const upgrade = !!(params.get('upgrade') && state.me?.user.guest);
+  let mode = upgrade ? 'upgrade' : 'login';
   const chars = h('div', { class: 'login-chars' }, h('span'), h('span'));
   const nick = h('input', { class: 'field', maxlength: 12, autocomplete: 'username', placeholder: t('nickname'), 'aria-label': t('nickname') });
   const pin = h('input', {
@@ -19,10 +21,24 @@ export function render(view, { errorText }) {
   const error = h('p', { class: 'form-error', role: 'alert' });
   const submit = h('button', { class: 'btn' });
   const swap = h('button', { type: 'button', class: 'btn btn-sub' });
+  /* 손님으로 해 보기: 서버가 임시 계정을 만들고 바로 들어갑니다. 정식 계정으로 바꾸는 중에는 '뒤로'. */
+  const guest = h('button', { type: 'button', class: 'btn-link' }, t(upgrade ? 'back' : 'guestPlay'));
+  guest.addEventListener('click', async () => {
+    if (upgrade) { go('lobby'); return; }
+    guest.disabled = true;
+    try {
+      setMe(await api('POST', 'guest'));
+      afterLogin();
+    } catch (err) {
+      error.textContent = errorText(err);
+      guest.disabled = false;
+    }
+  });
 
   function sync() {
     submit.textContent = t(mode === 'login' ? 'login' : 'signupDo');
     swap.textContent = t(mode === 'login' ? 'signup' : 'haveAccount');
+    swap.hidden = upgrade;
     pin.autocomplete = mode === 'login' ? 'current-password' : 'new-password';
     error.textContent = '';
   }
@@ -43,10 +59,11 @@ export function render(view, { errorText }) {
         submit.disabled = false;
       }
     }
-  }, nick, pin, error, submit, swap);
+  }, nick, pin, error, submit, swap, guest);
 
   sync();
-  view.append(h('section', { class: 'login' }, h('h1', null, t('appTitle')), chars, form));
+  view.append(h('section', { class: 'login' }, h('h1', null, t(upgrade ? 'guestMake' : 'appTitle')),
+    upgrade ? h('p', { class: 'login-hint' }, t('guestMakeHint')) : null, chars, form));
   const a = createCharacter(chars.children[0], lookFor('sooji'));
   const b = createCharacter(chars.children[1], lookFor('jiho'));
   nick.focus();
