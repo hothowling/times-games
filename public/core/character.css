@@ -107,13 +107,17 @@
   transform: translateX(-50%);
 }
 
-/* 펫은 캐릭터 옆의 앞쪽에 두어 몸이나 옷에 가려지지 않게 합니다. */
+/*
+ * 펫은 캐릭터 왼쪽, 흔드는 손 앞에 나란히 섭니다. 얼굴보다 앞(z-index 7 > 얼굴 3)에 그리고,
+ * 아래쪽을 기준 상자 바닥(상체 아래)에 맞춥니다. 손은 옷 그림마다 기준 상자 x≈15~60 에 있습니다.
+ */
 .chr-pet {
   z-index: 7;
-  left: 196px;
-  bottom: -34px;
-  width: 100px;
-  height: 100px;
+  left: var(--pet-x, 30px);
+  bottom: var(--pet-bottom, -6px);
+  width: 168px;
+  height: 168px;
+  transform: translateX(-50%);
   object-fit: contain;
 }
 
