@@ -189,8 +189,8 @@ export function mount(el, ctx) {
   const timeEl = $('.wm-time');
   const prompt = $('.wm-prompt');
 
-  const hero = ctx.character($('.wm-face'), { body: false });
-  const cardHero = ctx.character($('.wm-card-face'), { body: false });
+  const hero = ctx.character($('.wm-face'), { body: true });
+  const cardHero = ctx.character($('.wm-card-face'), { body: true });
 
   const saved = ctx.progress || {};
   let best = Number(saved.best) || 0;

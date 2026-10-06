@@ -97,8 +97,8 @@ export function mount(el, ctx) {
   const t = ctx.t;
 
   /* 캐릭터: 아래 언덕의 얼굴과 카드 속 얼굴. 표정을 직접 고르므로 대기 중 웃음은 끕니다. */
-  const hero = ctx.character(face, { body: false });
-  const cardHero = ctx.character($('.card-face'), { body: false });
+  const hero = ctx.character(face, { body: true });
+  const cardHero = ctx.character($('.card-face'), { body: true });
   hero.expression('neutral');
 
   let best = Number(ctx.progress?.best) || 0;  /* 최고 점수(서버 진행도) */

@@ -92,7 +92,7 @@
 
 /* 캐릭터 얼굴(ctx.character, body:false). 높이는 얼굴 칸 비율로 따라옵니다. */
 .game-shooter .sh-hero {
-  width: min(24vw, 12vh, 104px);
+  width: min(28vw, 14vh, 120px);
   animation: sh-bob 2.4s ease-in-out infinite;
 }
 

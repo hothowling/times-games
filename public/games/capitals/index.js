@@ -127,8 +127,8 @@ export function mount(el, ctx) {
   const bar = $('.cq-timer i');
   const photo = $('.cq-photo');
 
-  const hero = ctx.character($('.cq-face'), { body: false });
-  const cardHero = ctx.character($('.cq-card-face'), { body: false });
+  const hero = ctx.character($('.cq-face'), { body: true });
+  const cardHero = ctx.character($('.cq-card-face'), { body: true });
 
   let best = Number(ctx.progress?.best) || 0;
   let S = null;        /* 한 판 상태 */

@@ -73,7 +73,7 @@
   word-break: keep-all;
 }
 
-.game-capitals .cq-face { width: min(24vw, 96px); }
+.game-capitals .cq-face { width: min(28vw, 112px); }
 .game-capitals .cq-flag {
   width: min(48vw, 200px);
   aspect-ratio: 4 / 3;
@@ -169,7 +169,7 @@
 }
 
 .game-capitals .cq-card h1 { margin: 4px 0 8px; color: #1d6fd1; font-size: min(10vw, 40px); }
-.game-capitals .cq-card-face { width: min(32vw, 120px); margin: 0 auto; }
+.game-capitals .cq-card-face { width: min(36vw, 140px); margin: 0 auto; }
 .game-capitals .cq-card p { margin: 6px 0; font-size: 17px; line-height: 1.45; }
 .game-capitals .cq-result { font-size: 22px !important; font-weight: 800; }
 .game-capitals .cq-record { color: #e0314b; font-size: 22px !important; font-weight: 800; }

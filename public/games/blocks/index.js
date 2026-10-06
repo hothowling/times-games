@@ -162,9 +162,9 @@ export function mount(el, ctx) {
 
   /* 원본 마스코트는 얼굴 그림이라 세 자리 모두 얼굴만 그립니다. */
   const chars = {
-    home: ctx.character(el.querySelector('.mascot-home'), { body: false }),
-    game: ctx.character(el.querySelector('.mascot-game'), { body: false }),
-    result: ctx.character(el.querySelector('.mascot-result'), { body: false })
+    home: ctx.character(el.querySelector('.mascot-home'), { body: true }),
+    game: ctx.character(el.querySelector('.mascot-game'), { body: true }),
+    result: ctx.character(el.querySelector('.mascot-result'), { body: true })
   };
 
   let level = Math.max(1, Number(ctx.progress?.level) || 1);  /* 아직 못 깬 판(지금까지 연 마지막 판) */

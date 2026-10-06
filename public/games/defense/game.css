@@ -164,7 +164,7 @@
 }
 
 .game-defense .df-card h1 { margin: 4px 0 8px; color: #4f7a2e; font-size: min(9vw, 36px); font-weight: normal; }
-.game-defense .df-card-face { width: min(30vw, 116px); margin: 0 auto; }
+.game-defense .df-card-face { width: min(34vw, 136px); margin: 0 auto; }
 .game-defense .df-card p { margin: 6px 0; font-size: 17px; line-height: 1.45; }
 .game-defense .df-result { font-size: 21px !important; }
 .game-defense .df-record { color: #e0314b; font-size: 22px !important; }

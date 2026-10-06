@@ -171,7 +171,7 @@ export function mount(root, ctx) {
   /* 캐릭터: 화면마다 하나씩. 반응은 지금 보이는 화면의 캐릭터에게만 전합니다. */
   const chars = {
     home: ctx.character(root.querySelector('.mascot-home')),
-    game: ctx.character(el.mascotGame, { body: false }),
+    game: ctx.character(el.mascotGame, { body: true }),
     result: ctx.character(root.querySelector('.mascot-result'))
   };
   let current = 'home';

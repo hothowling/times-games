@@ -127,7 +127,7 @@ export function mount(el, ctx) {
     friend = ctx.character(friendEl.querySelector('.df-friend-body'), { body: true, key });
   }
   pickFriend();
-  const cardHero = ctx.character($('.df-card-face'), { body: false });
+  const cardHero = ctx.character($('.df-card-face'), { body: true });
 
   let best = Number(ctx.progress?.best) || 0;
   let W = WORLD_W;   /* 논리 좌표 너비(고정)·높이(화면 비율) */

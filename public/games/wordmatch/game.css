@@ -52,7 +52,7 @@
 .game-wordmatch .wm-time { font-variant-numeric: tabular-nums; }
 
 .game-wordmatch .wm-bar { display: flex; align-items: center; gap: 8px; min-height: 56px; }
-.game-wordmatch .wm-face { flex: none; width: 56px; }
+.game-wordmatch .wm-face { flex: none; width: 72px; }
 .game-wordmatch .wm-msg {
   flex: 1;
   min-width: 0;
@@ -327,7 +327,7 @@
 
 .game-wordmatch .wm-card h1 { margin: 2px 0 6px; color: var(--en); font-size: min(9vw, 36px); }
 .game-wordmatch .wm-card h2 { margin: 12px 0 6px; font-size: 16px; color: #6a6f9c; }
-.game-wordmatch .wm-card-face { width: min(26vw, 100px); margin: 0 auto; }
+.game-wordmatch .wm-card-face { width: min(30vw, 120px); margin: 0 auto; }
 .game-wordmatch .wm-card p { margin: 6px 0; font-size: 16px; line-height: 1.45; }
 .game-wordmatch .wm-score { font-size: 24px !important; font-weight: 800; }
 .game-wordmatch .wm-result { font-weight: 800; }

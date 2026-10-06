@@ -383,8 +383,8 @@
 }
 
 .game-blocks .mascot-game {
-  width: 68px;
-  flex: 0 0 68px;
+  width: 84px;
+  flex: 0 0 84px;
   margin: 0;
 }
 
@@ -595,7 +595,7 @@
 
 @media (max-height: 640px) {
   .game-blocks .talk-row { min-height: 56px; }
-  .game-blocks .mascot-game { width: 52px; flex-basis: 52px; }
+  .game-blocks .mascot-game { width: 64px; flex-basis: 64px; }
   .game-blocks .card { height: 46px; font-size: 21px; }
   .game-blocks .actions .btn { min-height: 44px; }
   .game-blocks .mascot-home { width: 110px; }
