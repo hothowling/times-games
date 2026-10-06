@@ -66,14 +66,16 @@ const QUERY = {
   dumpling: 'dumplings', medicine: 'medicine pills', diary: 'diary notebook', letter: 'letter envelope',
   graduation: 'graduation cap', plant: 'potted plant', seed: 'seeds', storm: 'storm clouds', ice: 'ice cubes',
   trash: 'trash litter', planet: 'planet saturn', pollution: 'air pollution', shadow: 'shadow silhouette',
-  bottle: 'water bottle', roof: 'house roof', oven: 'kitchen oven', tower: 'tower building', temple: 'buddhist temple',
+  bottle: 'water bottle', roof: 'house roof', oven: 'kitchen oven', tower: 'tower building', temple: 'korean buddhist temple',
   palace: 'palace korea', rocket: 'rocket launch', medal: 'gold medal', kite: 'kite flying', drum: 'drum instrument',
   fishing: 'fishing rod', chess: 'chess board', puzzle: 'jigsaw puzzle', skiing: 'skiing snow', hiking: 'hiking trail',
   skating: 'ice skating', soccer: 'soccer ball', baseball: 'baseball ball', basketball: 'basketball ball',
   tennis: 'tennis racket', badminton: 'badminton shuttlecock', artist: 'artist painting', vet: 'vet dog',
   pilot: 'airline pilot', mechanic: 'car mechanic', scientist: 'scientist laboratory', baker: 'baker bread',
   tie: 'necktie tie', crown: 'royal crown', vest: 'vest clothing', mall: 'shopping mall', hotel: 'hotel building',
-  mask: 'face mask', 'traffic-light': 'traffic light', 'washing-machine': 'washing machine', 'trash-can': 'trash can'
+  mask: 'surgical mask', 'traffic-light': 'traffic light', 'washing-machine': 'washing machine', 'trash-can': 'trash can',
+  kimchi: 'baechu kimchi', refrigerator: 'refrigerator kitchen', hill: 'green hill', sneakers: 'kids sneakers',
+  passport: 'korea passport', insect: 'bumblebee insect', dentist: 'dentist chair'
 };
 
 /* ---------- 인자 ---------- */
