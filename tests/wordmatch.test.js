@@ -36,7 +36,7 @@ test('pairsFor: 8 / 10 / 12, clamped', () => {
 test('makeRound: 2 × pairs cards, each word once in en and ko, no duplicate meaning', () => {
   const rng = seeded(7);
   for (let run = 0; run < 300; run++) {
-    const grade = GRADES[run % 2];
+    const grade = GRADES[run % GRADES.length];
     const topics = ['all', ...Object.keys(TOPICS)];
     const topic = topics[run % topics.length];
     const pairs = pairsFor(1 + (run % 3));
@@ -61,6 +61,45 @@ test('makeRound: same grade first, other grades only to fill', () => {
   const colors = makeRound({ grade: 4, topic: 'colors', pairs: 12, rng: seeded(2) }).words;
   assert.equal(colors.length, 12);
   assert.equal(colors.filter((w) => w.grade === 4).length, WORDS.filter((w) => w.topic === 'colors' && w.grade === 4).length);
+});
+
+test('grades 3–6: every grade has words, every (grade, topic) fills 12 pairs from that topic', () => {
+  assert.deepEqual(GRADES, [3, 4, 5, 6]);
+  for (const g of GRADES) assert.ok(WORDS.filter((w) => w.grade === g).length >= 150, `grade ${g}`);
+  for (const g of [5, 6]) {
+    /* 5·6학년 단어가 있는 주제는 그 학년 단어만으로 한 판(8쌍)을 채우거나, 모자라면 다른 학년으로 채웁니다. */
+    const topics = new Set(WORDS.filter((w) => w.grade === g).map((w) => w.topic));
+    assert.ok(topics.size >= 14, `grade ${g} topics`);
+  }
+  for (const g of GRADES) {
+    for (const t of ['all', ...Object.keys(TOPICS)]) {
+      const { words } = makeRound({ grade: g, topic: t, pairs: 12, rng: seeded(g * 31 + t.length) });
+      assert.equal(words.length, 12, `${g} ${t}`);
+      assert.equal(new Set(words.map((w) => w.ko)).size, 12, `${g} ${t}`);
+      const sameN = WORDS.filter((w) => w.grade === g && (t === 'all' || w.topic === t)).length;
+      assert.equal(words.filter((w) => w.grade === g).length, Math.min(12, sameN), `${g} ${t}: same grade first`);
+    }
+  }
+});
+
+test('makeRound: fallback prefers the nearest grade (grade 3 jobs → grade 5 before grade 6)', () => {
+  const g5 = WORDS.filter((w) => w.topic === 'jobs' && w.grade === 5).length;
+  assert.ok(g5 >= 8 && !WORDS.some((w) => w.topic === 'jobs' && w.grade < 5));
+  for (let seed = 1; seed < 20; seed++) {
+    const { words } = makeRound({ grade: 3, topic: 'jobs', pairs: 8, rng: seeded(seed) });
+    assert.ok(words.every((w) => w.grade === 5), `seed ${seed}`);
+    const six = makeRound({ grade: 6, topic: 'family', pairs: 12, rng: seeded(seed) }).words;
+    /* 6학년 가족 5개 → 5학년 5개 → 나머지 2개는 4학년 */
+    assert.deepEqual(six.map((w) => w.grade).sort(), [4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6], `seed ${seed}`);
+  }
+});
+
+test('old saves still load: grade 3/4 ids keep working, unknown ids dropped', () => {
+  const old = ['dog', 'apple', 'monday', 'gone-word', 'pilot'];
+  assert.deepEqual(mergeLearned(old, []), ['dog', 'apple', 'monday', 'pilot']);
+  const st = learnedStats(mergeLearned(old, []));
+  assert.equal(st.jobs.n, 1);
+  assert.equal(st.jobs.total, WORDS.filter((w) => w.topic === 'jobs').length);
 });
 
 test('makeRound: review words come first (up to half the pairs), unknown ids ignored', () => {

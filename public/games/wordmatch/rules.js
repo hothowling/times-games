@@ -32,7 +32,7 @@ export function poolFor(grade, topic, words = WORDS) {
 /*
  * makeRound({ grade, topic, pairs, reviewIds, rng, words })
  *   → { words: [단어...], cards: [{ uid, wordId, side: 'en'|'ko', text }] }
- * 복습 단어(reviewIds 중 이 주제에 있는 것)를 먼저 넣되 쌍의 절반까지만, 나머지는 같은 학년 → 다른 학년 순.
+ * 복습 단어(reviewIds 중 이 주제에 있는 것)를 먼저 넣되 쌍의 절반까지만, 나머지는 같은 학년 → 가까운 학년 → 먼 학년 순.
  * 한 판 안에서 같은 뜻(ko)이나 같은 영어(en)는 두 번 나오지 않습니다. 후보가 모자라면 쌍 수가 줄어듭니다.
  */
 export function makeRound({ grade, topic, pairs = 8, reviewIds = [], rng = Math.random, words = WORDS } = {}) {
@@ -53,7 +53,9 @@ export function makeRound({ grade, topic, pairs = 8, reviewIds = [], rng = Math.
     add(byId.get(id));
   }
   for (const w of shuffle([...same], rng)) add(w);
-  for (const w of shuffle([...other], rng)) add(w);
+  /* 다른 학년은 가까운 학년부터(3학년이 '직업'을 고르면 5학년 → 6학년 순). 같은 거리 안에서는 무작위. */
+  const dist = (w) => Math.abs(w.grade - grade);
+  for (const w of shuffle([...other], rng).sort((a, b) => dist(a) - dist(b))) add(w);
 
   const cards = shuffle(picked.flatMap((w) => [
     { uid: w.id + ':en', wordId: w.id, side: 'en', text: w.en },

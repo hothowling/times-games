@@ -1,27 +1,32 @@
 /*
- * words.js - 영단어 짝맞추기 단어 목록(초등 3~4학년 교과 수준). DOM 없음.
+ * words.js - 영단어 짝맞추기 단어 목록(초등 3~6학년 교과 수준). DOM 없음.
+ *   DATA 는 3~4학년, DATA_UPPER 는 5~6학년 단어입니다.
  * 한 단어에 한국어 뜻은 하나만 고정하고, 서로 다른 단어가 같은 뜻(ko)을 갖지 않게 합니다.
- *   (예: eye = 눈 이므로 snow 는 빼고 snowman/snowy 를 넣었습니다. pear = 배 이므로 boat 는 '보트')
+ *   (예: eye = 눈 이므로 snow 는 빼고 snowman/snowy 를 넣었습니다. pear = 배 이므로 boat 는 '보트',
+ *    leg = 다리 이므로 bridge 는 '건너는 다리', ten = 열 이므로 fever 는 '열이 남')
  * WORDS: { id, en, ko, grade, topic, emoji? }   id 는 en 의 소문자 slug(공백 → '-').
  */
 
-export const GRADES = [3, 4];
+export const GRADES = [3, 4, 5, 6];
 
 export const TOPICS = {
   animals: { ko: '동물', en: 'Animals' },
   food: { ko: '음식', en: 'Food' },
   school: { ko: '학교', en: 'School' },
   family: { ko: '가족·사람', en: 'Family' },
+  jobs: { ko: '직업', en: 'Jobs' },
   body: { ko: '몸', en: 'Body' },
-  colors: { ko: '색깔', en: 'Colors' },
+  colors: { ko: '색깔·모양', en: 'Colors & Shapes' },
   numbers: { ko: '숫자', en: 'Numbers' },
   nature: { ko: '자연·날씨', en: 'Nature' },
   home: { ko: '집·물건', en: 'Home' },
   clothes: { ko: '옷', en: 'Clothes' },
   verbs: { ko: '움직임(동사)', en: 'Verbs' },
   adjectives: { ko: '꾸밈말(형용사)', en: 'Adjectives' },
+  feelings: { ko: '감정·성격', en: 'Feelings' },
   time: { ko: '시간·요일', en: 'Time' },
-  places: { ko: '장소·탈것', en: 'Places' }
+  places: { ko: '장소·탈것', en: 'Places' },
+  hobbies: { ko: '운동·취미', en: 'Hobbies' }
 };
 
 /* [en, ko, grade, emoji?] 를 주제별로 적습니다. */
@@ -180,9 +185,143 @@ const DATA = {
   ]
 };
 
+/* 5~6학년 단어. [en, ko, grade, emoji?] 를 주제별로 적습니다(규칙은 위와 같음: ko·en 이 전체에서 겹치지 않게). */
+const DATA_UPPER = {
+  animals: [
+    ['insect', '곤충', 5, '🐛'], ['dinosaur', '공룡', 5, '🦖'], ['gorilla', '고릴라', 5, '🦍'], ['cheetah', '치타', 5, '🐆'],
+    ['swan', '백조', 5, '🦢'], ['parrot', '앵무새', 5, '🦜'], ['snail', '달팽이', 5, '🐌'], ['lizard', '도마뱀', 5, '🦎'],
+    ['hamster', '햄스터', 5, '🐹'], ['polar bear', '북극곰', 5, '🐻‍❄️'],
+    ['peacock', '공작', 6, '🦚'], ['flamingo', '플라밍고', 6, '🦩'], ['seal', '물개', 6, '🦭'], ['ladybug', '무당벌레', 6, '🐞'],
+    ['dragonfly', '잠자리', 6], ['hedgehog', '고슴도치', 6, '🦔'], ['otter', '수달', 6, '🦦'], ['raccoon', '너구리', 6, '🦝'],
+    ['rhino', '코뿔소', 6, '🦏'], ['jellyfish', '해파리', 6, '🪼']
+  ],
+  food: [
+    ['vegetable', '채소', 5, '🥦'], ['fruit', '과일', 5, '🍓'], ['garlic', '마늘', 5, '🧄'], ['mushroom', '버섯', 5, '🍄'],
+    ['pumpkin', '호박', 5, '🎃'], ['cabbage', '양배추', 5, '🥬'], ['pineapple', '파인애플', 5, '🍍'], ['cherry', '체리', 5, '🍒'],
+    ['dumpling', '만두', 5, '🥟'], ['donut', '도넛', 5, '🍩'],
+    ['coconut', '코코넛', 6, '🥥'], ['avocado', '아보카도', 6, '🥑'], ['kimchi', '김치', 6], ['pie', '파이', 6, '🥧'],
+    ['yogurt', '요구르트', 6], ['flour', '밀가루', 6], ['dessert', '후식', 6, '🍮'], ['recipe', '요리법', 6]
+  ],
+  school: [
+    ['subject', '과목', 5], ['history', '역사', 5], ['Korean', '국어', 5], ['P.E.', '체육', 5, '🤸'],
+    ['dictionary', '사전', 5, '📕'], ['textbook', '교과서', 5], ['club', '동아리', 5], ['vacation', '방학', 5],
+    ['diary', '일기', 5, '📔'], ['letter', '편지', 5, '✉️'],
+    ['principal', '교장 선생님', 6], ['semester', '학기', 6], ['graduation', '졸업', 6, '🎓'], ['contest', '대회', 6],
+    ['speech', '연설', 6], ['rule', '규칙', 6], ['mistake', '실수', 6], ['problem', '문제', 6],
+    ['sentence', '문장', 6], ['information', '정보', 6, 'ℹ️']
+  ],
+  family: [
+    ['child', '어린이', 5, '🧒'], ['adult', '어른', 5], ['neighbor', '이웃', 5], ['king', '왕', 5], ['queen', '여왕', 5],
+    ['husband', '남편', 6], ['wife', '아내', 6], ['prince', '왕자', 6, '🤴'], ['princess', '공주', 6, '👸'], ['hero', '영웅', 6, '🦸']
+  ],
+  jobs: [
+    ['job', '직업', 5, '💼'], ['pilot', '비행기 조종사', 5, '🧑‍✈️'], ['firefighter', '소방관', 5, '🧑‍🚒'], ['scientist', '과학자', 5, '🧑‍🔬'],
+    ['artist', '화가', 5, '🧑‍🎨'], ['writer', '작가', 5], ['dentist', '치과 의사', 5, '🦷'], ['vet', '수의사', 5],
+    ['baker', '제빵사', 5, '🥖'], ['dancer', '무용수', 5, '💃'], ['actor', '배우', 5, '🎭'], ['astronaut', '우주 비행사', 5, '🧑‍🚀'],
+    ['reporter', '기자', 5, '📰'],
+    ['lawyer', '변호사', 6, '⚖️'], ['judge', '판사', 6, '🧑‍⚖️'], ['mechanic', '정비사', 6, '🧑‍🔧'], ['photographer', '사진작가', 6, '📸'],
+    ['architect', '건축가', 6], ['inventor', '발명가', 6], ['engineer', '기술자', 6], ['programmer', '프로그래머', 6, '🧑‍💻'],
+    ['hairdresser', '미용사', 6, '💇'], ['volunteer', '자원봉사자', 6], ['carpenter', '목수', 6, '🪚'], ['detective', '탐정', 6, '🕵️']
+  ],
+  body: [
+    ['headache', '두통', 5, '🤕'], ['fever', '열이 남', 5, '🌡️'], ['cough', '기침', 5], ['toothache', '치통', 5],
+    ['medicine', '약', 5, '💊'], ['health', '건강', 5], ['brain', '뇌', 5, '🧠'],
+    ['flu', '독감', 6], ['sneeze', '재채기', 6, '🤧'], ['bandage', '붕대', 6, '🩹'], ['skin', '피부', 6],
+    ['bone', '뼈', 6, '🦴'], ['tongue', '혀', 6, '👅'], ['thumb', '엄지손가락', 6, '👍']
+  ],
+  colors: [
+    ['sky blue', '하늘색', 5, '🩵'], ['light green', '연두색', 5], ['shape', '모양', 5], ['circle', '동그라미', 5, '⭕'],
+    ['triangle', '세모', 5, '🔺'], ['square', '네모', 5, '🟦'],
+    ['beige', '베이지색', 6], ['turquoise', '청록색', 6], ['rectangle', '직사각형', 6], ['diamond', '마름모', 6, '🔷'],
+    ['oval', '타원', 6], ['stripe', '줄무늬', 6]
+  ],
+  numbers: [
+    ['seventeen', '열일곱', 5], ['eighteen', '열여덟', 5], ['nineteen', '열아홉', 5], ['sixty', '예순', 5],
+    ['seventy', '일흔', 5], ['eighty', '여든', 5], ['ninety', '아흔', 5], ['zero', '영', 5, '0️⃣'],
+    ['thousand', '천', 6], ['million', '백만', 6], ['half', '절반', 6], ['double', '두 배', 6],
+    ['plus', '더하기', 6, '➕'], ['minus', '빼기', 6, '➖'], ['number', '숫자', 6, '🔢']
+  ],
+  nature: [
+    ['plant', '식물', 5, '🪴'], ['seed', '씨앗', 5], ['storm', '폭풍', 5, '⛈️'], ['thunder', '천둥', 5, '🌩️'],
+    ['lightning', '번개', 5, '⚡'], ['fog', '안개', 5, '🌫️'], ['ice', '얼음', 5, '🧊'], ['hill', '언덕', 5],
+    ['desert', '사막', 5, '🏜️'], ['volcano', '화산', 5, '🌋'], ['waterfall', '폭포', 5], ['cave', '동굴', 5],
+    ['environment', '환경', 6], ['pollution', '오염', 6], ['trash', '쓰레기', 6], ['energy', '에너지', 6],
+    ['planet', '행성', 6, '🪐'], ['space', '우주', 6, '🌌'], ['climate', '기후', 6], ['earthquake', '지진', 6],
+    ['flood', '홍수', 6], ['typhoon', '태풍', 6, '🌀'], ['fine dust', '미세 먼지', 6, '😷'], ['shadow', '그림자', 6]
+  ],
+  home: [
+    ['bottle', '병', 5, '🍼'], ['blanket', '담요', 5], ['pillow', '베개', 5], ['refrigerator', '냉장고', 5],
+    ['stairs', '계단', 5], ['roof', '지붕', 5], ['basket', '바구니', 5, '🧺'], ['camera', '카메라', 5, '📷'],
+    ['calendar', '달력', 5, '📆'],
+    ['washing machine', '세탁기', 6], ['curtain', '커튼', 6], ['shelf', '선반', 6], ['bucket', '양동이', 6, '🪣'],
+    ['trash can', '휴지통', 6, '🗑️'], ['vase', '꽃병', 6, '🏺'], ['oven', '오븐', 6], ['ladder', '사다리', 6, '🪜']
+  ],
+  clothes: [
+    ['vest', '조끼', 5, '🦺'], ['shorts', '반바지', 5, '🩳'], ['jeans', '청바지', 5], ['sneakers', '운동화', 5],
+    ['sandals', '샌들', 5, '🩴'], ['necklace', '목걸이', 5, '📿'], ['sunglasses', '선글라스', 5, '🕶️'],
+    ['tie', '넥타이', 6, '👔'], ['wallet', '지갑', 6, '👛'], ['crown', '왕관', 6, '👑'], ['hanbok', '한복', 6],
+    ['mask', '마스크', 6], ['helmet', '헬멧', 6, '⛑️']
+  ],
+  verbs: [
+    ['borrow', '빌리다', 5], ['lend', '빌려주다', 5], ['choose', '고르다', 5], ['decide', '결정하다', 5],
+    ['bring', '가져오다', 5], ['carry', '나르다', 5], ['send', '보내다', 5, '📨'], ['visit', '방문하다', 5],
+    ['travel', '여행하다', 5, '🧳'], ['remember', '기억하다', 5], ['forget', '잊다', 5], ['arrive', '도착하다', 5, '🛬'],
+    ['leave', '떠나다', 5, '🛫'], ['grow', '자라다', 5, '🌱'], ['practice', '연습하다', 5], ['invite', '초대하다', 5, '💌'],
+    ['enjoy', '즐기다', 5], ['hurry', '서두르다', 5],
+    ['protect', '보호하다', 6, '🛡️'], ['recycle', '재활용하다', 6, '♻️'], ['reduce', '줄이다', 6], ['waste', '낭비하다', 6],
+    ['solve', '해결하다', 6], ['discover', '발견하다', 6], ['invent', '발명하다', 6], ['imagine', '상상하다', 6, '💭'],
+    ['agree', '동의하다', 6], ['prepare', '준비하다', 6], ['introduce', '소개하다', 6], ['understand', '이해하다', 6],
+    ['collect', '모으다', 6], ['celebrate', '축하하다', 6, '🎉'], ['promise', '약속하다', 6, '🤞'], ['share', '나누다', 6]
+  ],
+  adjectives: [
+    ['important', '중요한', 5], ['different', '다른', 5], ['same', '같은', 5], ['special', '특별한', 5],
+    ['dangerous', '위험한', 5, '⚠️'], ['safe', '안전한', 5], ['famous', '유명한', 5], ['expensive', '비싼', 5, '💰'],
+    ['cheap', '값싼', 5], ['interesting', '흥미로운', 5], ['empty', '텅 빈', 5], ['fresh', '신선한', 5],
+    ['necessary', '필요한', 6], ['possible', '가능한', 6], ['impossible', '불가능한', 6], ['terrible', '끔찍한', 6],
+    ['simple', '간단한', 6], ['similar', '비슷한', 6], ['convenient', '편리한', 6], ['traditional', '전통적인', 6],
+    ['modern', '현대적인', 6], ['perfect', '완벽한', 6, '💯'], ['huge', '거대한', 6], ['tiny', '아주 작은', 6]
+  ],
+  feelings: [
+    ['feeling', '느낌', 5], ['excited', '신이 난', 5, '🤩'], ['worried', '걱정하는', 5, '😟'], ['scared', '겁먹은', 5, '😨'],
+    ['surprised', '놀란', 5, '😲'], ['bored', '지루한', 5, '🥱'], ['lonely', '외로운', 5], ['nervous', '긴장한', 5, '😬'],
+    ['proud', '자랑스러운', 5], ['shy', '수줍은', 5, '😳'], ['sorry', '미안한', 5], ['curious', '궁금한', 5, '🧐'],
+    ['upset', '속상한', 5, '😣'],
+    ['confident', '자신 있는', 6, '😎'], ['disappointed', '실망한', 6, '😞'], ['embarrassed', '창피한', 6, '😅'], ['jealous', '질투하는', 6],
+    ['thankful', '고마운', 6, '🙏'], ['comfortable', '편안한', 6], ['calm', '차분한', 6, '😌'], ['generous', '너그러운', 6],
+    ['patient', '참을성 있는', 6], ['careful', '조심하는', 6], ['polite', '예의 바른', 6, '🙇'], ['honest', '정직한', 6]
+  ],
+  time: [
+    ['January', '1월', 5], ['February', '2월', 5], ['March', '3월', 5], ['April', '4월', 5],
+    ['May', '5월', 5], ['June', '6월', 5], ['July', '7월', 5], ['August', '8월', 5],
+    ['September', '9월', 5], ['October', '10월', 5], ['November', '11월', 5], ['December', '12월', 5],
+    ['season', '계절', 5],
+    ['past', '과거', 6], ['future', '미래', 6], ['century', '세기', 6], ['always', '항상', 6],
+    ['often', '자주', 6], ['sometimes', '가끔', 6], ['usually', '보통', 6], ['Christmas', '크리스마스', 6, '🎄']
+  ],
+  places: [
+    ['left', '왼쪽', 5, '⬅️'], ['right', '오른쪽', 5, '➡️'], ['corner', '모퉁이', 5], ['crosswalk', '횡단보도', 5, '🚸'],
+    ['traffic light', '신호등', 5, '🚦'], ['bridge', '건너는 다리', 5, '🌉'], ['tower', '탑', 5, '🗼'], ['castle', '성', 5, '🏰'],
+    ['hotel', '호텔', 5, '🏨'], ['supermarket', '슈퍼마켓', 5], ['pharmacy', '약국', 5], ['helicopter', '헬리콥터', 5, '🚁'],
+    ['truck', '트럭', 5, '🚚'], ['ambulance', '구급차', 5, '🚑'],
+    ['north', '북쪽', 6, '⬆️'], ['south', '남쪽', 6, '⬇️'], ['east', '동쪽', 6], ['west', '서쪽', 6],
+    ['palace', '궁전', 6, '🏯'], ['temple', '절', 6], ['stadium', '경기장', 6, '🏟️'], ['mall', '쇼핑몰', 6, '🛍️'],
+    ['factory', '공장', 6, '🏭'], ['rocket', '로켓', 6, '🚀'], ['passport', '여권', 6, '🛂'], ['trip', '여행', 6],
+    ['price', '가격', 6, '🏷️'], ['coin', '동전', 6, '🪙']
+  ],
+  hobbies: [
+    ['hobby', '취미', 5], ['soccer', '축구', 5, '⚽'], ['baseball', '야구', 5, '⚾'], ['basketball', '농구', 5, '🏀'],
+    ['volleyball', '배구', 5, '🏐'], ['tennis', '테니스', 5, '🎾'], ['badminton', '배드민턴', 5, '🏸'], ['table tennis', '탁구', 5, '🏓'],
+    ['taekwondo', '태권도', 5, '🥋'], ['piano', '피아노', 5, '🎹'], ['guitar', '기타', 5, '🎸'], ['violin', '바이올린', 5, '🎻'],
+    ['drum', '드럼', 5, '🥁'], ['kite', '연', 5, '🪁'], ['movie', '영화', 5, '🎬'],
+    ['skiing', '스키', 6, '⛷️'], ['skating', '스케이트', 6, '⛸️'], ['hiking', '등산', 6, '🥾'], ['fishing', '낚시', 6, '🎣'],
+    ['exercise', '운동', 6, '🏋️'], ['player', '선수', 6], ['team', '팀', 6], ['medal', '메달', 6, '🏅'],
+    ['jump rope', '줄넘기', 6], ['chess', '체스', 6, '♟️'], ['yoga', '요가', 6, '🧘'], ['puzzle', '퍼즐', 6, '🧩']
+  ]
+};
+
 export const slug = (en) => en.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-export const WORDS = Object.entries(DATA).flatMap(([topic, list]) =>
+export const WORDS = [DATA, DATA_UPPER].flatMap((data) => Object.entries(data)).flatMap(([topic, list]) =>
   list.map(([en, ko, grade, emoji]) => {
     const w = { id: slug(en), en, ko, grade, topic };
     if (emoji) w.emoji = emoji;

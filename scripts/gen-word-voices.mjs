@@ -127,8 +127,17 @@ async function dropWav(file) {
   if (dir !== PREVIEW_DIR) await rmdir(dir).catch(() => {});
 }
 
+/* 카드 글자와 읽는 소리가 다른 낱말(숫자로 적은 달은 '유월', '시월'처럼 읽어야 해서 한글로 넘깁니다). */
+const SAY = {
+  ko: {
+    january: '일월', february: '이월', march: '삼월', april: '사월', may: '오월', june: '유월',
+    july: '칠월', august: '팔월', september: '구월', october: '시월', november: '십일월', december: '십이월'
+  },
+  en: { 'p-e': 'P E' }
+};
+
 async function makeOne(w, lang, tmp) {
-  const text = lang === 'en' ? w.en : w.ko;
+  const text = SAY[lang]?.[w.id] ?? (lang === 'en' ? w.en : w.ko);
   const speed = speedFor(lang);
   let best = null;
   for (let attempt = 0; attempt < 2; attempt++) {

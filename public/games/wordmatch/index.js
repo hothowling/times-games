@@ -20,7 +20,7 @@ export const dict = {
   ko: {
     title: '영단어 짝맞추기',
     how: '영어 카드와 한글 카드에서 같은 뜻을 찾아 두 장을 눌러요!',
-    grade: '학년', grade3: '3학년', grade4: '4학년',
+    grade: '학년', grade3: '3학년', grade4: '4학년', grade5: '5학년', grade6: '6학년',
     topic: '주제', all: '전체',
     level1: '8쌍 (쉬움)', level2: '10쌍 (보통)', level3: '12쌍 (어려움)',
     left: '남은 짝 {n}',
@@ -59,7 +59,7 @@ export const dict = {
   en: {
     title: 'Word Match',
     how: 'Find the English card and the Korean card that mean the same thing!',
-    grade: 'Grade', grade3: 'Grade 3', grade4: 'Grade 4',
+    grade: 'Grade', grade3: '3rd', grade4: '4th', grade5: '5th', grade6: '6th',
     topic: 'Topic', all: 'All',
     level1: '8 pairs (Easy)', level2: '10 pairs (Normal)', level3: '12 pairs (Hard)',
     left: '{n} left',

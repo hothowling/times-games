@@ -46,8 +46,8 @@ const UA = 'times-games-wordmatch/1.0 (educational kids game; image fetch script
 const SIZE = 512;
 
 /* 그림으로 보여 주기 쉬운 주제를 먼저, 이 순서로 받습니다. */
-const CONCRETE = ['animals', 'food', 'school', 'body', 'home', 'clothes', 'nature', 'places', 'family'];
-const ABSTRACT = ['colors', 'numbers', 'time', 'verbs', 'adjectives'];
+const CONCRETE = ['animals', 'food', 'school', 'body', 'home', 'clothes', 'nature', 'places', 'hobbies', 'jobs', 'family'];
+const ABSTRACT = ['colors', 'numbers', 'time', 'verbs', 'adjectives', 'feelings'];
 
 /* 검색어가 애매한 단어는 바꿔 찾습니다(영어 단어 그대로 찾으면 엉뚱한 사진이 나오는 것). */
 const QUERY = {
@@ -60,7 +60,20 @@ const QUERY = {
   fall: 'autumn leaves', glass: 'drinking glass', watch: 'wristwatch', cap: 'baseball cap', ring: 'ring jewelry',
   'police-officer': 'police officer', boat: 'small boat', bike: 'bicycle', toilet: 'toilet restroom',
   'post-office': 'post office', 'fire-station': 'fire station', 'police-station': 'police station',
-  brother: 'brothers kids', sister: 'sisters kids', man: 'man portrait', woman: 'woman portrait', person: 'person portrait'
+  brother: 'brothers kids', sister: 'sisters kids', man: 'man portrait', woman: 'woman portrait', person: 'person portrait',
+  /* 5~6학년 */
+  'polar-bear': 'polar bear', fruit: 'fruit bowl', vegetable: 'vegetables', pie: 'pie dessert', flour: 'flour baking',
+  dumpling: 'dumplings', medicine: 'medicine pills', diary: 'diary notebook', letter: 'letter envelope',
+  graduation: 'graduation cap', plant: 'potted plant', seed: 'seeds', storm: 'storm clouds', ice: 'ice cubes',
+  trash: 'trash litter', planet: 'planet saturn', pollution: 'air pollution', shadow: 'shadow silhouette',
+  bottle: 'water bottle', roof: 'house roof', oven: 'kitchen oven', tower: 'tower building', temple: 'buddhist temple',
+  palace: 'palace korea', rocket: 'rocket launch', medal: 'gold medal', kite: 'kite flying', drum: 'drum instrument',
+  fishing: 'fishing rod', chess: 'chess board', puzzle: 'jigsaw puzzle', skiing: 'skiing snow', hiking: 'hiking trail',
+  skating: 'ice skating', soccer: 'soccer ball', baseball: 'baseball ball', basketball: 'basketball ball',
+  tennis: 'tennis racket', badminton: 'badminton shuttlecock', artist: 'artist painting', vet: 'vet dog',
+  pilot: 'airline pilot', mechanic: 'car mechanic', scientist: 'scientist laboratory', baker: 'baker bread',
+  tie: 'necktie tie', crown: 'royal crown', vest: 'vest clothing', mall: 'shopping mall', hotel: 'hotel building',
+  mask: 'face mask', 'traffic-light': 'traffic light', 'washing-machine': 'washing machine', 'trash-can': 'trash can'
 };
 
 /* ---------- 인자 ---------- */
@@ -94,7 +107,8 @@ const norm = (s) => String(s || '').toLowerCase().replace(/\.(jpe?g|png|gif|webp
 /* 아이들 게임에 맞지 않거나 그림 카드로 알아보기 어려운 제목 */
 const BAD = /\b(logo|diagram|map of|chart|poster|sign|text|tattoo|meme|screenshot|graffiti|stamp|coin|label|menu|book cover|statue|sculpture|plastic|toy|figurine|cartoon|dead|carcass|meat market|butcher|slaughter|hunt|hunting|war|soldier|gun|weapon|blood|nude|naked|nudity|topless|sexy|erotic|fetish|lingerie|underwear|bodysuit|tights|pantyhose|shapewear|corset|bra|bikini|modell?ed|beer|wine|cigar|cigarette|smok\w*|drunk|bw|b&w|black and white|monochrome|film|movie|museum|skeleton|fossil|x ray|surgery|injury|wound)\b/i;
 /* 사람 몸·수영복처럼 사진 검색이 위험한 단어는 기본으로 받지 않고 이모지를 씁니다(--only 로 직접 지정하면 받음). */
-const EXCLUDE = new Set(['swimsuit', 'body', 'back', 'lip', 'toe', 'pajamas']);
+const EXCLUDE = new Set(['swimsuit', 'body', 'back', 'lip', 'toe', 'pajamas',
+  'skin', 'tongue', 'thumb', 'brain', 'bone', 'shorts', 'jeans', 'yoga', 'dancer', 'child', 'adult', 'husband', 'wife']);
 
 function scoreCandidate(word, c, query) {
   const title = norm(c.title);
@@ -127,7 +141,7 @@ function scoreCandidate(word, c, query) {
   const rest = title.replace(new RegExp(`\\b${head}(s|es)?\\b`, 'g'), ' ');
   if (hint?.good?.test(rest)) s += 2;
   if (hint?.bad?.test(rest)) s -= 5;
-  if (word.topic !== 'family' && word.topic !== 'clothes' && PEOPLE.test(rest)) s -= 3;
+  if (!['family', 'clothes', 'jobs', 'hobbies'].includes(word.topic) && PEOPLE.test(rest)) s -= 3;
   s += Math.max(0, 2 - Math.floor(c.rank / 4)); // 검색 순위가 높을수록 조금 더
   return s;
 }
