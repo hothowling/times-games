@@ -105,7 +105,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 
 /* 게임 중: 게임이 화면 전체를 씁니다. */
-body.playing #view { max-width: none; padding: 0; }
+/* 게임 중에도 폭은 로비와 같은 560px(모바일 폭). 화면 전체에 고정되는 게임은 각자 game.css 에서 같은 폭으로 둡니다. */
+body.playing #view { padding: 0; }
 
 .screen-title {
   margin: 8px 0 14px;
@@ -747,3 +748,32 @@ body.playing #view { max-width: none; padding: 0; }
   opacity: .7;
 }
 .app-version:empty { display: none; }
+
+/* ---------- 넓은 화면(PC)의 양옆 배경 ----------
+ * 앱은 가운데 560px 기둥에만 그려지고, 남는 양옆은 파스텔 그라디언트 위에 반짝이·구구단 기호 무늬를 깝니다.
+ * 기둥 자리는 body::before 가 원래 배경색으로 덮고 그림자를 둘러 휴대폰 화면처럼 보이게 합니다.
+ */
+@media (min-width: 600px) {
+  body {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cg font-family='Arial Rounded MT Bold,Arial,sans-serif' font-weight='700' text-anchor='middle'%3E%3Ctext x='28' y='44' font-size='26' fill='%237c3aed' fill-opacity='.16'%3E%C3%97%3C/text%3E%3Ctext x='150' y='70' font-size='22' fill='%23ec4899' fill-opacity='.16'%3E%2B%3C/text%3E%3Ctext x='92' y='150' font-size='24' fill='%230ea5e9' fill-opacity='.16'%3E%3D%3C/text%3E%3Ctext x='192' y='182' font-size='20' fill='%237c3aed' fill-opacity='.14'%3E9%3C/text%3E%3Ctext x='40' y='200' font-size='18' fill='%23f59e0b' fill-opacity='.2'%3E7%3C/text%3E%3C/g%3E%3Cpath d='M110 18l4 10 10 4-10 4-4 10-4-10-10-4 10-4z' fill='%23facc15' fill-opacity='.55'/%3E%3Cpath d='M188 116l3 7 7 3-7 3-3 7-3-7-7-3 7-3z' fill='%23ec4899' fill-opacity='.35'/%3E%3Cpath d='M52 104l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z' fill='%237c3aed' fill-opacity='.3'/%3E%3Ccircle cx='170' cy='20' r='4' fill='%2338bdf8' fill-opacity='.35'/%3E%3Ccircle cx='14' cy='132' r='5' fill='%23f472b6' fill-opacity='.3'/%3E%3Ccircle cx='130' cy='204' r='3.5' fill='%23a78bfa' fill-opacity='.4'/%3E%3Ccircle cx='76' cy='70' r='3' fill='%23facc15' fill-opacity='.5'/%3E%3C/svg%3E") 0 0 / 220px 220px,
+      radial-gradient(42rem 32rem at 8% 12%, #fbcfe8 0%, transparent 60%),
+      radial-gradient(40rem 34rem at 92% 30%, #bae6fd 0%, transparent 60%),
+      radial-gradient(46rem 36rem at 20% 95%, #fde68a 0%, transparent 60%),
+      radial-gradient(44rem 34rem at 85% 100%, #ddd6fe 0%, transparent 62%),
+      #f3e8ff;
+    background-attachment: fixed;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    z-index: -1;
+    inset: 0 auto 0 50%;
+    width: 560px;
+    transform: translateX(-50%);
+    background:
+      radial-gradient(40rem 26rem at 50% -10%, #ede4ff, transparent 70%),
+      var(--bg);
+    box-shadow: 0 0 0 1px rgb(124 58 237 / 8%), 0 18px 60px rgb(76 29 149 / 18%);
+  }
+}

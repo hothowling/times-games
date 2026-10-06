@@ -9,6 +9,9 @@
   /* 화면 전체를 덮는 밤하늘(원본의 body 배경) */
   position: fixed;
   inset: 0;
+  /* PC 처럼 넓은 화면에서도 로비(#view)와 같은 모바일 폭으로 가운데에 둡니다. */
+  max-width: 560px;
+  margin: 0 auto;
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
