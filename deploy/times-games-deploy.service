@@ -1,0 +1,12 @@
+# /etc/systemd/system/times-games-deploy.service - GitHub main 의 새 커밋을 배포(deploy/deploy.sh). 타이머가 부릅니다.
+[Unit]
+Description=times-games auto deploy from GitHub main
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=linuxuser
+WorkingDirectory=/home/linuxuser/dev/jotanow/times-games
+ExecStart=/home/linuxuser/dev/jotanow/times-games/deploy/deploy.sh
+TimeoutStartSec=300

@@ -1,0 +1,17 @@
+# main 푸시와 PR 마다 테스트를 돌립니다. 배포는 서버가 1분마다 main 을 확인해 직접 합니다(deploy/README.md).
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node --test
