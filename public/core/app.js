@@ -251,6 +251,8 @@ async function route() {
   view.textContent = '';
   window.scrollTo(0, 0);
 
+  /* 새 버전이 배포돼 있으면 게임 밖으로 나오는 이 순간에 새로 불러옵니다. */
+  if (updateReady && name !== 'play') { location.reload(); return; }
   if (!state.me && name !== 'login') { go('login'); return; }
   if (state.me && name === 'login' && !(params.get('upgrade') && state.me.user.guest)) { go('lobby'); return; }
   $('topbar').hidden = !state.me || name === 'play';
@@ -284,6 +286,7 @@ async function boot() {
   }
   applySettings();
   showVersion();
+  watchUpdates();
   window.addEventListener('hashchange', route);
   route();
   if (state.me) claimInstallReward();
@@ -298,7 +301,45 @@ async function showVersion() {
     const p = (n) => String(n).padStart(2, '0');
     const when = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
     $('app-version').textContent = `${t('updated')} ${when} · ${v.commit}`;
+    loadedCommit ??= v.commit;
   } catch { /* 표시만 안 할 뿐 */ }
+}
+
+/*
+ * 새 버전 확인: 홈 화면 앱은 백그라운드에 오래 남아 있어 새로 배포한 코드를 받지 못합니다.
+ * 화면이 다시 보일 때(앱 전환·잠금 해제·bfcache 복귀) 서버 커밋을 묻고, 처음 불러온 커밋과 다르면 새로고침합니다.
+ * 게임 중이거나 창(dialog)이 열려 있으면 미뤘다가, 게임에서 나오거나 다음 화면으로 갈 때 새로고침합니다.
+ * 서버는 no-cache 로 파일을 주고 서비스 워커는 캐시하지 않아서, 새로고침만 하면 새 파일을 받습니다.
+ */
+let loadedCommit = null;
+let updateReady = false;
+let lastCheck = 0;
+const UPDATE_CHECK_GAP = 30e3;
+
+function reloadIfIdle() {
+  if (!updateReady || document.hidden) return;
+  const inGame = location.hash.replace(/^#\/?/, '').startsWith('play');
+  if (inGame || document.querySelector('dialog[open]')) return;
+  location.reload();
+}
+
+async function checkUpdate() {
+  if (document.hidden || Date.now() - lastCheck < UPDATE_CHECK_GAP) return;
+  lastCheck = Date.now();
+  try {
+    const v = await api('GET', 'version');
+    if (!v.commit) return;
+    if (!loadedCommit) { loadedCommit = v.commit; return; }
+    if (v.commit !== loadedCommit) { updateReady = true; reloadIfIdle(); }
+  } catch { /* 연결이 없으면 다음에 다시 */ }
+}
+
+function watchUpdates() {
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate(); });
+  window.addEventListener('pageshow', (e) => { if (e.persisted) { lastCheck = 0; checkUpdate(); } });
+  window.addEventListener('focus', checkUpdate);
+  /* 창을 닫아 미뤄 둔 새로고침도 처리합니다. */
+  document.addEventListener('close', reloadIfIdle, true);
 }
 
 /* 로그인/가입 직후 화면 셸을 다시 맞춥니다(screens/login.js 가 부릅니다). */
