@@ -30,7 +30,7 @@ const BASE_RIG = {
 export const RIGS = {
   sooji: { ...BASE_RIG, headX: '45.5%', headW: 198, glassesX: '42%', glassesAngle: -8.7 },
   jiho: {
-    ...BASE_RIG, faceY: -21, faceW: 174, faceH: 196, headX: '47%', headY: -90, headAngle: 5,
+    ...BASE_RIG, faceY: -21, faceW: 174, faceH: 196, headX: '52%', headY: -90, headAngle: 5,
     glassesX: '48%', glassesAngle: -4.9, bow: { headY: -35, headW: 132 }
   },
   /* 목 없는 단발 머리와 정면 눈높이에 맞춰 얼굴 영역과 장식 위치를 조정합니다. */
