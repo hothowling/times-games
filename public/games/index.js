@@ -13,6 +13,12 @@ export const GAMES = [
     desc: { ko: '울타리를 지키고 퀴즈로 미사일을 키워요.', en: 'Guard the fence and power up with quizzes.' }
   },
   {
+    id: 'wordmatch', items: ['hint'], thumb: 'assets/thumbs/wordmatch.jpg',
+    title: { ko: '영단어 짝맞추기', en: 'Word Match' },
+    short: { ko: '영단어', en: 'Words' }, rank: { ko: '{n}점', en: '{n} pts' },
+    desc: { ko: '영어 카드와 한글 카드에서 같은 뜻을 찾아요.', en: 'Match each English word with its Korean meaning.' }
+  },
+  {
     id: 'capitals', items: ['hint', 'eraser', 'time', 'shield', 'pill'], thumb: 'assets/thumbs/capitals.jpg',
     title: { ko: '수도 맞히기', en: 'Capital Quiz' },
     short: { ko: '수도', en: 'Capitals' }, rank: { ko: '{n}점', en: '{n} pts' },

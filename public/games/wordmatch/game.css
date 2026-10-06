@@ -1,0 +1,303 @@
+/*
+ * game.css - 영단어 짝맞추기. 모든 선택자는 .game-wordmatch 아래에 둡니다.
+ */
+
+.game-wordmatch {
+  --ink: #2b2f5c;
+  --en: #2f7de1;
+  --en-dark: #1d5aa8;
+  --ko: #ff8a3d;
+  --ko-dark: #c9611f;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  touch-action: manipulation;
+  color: var(--ink);
+  font-family: var(--font-fun);
+  background: linear-gradient(#fff3d6, #fef9ee 50%, #dff3ff);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game-wordmatch * { box-sizing: border-box; }
+.game-wordmatch button { font-family: inherit; color: inherit; cursor: pointer; }
+
+.game-wordmatch .wm-app {
+  position: absolute;
+  inset: 0;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: calc(8px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));
+  gap: 8px;
+}
+
+.game-wordmatch .wm-hud { display: flex; align-items: center; gap: 6px; }
+.game-wordmatch .wm-left { margin-right: auto; }
+.game-wordmatch .wm-left:empty { visibility: hidden; }
+
+.game-wordmatch .wm-pill {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .9);
+  font-size: 17px;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 3px 0 rgba(43, 47, 92, .15);
+}
+
+.game-wordmatch .wm-time { font-variant-numeric: tabular-nums; }
+
+.game-wordmatch .wm-bar { display: flex; align-items: center; gap: 8px; min-height: 56px; }
+.game-wordmatch .wm-face { flex: none; width: 56px; }
+.game-wordmatch .wm-msg {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: #e0314b;
+  font-size: min(4.6vw, 20px);
+  font-weight: 800;
+  word-break: keep-all;
+}
+.game-wordmatch .wm-items { flex: none; }
+.game-wordmatch .wm-items .item-btn { width: 48px; height: 48px; }
+
+/* ---------- 카드 판: 4열, 줄 수는 카드 수에 맞춰 화면을 채웁니다 ---------- */
+
+.game-wordmatch .wm-grid {
+  --rows: 4;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
+  gap: 8px;
+}
+
+.game-wordmatch .wm-grid[data-n="20"] { --rows: 5; }
+.game-wordmatch .wm-grid[data-n="24"] { --rows: 6; }
+
+.game-wordmatch .wm-cardbtn {
+  min-width: 0;
+  min-height: 0;
+  padding: 4px;
+  border: 0;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: clamp(13px, 4.2vw, 24px);
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  transition: transform .32s ease-in, opacity .32s ease-in;
+}
+
+/* 영어 카드: 파란 테두리 흰 카드 / 한글 카드: 주황 카드 */
+.game-wordmatch .wm-en {
+  background: #fff;
+  color: var(--en-dark);
+  border: 3px solid var(--en);
+  box-shadow: 0 4px 0 var(--en-dark);
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.game-wordmatch .wm-ko {
+  background: var(--ko);
+  color: #fff;
+  box-shadow: 0 4px 0 var(--ko-dark);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.game-wordmatch .wm-cardbtn:active:not(:disabled) { transform: translateY(2px); }
+.game-wordmatch .wm-cardbtn.sel { transform: translateY(-3px) scale(1.04); outline: 4px solid #ffd54a; outline-offset: 1px; }
+.game-wordmatch .wm-cardbtn.glow { animation: wm-glow .5s ease-in-out infinite alternate; }
+.game-wordmatch .wm-cardbtn.shake { animation: wm-shake .45s; background: #ff5a5a; color: #fff; border-color: #c23434; }
+.game-wordmatch .wm-cardbtn.fly { transform: translate(var(--dx), var(--dy)) scale(.5); opacity: 0; pointer-events: none; }
+.game-wordmatch .wm-cardbtn.gone { visibility: hidden; }
+
+@keyframes wm-glow { to { box-shadow: 0 0 0 5px #ffd54a, 0 4px 0 rgba(0, 0, 0, .2); } }
+@keyframes wm-shake {
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* ---------- 맞혔을 때 그림 카드 ---------- */
+
+.game-wordmatch .wm-pop {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(43, 47, 92, .25);
+}
+
+.game-wordmatch .wm-pop[hidden] { display: none; }
+
+.game-wordmatch .wm-pop-card {
+  width: min(100%, 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 18px 16px 22px;
+  border-radius: 28px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, .18);
+  animation: wm-pop .3s cubic-bezier(.2, 1.4, .5, 1);
+}
+
+.game-wordmatch .wm-pop-pic { font-size: min(32vw, 128px); line-height: 1.1; }
+.game-wordmatch .wm-pop-pic[hidden] { display: none; }
+.game-wordmatch .wm-pop-img {
+  width: min(56vw, 240px);
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 20px;
+  background: #f1f3fb;
+}
+.game-wordmatch .wm-pop-img[hidden],
+.game-wordmatch .wm-pop-credit[hidden] { display: none; }
+.game-wordmatch .wm-pop-credit {
+  max-width: min(56vw, 240px);
+  color: #9aa0b4;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.game-wordmatch .wm-pop-en { color: var(--en-dark); font-size: min(12vw, 52px); overflow-wrap: anywhere; }
+.game-wordmatch .wm-pop-ko { color: var(--ko-dark); font-size: min(7vw, 28px); font-weight: 800; word-break: keep-all; }
+
+@keyframes wm-pop { from { opacity: 0; transform: scale(.6); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .game-wordmatch .wm-pop-card,
+  .game-wordmatch .wm-cardbtn.glow,
+  .game-wordmatch .wm-cardbtn.shake { animation: none; }
+  .game-wordmatch .wm-cardbtn { transition: none; }
+}
+
+/* ---------- 시작 / 끝 ---------- */
+
+.game-wordmatch .wm-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(43, 47, 92, .45);
+}
+
+.game-wordmatch .wm-overlay[hidden],
+.game-wordmatch .wm-overlay[data-mode="start"] [data-show]:not([data-show~="start"]),
+.game-wordmatch .wm-overlay[data-mode="over"] [data-show]:not([data-show~="over"]),
+.game-wordmatch .wm-overlay:not(.new-best) .wm-record { display: none; }
+
+.game-wordmatch .wm-card {
+  width: min(100%, 440px);
+  max-height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 16px 16px 20px;
+  border-radius: 28px;
+  background: #fff;
+  text-align: center;
+  word-break: keep-all;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, .2);
+}
+
+.game-wordmatch .wm-card h1 { margin: 2px 0 6px; color: var(--en); font-size: min(9vw, 36px); }
+.game-wordmatch .wm-card h2 { margin: 12px 0 6px; font-size: 16px; color: #6a6f9c; }
+.game-wordmatch .wm-card-face { width: min(26vw, 100px); margin: 0 auto; }
+.game-wordmatch .wm-card p { margin: 6px 0; font-size: 16px; line-height: 1.45; }
+.game-wordmatch .wm-score { font-size: 24px !important; font-weight: 800; }
+.game-wordmatch .wm-result { font-weight: 800; }
+.game-wordmatch .wm-record { color: #e0314b; font-size: 20px !important; font-weight: 800; }
+.game-wordmatch .wm-best { color: var(--en); font-weight: 800; }
+.game-wordmatch .wm-review-note:empty { display: none; }
+.game-wordmatch .wm-review-note { color: var(--ko-dark); font-weight: 800; }
+
+.game-wordmatch .wm-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+
+.game-wordmatch .wm-chip {
+  padding: 7px 12px;
+  border: 2px solid #d8dcf2;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.game-wordmatch .wm-chip.on { border-color: var(--en); background: var(--en); color: #fff; }
+
+.game-wordmatch .wm-levels { display: grid; gap: 10px; margin-top: 12px; }
+
+.game-wordmatch .wm-main {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--en);
+  color: #fff;
+  font-size: min(5.8vw, 24px);
+  font-weight: 800;
+  box-shadow: 0 6px 0 var(--en-dark);
+}
+
+.game-wordmatch .wm-levels .wm-main { margin-top: 0; }
+.game-wordmatch .wm-levels .wm-main:first-child { background: #34c27a; box-shadow: 0 6px 0 #1f8a54; }
+.game-wordmatch .wm-levels .wm-main:last-child { background: var(--ko); box-shadow: 0 6px 0 var(--ko-dark); }
+.game-wordmatch .wm-main:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0, 0, 0, .25) !important; }
+
+.game-wordmatch .wm-sub {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 2px solid #d8dcf2;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* 오늘 배운 단어 */
+.game-wordmatch .wm-learned {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.game-wordmatch .wm-word {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 6px;
+  align-items: center;
+  padding: 6px 8px;
+  border: 2px solid #e6e8f6;
+  border-radius: 14px;
+  background: #f8f9ff;
+  text-align: left;
+}
+
+.game-wordmatch .wm-word.missed { border-color: #ffb4b4; background: #fff4f4; }
+.game-wordmatch .wm-word-pic { grid-row: span 2; font-size: 26px; }
+.game-wordmatch .wm-word-pic img { display: block; width: 40px; height: 40px; object-fit: cover; border-radius: 10px; }
+.game-wordmatch .wm-word b { color: var(--en-dark); font-size: 16px; overflow-wrap: anywhere; }
+.game-wordmatch .wm-word span:last-child { color: var(--ko-dark); font-size: 14px; font-weight: 800; }

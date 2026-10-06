@@ -1,6 +1,7 @@
 /*
  * audio.js - 효과음(WebAudio)과 숫자 읽어주기(녹음 파일)를 담당합니다.
  * 효과음은 오실레이터로 만들고, 읽어주기는 assets/voice/<lang>/NN.ogg 녹음 파일을 이어 붙여 재생합니다.
+ * 낱말 읽기(speak/stopSpeak/warmSpeak)는 녹음 클립(opts.clip)이 있으면 그 파일을, 없거나 못 열면 브라우저 speechSynthesis 를 씁니다.
  * 게임마다 다른 효과음은 audio.context() / audio.tone() 으로 같은 AudioContext 위에 만듭니다
  * (iOS 는 AudioContext 개수가 제한되어 하나만 씁니다). 원본: times-table-game/js/audio.js
  */
@@ -500,6 +501,197 @@
     return !!clips[voiceLang(lang)][Number(n)];
   }
 
+  /* ---------- 낱말 읽어주기(브라우저 speechSynthesis) ---------- */
+
+  /*
+   * speakTts(text, lang, { rate, pitch }) → Promise. 영어 낱말 게임(wordmatch)이 speak 를 거쳐 씁니다.
+   * 소리나 읽어주기가 꺼져 있거나 브라우저가 지원하지 않으면 바로 끝납니다. 읽던 것은 끊고 새로 읽습니다.
+   * Chrome 은 목소리 목록이 늦게 오므로 onvoiceschanged 에서 다시 고릅니다. 그 언어 목소리가 없으면 lang 만 정해 시도하고,
+   * 실패(onerror)나 끝 신호가 오지 않아도(일부 브라우저) 안전 타이머로 끝냅니다.
+   */
+  var synth = global.speechSynthesis || null;
+  var Utter = global.SpeechSynthesisUtterance || null;
+  var ttsVoices = { ko: null, en: null };
+  var speakDone = null;   /* 지금 읽는 말의 resolve. 끊을 때 바로 부릅니다. */
+
+  function pickVoices() {
+    var list = [];
+    try { list = synth.getVoices() || []; } catch (e) { list = []; }
+    var find = function (re) {
+      for (var i = 0; i < list.length; i++) if (re.test(list[i].lang || '')) return list[i];
+      return null;
+    };
+    ttsVoices.ko = find(/^ko/i);
+    ttsVoices.en = find(/^en[-_](US|GB)/i) || find(/^en/i);
+  }
+
+  if (synth && Utter) {
+    pickVoices();
+    try {
+      if (synth.addEventListener) synth.addEventListener('voiceschanged', pickVoices);
+      else synth.onvoiceschanged = pickVoices;
+    } catch (e) { /* 무시 */ }
+  }
+
+  function settleSpeak() {
+    var done = speakDone;
+    speakDone = null;
+    if (done) done();
+  }
+
+  function stopSpeak() {
+    settleSpeak();
+    if (!synth) return;
+    try { synth.cancel(); } catch (e) { /* 무시 */ }
+  }
+
+  /* ---------- 낱말 녹음 클립(opts.clip) ---------- */
+
+  /*
+   * url → Promise<AudioBuffer|null>. 디코딩한 버퍼는 최근 CLIP_CACHE_MAX 개까지 기억합니다.
+   * 디코딩에 실패한 파일은 null 로 기억해 다시 받지 않고, 받기 실패(네트워크)는 기억하지 않아 다음에 다시 시도합니다.
+   */
+  var CLIP_CACHE_MAX = 160;
+  var clipCache = new Map();
+
+  function loadClip(url) {
+    var hit = clipCache.get(url);
+    if (hit) {
+      clipCache.delete(url);   /* 최근에 쓴 것으로 옮깁니다 */
+      clipCache.set(url, hit);
+      return hit;
+    }
+    var c = hasCtxCtor ? ensureCtx() : null;
+    if (!c) return Promise.resolve(null);
+    var p = new Promise(function (res) {
+      loadBytes(url, function (bytes) {
+        decode(c, bytes, res, function (err) {
+          log('음성 디코딩 실패 ' + url, err);
+          res(null);
+        });
+      }, function (err) {
+        if (clipCache.get(url) === p) clipCache.delete(url);
+        log('음성 파일 읽기 실패 ' + url, err);
+        res(null);
+      });
+    });
+    clipCache.set(url, p);
+    while (clipCache.size > CLIP_CACHE_MAX) clipCache.delete(clipCache.keys().next().value);
+    return p;
+  }
+
+  /* 한 판에 쓸 클립을 미리 받아 디코딩해 둡니다. 소리나 읽어주기가 꺼져 있으면 받지 않습니다. */
+  function preloadClips(urls) {
+    if (!soundOn || !ttsOn || !urls) return;
+    for (var i = 0; i < urls.length; i++) if (urls[i]) loadClip(urls[i]);
+  }
+
+  /*
+   * 클립 하나를 재생합니다 → Promise<boolean>. 끝까지 재생했거나 stopSpeak 로 끊기면 true,
+   * 파일이 없거나 디코딩·재생을 못 하면 false(부르는 쪽이 speechSynthesis 로 대신 읽습니다).
+   * onended 가 오지 않아도(컨텍스트 멈춤 등) 클립 길이 + SAFETY_MS 뒤에 끝냅니다.
+   */
+  function playClip(url) {
+    return new Promise(function (res) {
+      stopSpeak();
+      var c = hasCtxCtor ? ensureCtx() : null;
+      if (!c) { res(false); return; }
+      resume();
+      var src = null;
+      var timer = null;
+      var settled = false;
+      var finish = function (ok) {
+        if (settled) return;
+        settled = true;
+        if (timer !== null) global.clearTimeout(timer);
+        timer = null;
+        if (speakDone === cancel) speakDone = null;
+        if (src) {
+          src.onended = null;
+          try { src.stop(0); } catch (e) { /* 이미 끝남 */ }
+          try { src.disconnect(); } catch (e2) { /* 무시 */ }
+        }
+        res(ok);
+      };
+      var cancel = function () { finish(true); };
+      speakDone = cancel;
+      loadClip(url).then(function (buf) {
+        if (settled) return;
+        if (!buf) { finish(false); return; }
+        try {
+          src = c.createBufferSource();
+          src.buffer = buf;
+          src.connect(c.destination);
+          src.onended = function () { finish(true); };
+          src.start(c.currentTime + START_LEAD_SEC);
+          timer = global.setTimeout(function () { finish(true); },
+            Math.round((buf.duration + START_LEAD_SEC) * 1000) + SAFETY_MS);
+        } catch (e) {
+          log('음성 재생 실패 ' + url, e);
+          src = null;
+          finish(false);
+        }
+      });
+    });
+  }
+
+  /*
+   * speak(text, lang, { rate, pitch, clip }) → Promise.
+   * clip(녹음 파일 주소)이 있으면 그 파일을 재생하고, 못 열면 text 를 speechSynthesis 로 읽습니다.
+   */
+  function speak(text, lang, options) {
+    var opts = options || {};
+    if (opts.clip && soundOn && ttsOn) {
+      return playClip(opts.clip).then(function (ok) {
+        if (!ok) return speakTts(text, lang, opts);
+      });
+    }
+    return speakTts(text, lang, opts);
+  }
+
+  function speakTts(text, lang, options) {
+    var opts = options || {};
+    return new Promise(function (res) {
+      stopSpeak();
+      if (!synth || !Utter || !soundOn || !ttsOn || !text) { res(); return; }
+      var L = lang === 'ko' ? 'ko' : 'en';
+      var timer = null;
+      var finish = function () {
+        if (timer !== null) global.clearTimeout(timer);
+        timer = null;
+        if (speakDone === finish) speakDone = null;
+        res();
+      };
+      speakDone = finish;
+      try {
+        var u = new Utter(String(text));
+        u.lang = L === 'ko' ? 'ko-KR' : 'en-US';
+        if (ttsVoices[L]) u.voice = ttsVoices[L];
+        u.rate = opts.rate || 0.9;
+        u.pitch = opts.pitch || 1;
+        u.onend = finish;
+        u.onerror = finish;
+        timer = global.setTimeout(finish, 4000 + String(text).length * 250);
+        if (synth.paused && synth.resume) synth.resume();
+        synth.speak(u);
+      } catch (e) {
+        finish();
+      }
+    });
+  }
+
+  /* iOS Safari: 사용자 탭 안에서 빈 말을 한 번 해 두어야 이후 speak 가 소리를 냅니다. */
+  var speakWarmed = false;
+  function warmSpeak() {
+    if (speakWarmed || !synth || !Utter) return;
+    speakWarmed = true;
+    try {
+      var u = new Utter(' ');
+      u.volume = 0;
+      synth.speak(u);
+    } catch (e) { /* 무시 */ }
+  }
+
   export const audio = {
     context: ensureCtx,
     tone: tone,
@@ -508,13 +700,18 @@
     voiceSupported: hasCtxCtor || hasAudioEl,
     setSound: function (on) { soundOn = !!on; if (on && ctx) resume(); }, /* 탭 전에는 컨텍스트를 만들지 않습니다 */
     getSound: function () { return soundOn; },
-    setTts: function (on) { ttsOn = !!on; if (!on) cancelSpeech(); },
+    setTts: function (on) { ttsOn = !!on; if (!on) { cancelSpeech(); stopSpeak(); } },
     getTts: function () { return ttsOn; },
     isSpeaking: function () { return speaking; },
     preloadVoices: preloadVoices,
     playNumbers: playNumbers,
     hasVoice: hasVoice,
     cancelSpeech: cancelSpeech,
+    speechSupported: !!(synth && Utter),
+    speak: speak,
+    preloadClips: preloadClips,
+    stopSpeak: stopSpeak,
+    warmSpeak: warmSpeak,
     FX_CORRECT_SEC: FX_CORRECT_SEC,
     FX_TIMEOUT_SEC: FX_TIMEOUT_SEC,
     CLIP_GAP_SEC: CLIP_GAP_SEC,
@@ -527,3 +724,6 @@
     nextFx: nextFx,
     keyTap: keyTap
   };
+
+/* 게임은 ctx.audio.speak 를 쓰면 됩니다. 이름으로 가져다 쓰는 경우를 위해 함께 내보냅니다. */
+export { speak, stopSpeak, warmSpeak, preloadClips };
