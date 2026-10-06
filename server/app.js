@@ -1,6 +1,6 @@
 /*
  * app.js - HTTP 처리: /api/* JSON API + public/ 정적 파일.
- * createApp({ db, dataDir, adminPassword }) 가 (req, res) 핸들러를 돌려줍니다(테스트에서 그대로 띄워 씁니다).
+ * createApp({ db, dataDir, adminPassword, version }) 가 (req, res) 핸들러를 돌려줍니다(테스트에서 그대로 띄워 씁니다).
  * 관리자 페이지는 server/admin.js (/admin/).
  */
 import { createReadStream, mkdirSync, statSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
@@ -84,7 +84,7 @@ const isImage = (buf, mime) =>
   (mime === 'image/png' && buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) ||
   (mime === 'image/webp' && buf.toString('latin1', 0, 4) === 'RIFF' && buf.toString('latin1', 8, 12) === 'WEBP');
 
-export function createApp({ db, dataDir, adminPassword }) {
+export function createApp({ db, dataDir, adminPassword, version = {} }) {
   const facesDir = join(dataDir, 'faces');
   mkdirSync(facesDir, { recursive: true });
 
@@ -262,6 +262,9 @@ export function createApp({ db, dataDir, adminPassword }) {
   });
 
   route('GET', '/api/me', async (req, res) => send(res, 200, me(currentUser(req))));
+  /* 배포 확인용: 지금 서버가 돌리는 커밋 해시와 커밋 시각(로그인 없이). 화면 맨 아래에 작게 보입니다. */
+  const started = new Date().toISOString();
+  route('GET', '/api/version', async (req, res) => send(res, 200, { commit: version.commit || null, date: version.date || null, started }));
 
   route('PATCH', '/api/settings', async (req, res) => {
     const user = currentUser(req);

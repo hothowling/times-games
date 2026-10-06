@@ -254,6 +254,7 @@ async function route() {
   if (!state.me && name !== 'login') { go('login'); return; }
   if (state.me && name === 'login' && !(params.get('upgrade') && state.me.user.guest)) { go('lobby'); return; }
   $('topbar').hidden = !state.me || name === 'play';
+  $('app-version').hidden = name === 'play';
 
   if (!(name in SCREENS)) { go('lobby'); return; }
   if (name === 'play') {
@@ -282,9 +283,22 @@ async function boot() {
     return;
   }
   applySettings();
+  showVersion();
   window.addEventListener('hashchange', route);
   route();
   if (state.me) claimInstallReward();
+}
+
+/* 맨 아래 작은 글씨: 서버가 돌리는 코드의 커밋 시각과 해시. 배포가 됐는지 확인하는 용도입니다. */
+async function showVersion() {
+  try {
+    const v = await api('GET', 'version');
+    if (!v.date) return;
+    const d = new Date(v.date);
+    const p = (n) => String(n).padStart(2, '0');
+    const when = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    $('app-version').textContent = `${t('updated')} ${when} · ${v.commit}`;
+  } catch { /* 표시만 안 할 뿐 */ }
 }
 
 /* 로그인/가입 직후 화면 셸을 다시 맞춥니다(screens/login.js 가 부릅니다). */

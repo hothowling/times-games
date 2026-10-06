@@ -415,3 +415,16 @@ test('app install files are served with the right types', async () => {
   assert.ok(manifest.icons.some((i) => i.purpose === 'maskable'));
   assert.ok(manifest.icons.every((i) => !i.src.startsWith('/')), 'relative icon paths (served under /games/)');
 });
+
+test('version: tells which commit the server is running, without login', async () => {
+  const s = createServer(createApp({ db: openDb(':memory:'), dataDir: dir, version: { commit: 'abc1234', date: '2026-10-06T15:00:00+09:00' } }));
+  await new Promise((ok) => s.listen(0, '127.0.0.1', ok));
+  try {
+    const r = await (await fetch(`http://127.0.0.1:${s.address().port}/api/version`)).json();
+    assert.equal(r.commit, 'abc1234');
+    assert.equal(r.date, '2026-10-06T15:00:00+09:00');
+    assert.ok(!Number.isNaN(Date.parse(r.started)));
+  } finally { s.close(); }
+  const none = await (await fetch(base + '/api/version')).json();
+  assert.equal(none.commit, null, 'no version given → null');
+});
