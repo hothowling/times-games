@@ -1,6 +1,0 @@
-Generated with built-in image_gen, using 08-hero-suit.webp as the pose template.
-
-Use case: precise-object-edit
-Asset type: transparent 2D dress-up game outfit sprite, Strong Boy costume.
-Input image is the exact pose, proportions, composition and art style template.
-Replace only the outfit with an original boy superhero Strong Boy costume: royal blue short-sleeved athletic superhero suit, stylized padded chest panels suggesting strength in a cute child-friendly way, bright red shoulder panels and short red cape behind the shoulders, golden yellow belt, simple bold golden lightning shield emblem at chest with no letters. Clearly distinct from the reference's star emblem and ornate red/gold armor: simpler sporty strong hero silhouette. Keep the same front-facing headless chibi torso, same shoulder/neckline height, exact arms and skin tone, image-left hand waving with five fingers, image-right hand holding the same yellow pencil. No head, no visible neck, no legs, no other props. Keep crisp dark outlines, rounded polished illustrated game art, soft shading. Square canvas, same scale and transparent margins as template. True transparent RGBA background, including empty neckline; no ground shadow, no text, no watermarks.
