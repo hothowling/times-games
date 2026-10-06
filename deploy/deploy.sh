@@ -6,7 +6,9 @@
 #   3) fast-forward 만 합니다(서버에만 있는 커밋이 있으면 멈춤).
 #   4) 테스트가 통과해야 서비스를 다시 켭니다. 다시 켠 뒤 응답이 없으면 이전 커밋으로 되돌립니다.
 # 멈춘 이유는 같은 이유가 이어지는 동안 한 번만 기록합니다. 기록: $LOG
+# git merge 가 실행 중에 이 파일을 바꿀 수 있어서, 전체를 { } 로 묶어 끝까지 읽은 뒤 실행합니다.
 set -euo pipefail
+{
 
 APP=/home/linuxuser/dev/jotanow/times-games
 NODE=/home/linuxuser/.nvm/versions/node/v24.18.0/bin/node
@@ -55,3 +57,5 @@ for _ in $(seq 1 15); do
   sleep 1
 done
 rollback "service did not answer"
+exit
+}
