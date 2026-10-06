@@ -7,7 +7,9 @@ import { t } from '../core/i18n.js';
 import { h } from '../core/dom.js';
 import { state, setMe, lookFor } from '../core/state.js';
 import { createCharacter } from '../core/character.js';
-import { afterLogin, go } from '../core/app.js';
+import { afterLogin, go, toast } from '../core/app.js';
+import { audio } from '../core/audio.js';
+import { UPGRADE_REWARD } from '../core/catalog.js';
 
 export function render(view, { errorText, params }) {
   const upgrade = !!(params.get('upgrade') && state.me?.user.guest);
@@ -52,8 +54,11 @@ export function render(view, { errorText, params }) {
       if (!/^\d{4}$/.test(pin.value)) { error.textContent = t('badPin'); return; }
       submit.disabled = true;
       try {
-        setMe(await api('POST', mode, { nickname: nick.value, pin: pin.value }));
+        const data = await api('POST', mode, { nickname: nick.value, pin: pin.value });
+        setMe(data);
         afterLogin();
+        /* 손님 → 정식 계정 선물(서버가 한 번만 줌) */
+        if (data.reward) { audio.fanfare?.(); toast(t('upgradeDone', { n: data.reward }), 3500); }
       } catch (err) {
         error.textContent = errorText(err);
         submit.disabled = false;
@@ -63,7 +68,7 @@ export function render(view, { errorText, params }) {
 
   sync();
   view.append(h('section', { class: 'login' }, h('h1', null, t(upgrade ? 'guestMake' : 'appTitle')),
-    upgrade ? h('p', { class: 'login-hint' }, t('guestMakeHint')) : null, chars, form));
+    upgrade ? h('p', { class: 'login-hint' }, t('guestMakeHint', { n: UPGRADE_REWARD })) : null, chars, form));
   const a = createCharacter(chars.children[0], lookFor('sooji'));
   const b = createCharacter(chars.children[1], lookFor('jiho'));
   nick.focus();

@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { randomBytes, scryptSync, timingSafeEqual, createHash, randomInt } from 'node:crypto';
 import { tx } from './db.js';
 import { adminRoutes } from './admin.js';
-import { PRESETS, COSMETICS, ITEMS, REWARD, BONUS_MAX, GAMES, DEFAULT_LOOK, BOX, INSTALL_REWARD, INSTALL_SNOOZE_MS, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
+import { PRESETS, COSMETICS, ITEMS, REWARD, BONUS_MAX, GAMES, DEFAULT_LOOK, BOX, INSTALL_REWARD, INSTALL_SNOOZE_MS, UPGRADE_REWARD, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const SESSION_DAYS = 180;
@@ -228,14 +228,20 @@ export function createApp({ db, dataDir, adminPassword, version = {} }) {
     send(res, 200, me(S.userById.get(id)));
   });
 
-  /* 손님 → 정식 계정: 모은 것(Sparkles·아이템·기록)은 그대로, 닉네임과 비밀번호만 새로 정합니다. */
+  /* 손님 → 정식 계정: 모은 것(Sparkles·아이템·기록)은 그대로, 닉네임과 비밀번호만 새로 정합니다.
+   * 계정을 만들면 UPGRADE_REWARD 만큼 Sparkles 를 줍니다. guest = 1 인 행만 바뀌므로 계정당 한 번입니다. */
   route('POST', '/api/upgrade', async (req, res) => {
     const user = currentUser(req);
     if (!user.guest) fail(400, 'notGuest');
     const body = await readJson(req);
     const nick = checkNewAccount(body, user.id);
-    S.upgradeGuest.run(nick, hashPin(body.pin), user.id);
-    send(res, 200, me(S.userById.get(user.id)));
+    const reward = tx(db, () => {
+      if (S.upgradeGuest.run(nick, hashPin(body.pin), user.id).changes !== 1) return 0;
+      S.addSparkles.run(UPGRADE_REWARD, user.id);
+      S.log.run(user.id, UPGRADE_REWARD, 'upgrade', null, Date.now());
+      return UPGRADE_REWARD;
+    });
+    send(res, 200, { ...me(S.userById.get(user.id)), reward });
   });
 
   route('POST', '/api/login', async (req, res) => {

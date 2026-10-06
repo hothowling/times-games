@@ -7,7 +7,7 @@ import { h } from '../core/dom.js';
 import { state, lookFor } from '../core/state.js';
 import { showGift } from '../core/box.js';
 import { openInstallGuide, maybeAutoShowInstall, guideAvailable, installText } from '../core/install-ui.js';
-import { INSTALL_REWARD } from '../core/catalog.js';
+import { INSTALL_REWARD, UPGRADE_REWARD } from '../core/catalog.js';
 import { createCharacter } from '../core/character.js';
 import { GAMES } from '../games/index.js';
 
@@ -27,7 +27,7 @@ export function render(view, { go, toast, errorText }) {
           : null)),
     /* 손님이면 계정 만들기를 권합니다(모은 것이 그대로 남음). */
     state.me.user.guest ? h('button', { type: 'button', class: 'guest-note', onclick: () => go('login?upgrade=1') },
-      h('span', null, t('guestNote')), h('b', null, t('guestMake') + ' ›')) : '',
+      h('span', null, t('guestNote', { n: UPGRADE_REWARD })), h('b', null, t('guestMake') + ' ›')) : '',
     h('h2', { class: 'screen-title' }, t('games')),
     h('div', { class: 'game-list' }, GAMES.map((g) =>
       h('button', { type: 'button', class: 'game-card', onclick: () => go('play/' + g.id) },

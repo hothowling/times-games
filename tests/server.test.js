@@ -352,13 +352,15 @@ test('guest: play right away, hidden from others in ranking, upgrade keeps every
   /* 손님 닉네임으로는 로그인할 수 없습니다(비밀번호를 아무도 모름). */
   assert.equal((await client()('POST', '/api/login', { nickname: guestNick, pin: '0000' })).status, 401);
 
-  /* 정식 계정으로: 닉네임 중복·형식 검사, Sparkles 는 그대로 */
+  /* 정식 계정으로: 닉네임 중복·형식 검사, Sparkles 는 그대로 + 계정 만들기 선물 30 */
   assert.equal((await g('POST', '/api/upgrade', { nickname: 'rankwatch', pin: '1111' })).body.error, 'nicknameTaken');
   assert.equal((await g('POST', '/api/upgrade', { nickname: '새친구', pin: '11a1' })).body.error, 'badPin');
   r = await g('POST', '/api/upgrade', { nickname: '새친구', pin: '1111' });
   assert.equal(r.body.user.guest, false);
   assert.equal(r.body.user.nickname, '새친구');
-  assert.equal(r.body.user.sparkles, 10);
+  assert.equal(r.body.reward, 30);
+  assert.equal(r.body.user.sparkles, 10 + 30);
+  assert.equal(db.prepare("select count(*) n from sparkle_log where user_id = ? and reason = 'upgrade'").get(r.body.user.id).n, 1);
   assert.equal((await client()('POST', '/api/login', { nickname: '새친구', pin: '1111' })).status, 200);
   assert.equal((await g('POST', '/api/upgrade', { nickname: '또다른', pin: '2222' })).body.error, 'notGuest');
   assert.ok((await other('GET', '/api/ranking?board=master&period=all')).body.top.some((x) => x.nickname === '새친구'));
