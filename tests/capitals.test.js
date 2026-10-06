@@ -52,3 +52,15 @@ test('judge: shield turns the first miss into a counted answer without points', 
   assert.ok(saved.counts && !saved.points && saved.saved && !saved.shield);
   assert.equal(judge(true, true).shield, true, 'a right answer keeps the shield');
 });
+
+test('voices: every country has a ko and en answer clip, and the manifest matches the files', async () => {
+  const { readdirSync } = await import('node:fs');
+  const { VOICES } = await import('../public/games/capitals/voices.js');
+  const codes = COUNTRIES.map((c) => c.code.toLowerCase());
+  for (const l of ['ko', 'en']) {
+    assert.deepEqual([...VOICES[l]].sort(), [...codes].sort(), `${l}: manifest must list every country`);
+    const dir = new URL(`../public/assets/voice/capitals/${l}/`, import.meta.url);
+    const files = readdirSync(dir).filter((f) => f.endsWith('.m4a')).map((f) => f.slice(0, -4)).sort();
+    assert.deepEqual(files, [...VOICES[l]].sort(), `${l}: files on disk must match the manifest`);
+  }
+});

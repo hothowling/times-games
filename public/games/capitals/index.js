@@ -1,10 +1,13 @@
 /*
  * 수도 맞히기 - 국기와 나라 이름을 보고 수도를 4개 보기 중에서 고르는 게임.
  * 한 판 10문제, 문제마다 10초. 답한 뒤에는 그 수도의 사진을 보여 줍니다(사진만 보고 답을 알 수 없게).
- * 규칙과 나라 목록은 rules.js(DOM 없음), 사진 출처는 credits.js 에 있습니다.
+ * 사진을 보여 줄 때 "<나라>의 수도는 <수도>." 를 지금 언어로 읽어 주고(voices.js 의 MeloTTS 녹음 → 없으면 speechSynthesis),
+ * 다 읽은 뒤 다음 문제로 넘어갑니다. 사진(다음 ▶)을 누르면 읽기를 멈추고 바로 넘어갑니다.
+ * 규칙과 나라 목록은 rules.js(DOM 없음), 사진 출처는 credits.js, 녹음 목록은 voices.js(자동 생성) 에 있습니다.
  */
 import { makeRound, pointsFor, starsFor, judge, QUESTIONS, SECONDS } from './rules.js';
 import { CREDITS } from './credits.js';
+import { VOICES } from './voices.js';
 
 export const dict = {
   ko: {
@@ -52,10 +55,22 @@ export const dict = {
 };
 
 const SHOW_MS = 1100;   /* 정답 보기를 보여 준 뒤 사진으로 바꾸기까지 */
-const PHOTO_MS = 3500;  /* 사진을 보여 주고 다음 문제로 넘어가기까지(누르면 바로 넘어감) */
+const PHOTO_MS = 3500;  /* 사진을 보여 주는 최소 시간(누르면 바로 넘어감) */
+const AFTER_SAY_MS = 700;  /* 다 읽은 뒤 다음 문제까지 조금 쉬기 */
+const PHOTO_MAX_MS = 9000; /* 읽기가 끝나지 않아도(멈춤 등) 이만큼 지나면 다음 문제 */
 const A = 'assets/games/capitals/';
 const flagSrc = (c) => `${A}flags/${c.code.toLowerCase()}.svg`;
 const photoSrc = (c) => `${A}cities/${c.code.toLowerCase()}.webp`;
+const HAS_VOICE = { en: new Set(VOICES.en), ko: new Set(VOICES.ko) };
+export const voiceFor = (c, l) => {
+  const id = c.code.toLowerCase();
+  return HAS_VOICE[l]?.has(id) ? `assets/voice/capitals/${l}/${id}.m4a` : '';
+};
+/* 읽을 문장(녹음이 없을 때 speechSynthesis 가 읽는 글자). 녹음은 scripts/gen-capital-voices.mjs 가 만듭니다. */
+export const sentenceFor = (c, l) => {
+  const cap = c.capital[l].replace(/\.$/, '');
+  return l === 'ko' ? `${c.name.ko}의 수도는 ${cap}.` : `The capital of ${c.name.en} is ${cap}.`;
+};
 
 const HTML = `
 <div class="cq-app">
@@ -118,6 +133,7 @@ export function mount(el, ctx) {
   let S = null;        /* 한 판 상태 */
   let tick = 0;        /* 남은 시간 타이머 */
   let next = 0;        /* 다음 문제 타이머 */
+  let sayToken = 0;    /* 읽기 순서. 넘기거나 그만두면 늘려서 앞의 읽기가 끝나도 무시합니다. */
   const tip = $('.cq-tip');
 
   /* 아이템(공통 5종). 문제마다 같은 아이템은 한 번, 보호막은 켜 둔 동안 다시 못 씀. 사는 동안(팝업)은 타이머를 멈춥니다. */
@@ -166,7 +182,9 @@ export function mount(el, ctx) {
   function start(level) {
     const ac = ctx.audio.context();
     if (ac && ac.state !== 'running') ac.resume().catch(() => {});
+    ctx.audio.warmSpeak();   /* iOS: 탭 안에서 읽기를 깨워 둡니다 */
     S = { level, round: makeRound(level), i: -1, correct: 0, score: 0, prevBest: best, shield: false };
+    ctx.audio.preloadClips(S.round.map((q) => voiceFor(q.answer, lang)));
     overlay.hidden = true;
     overlay.classList.remove('new-best');
     ask();
@@ -250,7 +268,8 @@ export function mount(el, ctx) {
     next = setTimeout(showPhoto, SHOW_MS);
   }
 
-  /* 정답 도시 사진과 출처(CC 라이선스는 작가·라이선스 표시 필요). 누르거나 시간이 지나면 다음 문제. */
+  /* 정답 도시 사진과 출처(CC 라이선스는 작가·라이선스 표시 필요). 정답 문장을 읽고,
+     다 읽고(최소 PHOTO_MS, 최대 PHOTO_MAX_MS) 나면 다음 문제. 누르면 바로 다음 문제. */
   function showPhoto() {
     const c = S.round[S.i].answer;
     const [artist, license] = CREDITS[c.code];
@@ -258,7 +277,22 @@ export function mount(el, ctx) {
     $('.cq-city').textContent = t('city', { city: c.capital[lang], country: c.name[lang] });
     $('.cq-credit').textContent = `📷 ${artist} / Wikimedia Commons · ${license}`;
     photo.hidden = false;
-    next = setTimeout(ask, PHOTO_MS);
+    const my = ++sayToken;
+    const shownAt = performance.now();
+    next = setTimeout(advance, PHOTO_MAX_MS);
+    ctx.audio.speak(sentenceFor(c, lang), lang, { clip: voiceFor(c, lang) }).then(() => {
+      if (my !== sayToken) return;
+      clearTimeout(next);
+      next = setTimeout(advance, Math.max(AFTER_SAY_MS, PHOTO_MS - (performance.now() - shownAt)));
+    });
+  }
+
+  /* 사진에서 다음 문제로: 읽던 것을 멈추고 넘어갑니다. */
+  function advance() {
+    sayToken++;
+    clearTimeout(next);
+    ctx.audio.stopSpeak();
+    ask();
   }
 
   function end() {
@@ -277,17 +311,23 @@ export function mount(el, ctx) {
   function stop() {
     clearInterval(tick);
     clearTimeout(next);
+    sayToken++;
+    ctx.audio.stopSpeak();
   }
 
-  buttons.forEach((b, k) => b.addEventListener('click', () => answer(k)));
-  photo.addEventListener('click', () => { clearTimeout(next); ask(); });
+  buttons.forEach((b, k) => b.addEventListener('click', () => { ctx.audio.warmSpeak(); answer(k); }));
+  photo.addEventListener('click', () => { if (S && !photo.hidden) advance(); });
   el.querySelectorAll('[data-level]').forEach((b) => b.addEventListener('click', () => start(Number(b.dataset.level))));
   $('.cq-again').addEventListener('click', () => start(S.level));
   $('.cq-other').addEventListener('click', () => showOverlay('start'));
   $('.cq-lobby').addEventListener('click', () => ctx.exit());
   /* 판 중간에 그만두면 결과 없이 시작 화면으로 돌아갑니다. */
   $('.cq-quit').addEventListener('click', () => { stop(); photo.hidden = true; showOverlay('start'); });
-  $('.cq-sound').addEventListener('click', () => { ctx.setSound(!ctx.audio.getSound()); renderSound(); });
+  $('.cq-sound').addEventListener('click', () => {
+    ctx.setSound(!ctx.audio.getSound());
+    if (!ctx.audio.getSound()) ctx.audio.stopSpeak();
+    renderSound();
+  });
 
   renderSound();
   showOverlay('start');
