@@ -468,8 +468,10 @@ export function createApp({ db, dataDir, adminPassword }) {
   }
 
   return async function handle(req, res) {
-    const url = new URL(req.url, 'http://x');
     try {
+      // req.url 앞에 기준 주소를 붙여 읽습니다. new URL('//', base) 처럼 '//' 로 시작하면 호스트로 읽혀 예외가 납니다.
+      let url;
+      try { url = new URL('http://x' + req.url); } catch { fail(400, 'badPath'); }
       for (const r of routes) {
         if (r.method !== req.method) continue;
         const m = url.pathname.match(r.re);

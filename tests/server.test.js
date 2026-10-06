@@ -294,3 +294,18 @@ test('plays: bonus Sparkles are added and capped by BONUS_MAX', async () => {
   r = await a('POST', '/api/plays', { game: 'defense', roundKey: 'b3', stars: 0, bonus: -5 });
   assert.equal(r.body.earned, 1);
 });
+
+test("odd request paths like '//' get an answer instead of crashing the server", async () => {
+  const { request } = await import('node:http');
+  const raw = (path) => new Promise((ok, no) => {
+    const req = request({ host: '127.0.0.1', port: server.address().port, path, method: 'GET' }, (res) => { res.resume(); res.on('end', () => ok(res.statusCode)); });
+    req.on('error', no);
+    req.setTimeout(2000, () => req.destroy(new Error(`no answer for ${path}`)));
+    req.end();
+  });
+  for (const p of ['//', '//evil.com/x', '///api/me', '/a//b']) {
+    const status = await raw(p);
+    assert.ok(status < 500, `${p} -> ${status}`);
+  }
+  assert.equal(await raw('/'), 200, 'server still up');
+});
