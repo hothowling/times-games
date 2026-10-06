@@ -5,6 +5,7 @@ import { icon, iconFromSource, iconMarkup, setIconText } from '../../core/icons.
  * 맞히면 미사일 업그레이드 카드 3장 중 하나를 고릅니다. 정답 알약을 쓰면 퀴즈 없이 바로 업그레이드.
  * 규칙·수치는 rules.js(DOM 없음). 들판·좀비·울타리·미사일·폭발은 assets/games/defense/ 그림을 캔버스에 그립니다.
  */
+import { PRESETS } from '../../core/catalog.js';
 import { WORLD_W, FENCE_HP, WAVE_SEC, QUIZ_EVERY, ZOMBIES, UPGRADES, waveConfig, pickType, stats, upgradeChoices, makeQuiz, starsFor } from './rules.js';
 
 export const dict = {
@@ -114,11 +115,18 @@ export function mount(el, ctx) {
 
   const heroEl = $('.df-hero');
   const hero = ctx.character(heroEl, { body: true });
-  /* 친구: 내가 수지면 지호, 아니면 수지 */
-  const friendKey = ctx.look.key === 'sooji' ? 'jiho' : 'sooji';
-  const friendName = t(friendKey);
+  /* 친구: 나를 뺀 프리셋(수지·지호·나연…) 중 하나. 한 번 다녀가면 다음 친구를 다시 뽑습니다. */
   const friendEl = $('.df-friend');
-  const friend = ctx.character(friendEl.querySelector('.df-friend-body'), { body: true, key: friendKey });
+  const others = PRESETS.filter((k) => k !== ctx.look.key);
+  let friendName = '';
+  let friend = null;
+  function pickFriend() {
+    const key = others[Math.floor(Math.random() * others.length)];
+    friendName = t(key);
+    friend?.destroy();
+    friend = ctx.character(friendEl.querySelector('.df-friend-body'), { body: true, key });
+  }
+  pickFriend();
   const cardHero = ctx.character($('.df-card-face'), { body: false });
 
   let best = Number(ctx.progress?.best) || 0;
@@ -240,6 +248,7 @@ export function mount(el, ctx) {
     } else if (!friendEl.hidden) {
       friendEl.hidden = true;
       say(t('friendBye', { name: friendName }));
+      pickFriend();
     }
 
     function fire(cool, o, target) {
@@ -608,7 +617,7 @@ export function mount(el, ctx) {
     say(t('repaired'));
   }
 
-  /* 친구 부르기 효과(아이템·퀴즈 보상 공통): 수지나 지호가 FRIEND_SEC 초 동안 같이 쏩니다. */
+  /* 친구 부르기 효과(아이템·퀴즈 보상 공통): 친구가 FRIEND_SEC 초 동안 같이 쏩니다. */
   function callFriend() {
     G.friendUntil = G.t + FRIEND_SEC;
     G.friendCool = 0.3;
@@ -631,7 +640,7 @@ export function mount(el, ctx) {
         else openPick();
       }
     },
-    /* 친구 부르기: 수지나 지호가 FRIEND_SEC 초 동안 같이 쏩니다. */
+    /* 친구 부르기: 친구가 FRIEND_SEC 초 동안 같이 쏩니다. */
     friend: { can: () => G?.mode === 'play' && G.t >= G.friendUntil, apply: callFriend },
     pause: () => { if (G) G.hold = true; },
     resume: () => { if (G) G.hold = false; }

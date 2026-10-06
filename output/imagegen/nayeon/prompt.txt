@@ -1,5 +1,0 @@
-Use case: background-extraction
-Input image 1 is the edit target.
-Produce a clean five-head sprite strip for a game by replacing the flat black background with actual alpha transparency. This is a background-removal edit only.
-Keep the five illustrated heads and all facial features and expressions exactly unchanged. Preserve the original hair silhouettes, dark hair, fine strands, skin tones, eyes, mouth, and tears. The empty black spaces around and between the heads, including the empty spaces between the long locks beneath each face, should be transparent.
-Preserve the original canvas aspect ratio2048x682, the one-row five-equal-cell layout, the exact face placement, scale, alignment and spacing. Left to right: neutral, happy, angry, surprised, sad. Do not generate new faces or alter the identity. No additional objects, no text, no frame or grid. No black background, no white background, no checkerboard baked into the image. Return a genuinely transparent PNG with antialiased edges.

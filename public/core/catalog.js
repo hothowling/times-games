@@ -76,7 +76,7 @@ export const ITEMS = {
   time: item('hourglass.webp', 15, '모래시계', 'Hourglass', '시간을 더 주거나 천천히 흐르게 해요.', 'Gives you more time.'),
   shield: item('score-protection.webp', 20, '보호막', 'Shield', '실수 하나를 지켜 줘요.', 'Protects you from one mistake.'),
   pill: item('smart-pill.webp', 30, '정답 알약', 'Answer Pill', '정답을 보여 줘요. 쓴 판은 별을 2개까지만 받아요.', 'Shows the answer. That round gets at most 2 stars.'),
-  friend: item('call-friend.webp', 25, '친구 부르기', 'Call a Friend', '수지나 지호가 와서 30초 동안 같이 싸워요.', 'Sooji or Jiho joins the fight for 30 seconds.')
+  friend: item('call-friend.webp', 25, '친구 부르기', 'Call a Friend', '다른 친구(수지·지호·나연)가 와서 30초 동안 같이 싸워요.', 'Another friend (Sooji, Jiho or Nayeon) joins the fight for 30 seconds.')
 };
 
 /* 예전 게임별 아이템 id → 지금 id. 서버가 시작할 때 인벤토리를 옮깁니다(server/db.js). */
