@@ -4,7 +4,7 @@
 
 ## 자동 배포 (main 푸시)
 
-서버의 systemd 타이머 `times-games-deploy.timer` 가 1분마다 `deploy/deploy.sh` 를 실행합니다.
+서버의 systemd 타이머 `times-games-deploy.timer` 가 5분마다 `deploy/deploy.sh` 를 실행합니다.
 GitHub 에서 서버로 들어오는 접속은 없습니다(Vultr 방화벽이 SSH 를 막고 있어 서버가 가져가는 방식).
 
 `deploy.sh` 순서: `git fetch` → 새 커밋이 없으면 끝 → `origin/main` 으로 fast-forward → 서버에서 `node --test`

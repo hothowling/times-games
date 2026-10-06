@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # deploy.sh - GitHub main 에 새 커밋이 있으면 운영 서버를 그 커밋으로 바꿉니다.
-# systemd 타이머(times-games-deploy.timer)가 1분마다 부릅니다. 손으로 불러도 됩니다.
+# systemd 타이머(times-games-deploy.timer)가 5분마다 부릅니다. 손으로 불러도 됩니다.
 #   1) origin/main 이 지금 커밋과 같으면 아무것도 하지 않습니다(기록도 남기지 않음).
 #   2) 작업 폴더에 커밋 안 한 수정이 있으면 멈춥니다(서버에서 직접 고친 것을 덮어쓰지 않기 위해).
 #   3) fast-forward 만 합니다(서버에만 있는 커밋이 있으면 멈춤).
@@ -22,7 +22,7 @@ cd "$APP"
 export GIT_SSH_COMMAND="ssh -o BatchMode=yes"
 
 log() { echo "$(date '+%F %T') $*" >> "$LOG"; echo "$*"; }
-# 같은 멈춤 이유를 1분마다 다시 쓰지 않도록, 바뀌었을 때만 기록합니다.
+# 같은 멈춤 이유를 5분마다 다시 쓰지 않도록, 바뀌었을 때만 기록합니다.
 note() { if [ "$(cat "$STATE" 2>/dev/null)" != "$1" ]; then echo "$1" > "$STATE"; log "$1"; fi; }
 
 git fetch -q origin main
