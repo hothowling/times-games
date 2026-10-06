@@ -14,7 +14,14 @@ import { UPGRADE_REWARD } from '../core/catalog.js';
 export function render(view, { errorText, params }) {
   const upgrade = !!(params.get('upgrade') && state.me?.user.guest);
   let mode = upgrade ? 'upgrade' : 'login';
-  const chars = h('div', { class: 'login-chars' }, h('span'), h('span'));
+  /* 두 아이 앞에 상점 펫들을 줄지어 세워 꾸밉니다(그림만, 계정과 무관). */
+  const PETS = ['04-hamster', '02-kitten', '01-puppy', '05-fox', '03-bunny'];
+  const pets = h('div', { class: 'login-pets', 'aria-hidden': 'true' },
+    PETS.map((p, i) => h('img', { src: `assets/wearables/pets/${p}.webp`, alt: '', draggable: false, style: `--i:${i}` })));
+  /* 양옆에는 게임 캐릭터 펫들이 둥실둥실 떠 있습니다. [파일, 자리 클래스] */
+  const SIDE = [['06-minecraft-steve', 'l1'], ['08-minecraft-creeper', 'l2'], ['07-minecraft-alex', 'r1'], ['09-roblox-noob', 'r2'], ['10-roblox-bacon', 'r3']];
+  const side = SIDE.map(([p, at], i) => h('img', { class: 'login-side ' + at, src: `assets/wearables/pets/${p}.webp`, alt: '', draggable: false, 'aria-hidden': 'true', style: `--i:${i}` }));
+  const chars = h('div', { class: 'login-chars' }, h('span'), h('span'), pets, side);
   const nick = h('input', { class: 'field', maxlength: 12, autocomplete: 'username', placeholder: t('nickname'), 'aria-label': t('nickname') });
   const pin = h('input', {
     class: 'field pin-field', type: 'password', inputmode: 'numeric', pattern: '[0-9]*', maxlength: 4,
@@ -69,8 +76,10 @@ export function render(view, { errorText, params }) {
   sync();
   view.append(h('section', { class: 'login' }, h('h1', null, t(upgrade ? 'guestMake' : 'appTitle')),
     upgrade ? h('p', { class: 'login-hint' }, t('guestMakeHint', { n: UPGRADE_REWARD })) : null, chars, form));
-  const a = createCharacter(chars.children[0], lookFor('sooji'));
-  const b = createCharacter(chars.children[1], lookFor('jiho'));
+  /* 첫 화면의 두 아이는 상점 꾸미기를 입혀 보여 줍니다(계정의 실제 착용과는 무관). */
+  const dressed = (key, equipped) => { const look = lookFor(key); return { ...look, equipped: { ...look.equipped, ...equipped } }; };
+  const a = createCharacter(chars.children[0], dressed('sooji', { outfit: 'pinkFlowerDress', head: 'bowPink' }));
+  const b = createCharacter(chars.children[1], dressed('jiho', { outfit: 'overalls', head: 'propellerHat' }));
   nick.focus();
   return () => { a.destroy(); b.destroy(); };
 }

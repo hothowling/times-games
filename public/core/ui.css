@@ -202,7 +202,60 @@ body.playing #view { padding: 0; }
 
 .login { display: grid; gap: 14px; justify-items: center; padding-top: max(24px, env(safe-area-inset-top)); }
 .login h1 { margin: 0; text-align: center; font-family: var(--font-fun); font-size: clamp(34px, 10vw, 46px); font-weight: normal; color: var(--primary); }
-.login-chars { display: flex; justify-content: center; gap: 4px; }
+.login-chars { position: relative; display: flex; justify-content: center; gap: 4px; padding-top: 14px; padding-bottom: 34px; }
+/* 두 아이 다리 앞에 겹쳐 서는 펫 줄. 하나씩 통통 뛰고(시간차), 가운데가 조금 더 큽니다. */
+.login-pets {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.login-pets img {
+  width: 62px;
+  height: 62px;
+  margin: 0 -6px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 4px rgb(76 29 149 / 22%));
+  animation: login-pet 2.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.45s);
+}
+.login-pets img:nth-child(odd) { width: 54px; height: 54px; }
+.login-pets img:nth-child(3) { width: 72px; height: 72px; }
+@keyframes login-pet {
+  0%, 70%, 100% { transform: translateY(0) rotate(0); }
+  80% { transform: translateY(-10px) rotate(-4deg); }
+  90% { transform: translateY(0) rotate(3deg); }
+}
+/* 두 아이 양옆에 떠 있는 게임 캐릭터 펫. 둥실둥실 위아래로, 서로 다른 박자로 움직입니다. */
+.login-side {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 5px rgb(76 29 149 / 20%));
+  pointer-events: none;
+  animation: login-float 3.2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.7s);
+}
+.login-side.l1 { left: calc(50% - 190px); top: 18px; transform: rotate(-8deg); }
+.login-side.l2 { left: calc(50% - 178px); top: 96px; width: 50px; height: 50px; }
+.login-side.r1 { right: calc(50% - 190px); top: 10px; }
+.login-side.r2 { right: calc(50% - 184px); top: 84px; width: 52px; height: 52px; }
+.login-side.r3 { right: calc(50% - 186px); top: 150px; width: 46px; height: 46px; }
+@keyframes login-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+/* 아주 좁은 화면에서는 양옆 펫을 조금 안쪽·작게 */
+@media (max-width: 380px) {
+  .login-side { width: 46px; height: 46px; }
+  .login-side.l1, .login-side.l2 { left: calc(50% - 168px); }
+  .login-side.r1, .login-side.r2, .login-side.r3 { right: calc(50% - 168px); }
+}
+@media (prefers-reduced-motion: reduce) { .login-pets img, .login-side { animation: none; } }
 .login-chars .chr { width: 130px; }
 .login form { display: grid; gap: 12px; width: 100%; max-width: 360px; }
 
