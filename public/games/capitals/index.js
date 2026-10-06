@@ -1,3 +1,4 @@
+import { icon, iconMarkup, setIconText } from '../../core/icons.js';
 /*
  * 수도 맞히기 - 국기와 나라 이름을 보고 수도를 4개 보기 중에서 고르는 게임.
  * 한 판 10문제, 문제마다 10초. 답한 뒤에는 그 수도의 사진을 보여 줍니다(사진만 보고 답을 알 수 없게).
@@ -77,7 +78,7 @@ const HTML = `
   <header class="cq-hud">
     <button type="button" class="cq-pill cq-quit" data-i18n-aria="quit">✕</button>
     <span class="cq-pill cq-count"></span>
-    <span class="cq-pill">⭐ <b class="cq-score">0</b></span>
+    <span class="cq-pill">${iconMarkup('star')} <b class="cq-score">0</b></span>
     <button type="button" class="cq-pill cq-sound" data-i18n-aria="sound"></button>
   </header>
   <div class="cq-timer"><i></i></div>
@@ -138,7 +139,7 @@ export function mount(el, ctx) {
 
   /* 아이템(공통 5종). 문제마다 같은 아이템은 한 번, 보호막은 켜 둔 동안 다시 못 씀. 사는 동안(팝업)은 타이머를 멈춥니다. */
   const canUse = (id) => !!S && !S.locked && overlay.hidden && !S.used.has(id);
-  const mark = (id, text) => { S.used.add(id); tip.textContent = text; };
+  const mark = (id, text) => { S.used.add(id); setIconText(tip, text); };
   const items = ctx.itemBar($('.cq-items'), {
     hint: { can: () => canUse('hint'), apply: () => mark('hint', t('tipHint', { c: [...S.round[S.i].answer.capital[lang]][0] })) },
     eraser: {
@@ -163,12 +164,12 @@ export function mount(el, ctx) {
   function renderSound() {
     const b = $('.cq-sound');
     const on = ctx.audio.getSound();
-    b.textContent = on ? '🔊' : '🔇';
+    b.replaceChildren(icon(on ? 'sound' : 'sound-muted'));
     b.setAttribute('aria-pressed', String(on));
   }
 
   function renderBest() {
-    $('.cq-best').textContent = t('best', { n: best });
+    setIconText($('.cq-best'), t('best', { n: best }));
     $('.cq-best').hidden = !best;
   }
 

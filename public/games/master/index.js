@@ -1,3 +1,4 @@
+import { iconMarkup, setIconText } from '../../core/icons.js';
 /*
  * index.js - 구구단 마스터: 화면 그리기, 화면 전환, 애니메이션, 입력 받기.
  * 원본: times-table-game/js/ui.js. 게임 규칙은 rules.js, 진행은 game.js 가 맡고 여기서는 화면에 옮깁니다.
@@ -74,7 +75,7 @@ export const dict = {
 const HTML = `
   <section class="screen" data-screen="home">
     <div class="m-top">
-      <button type="button" class="m-icon" data-act="exit" data-i18n-aria="home"><img src="assets/ui/home.webp" alt=""></button>
+      <button type="button" class="m-icon" data-act="exit" data-i18n-aria="home">${iconMarkup('home')}</button>
     </div>
     <h1 class="title" data-i18n="title"></h1>
     <p class="tagline" data-i18n="tagline"></p>
@@ -235,7 +236,8 @@ export function mount(root, ctx) {
     icons.forEach((icon, i) => {
       const span = document.createElement('span');
       span.className = 'star' + (before >= 0 && i >= before ? ' pop' : '');
-      span.textContent = icon;
+      if (icon === '…') span.textContent = icon;
+      else span.innerHTML = iconMarkup('star');
       node.appendChild(span);
     });
     if (before >= 0 && icons.length > before) audio.starPop();
@@ -257,7 +259,7 @@ export function mount(root, ctx) {
 
   function setFeedback(text, kind) {
     el.feedback.className = 'feedback' + (text ? ' show' + (kind ? ' ' + kind : '') : '');
-    el.feedback.textContent = text || '';
+    setIconText(el.feedback, text || '');
   }
 
   /* 클래스를 다시 붙여 애니메이션을 처음부터 재생합니다. */

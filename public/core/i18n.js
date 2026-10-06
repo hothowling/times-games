@@ -1,3 +1,4 @@
+import { setIconText } from './icons.js';
 /*
  * i18n.js - 한국어/영어. 플랫폼 문구는 아래 CORE, 게임 문구는 게임마다 자기 사전을 dict 로 넘깁니다.
  *   t(key, vars, dict)   dict[lang] → CORE[lang] → en → key 순서로 찾고 {name} 을 vars 로 채웁니다.
@@ -18,7 +19,9 @@ const CORE = {
     chooseCharacter: '누구랑 놀까요?', newCharacter: '사진으로 만들기', del: '지우기', delAsk: '이 캐릭터를 지울까요?',
     dressUp: '꾸미기', wear: '착용', remove: '벗기', wearing: '착용 중', buy: '구매', owned: '보유',
     shopCosmetics: '꾸미기', shopItems: '아이템', bought: '{name}을(를) 샀어요!', qty: '{n}개',
-    slot_outfit: '옷', slot_head: '머리 장식', slot_face: '안경', slot_back: '가방',
+    tryBeforeBuy: '아이템을 눌러 먼저 입어보세요.', tryingOn: '입어보는 중', buyAndWear: '구매하고 착용',
+    slot_pet: '펫', petTogether: '함께하는 중', petPreview: '함께 미리보기', petJoin: '함께하기', petRemove: '돌려보내기', buyAndAdopt: '구매하고 데려오기',
+    slot_outfit: '옷', slot_head: '머리 장식', slot_face: '안경', slot_back: '가방', newItems: '신규 아이템', newBadge: 'NEW',
     earned: '+{n} Sparkles!', noEarn: '조금 쉬었다가 하면 Sparkles 를 또 받을 수 있어요.',
     today: '오늘', noRecord: '아직 기록이 없어요. 한 판 해볼까요?', plays: '{n}판', exitAsk: '게임을 그만할까요?',
     keepPlaying: '계속하기', goLobby: '로비로', offlineSave: '결과를 저장하지 못했어요. 연결을 확인해 주세요.',
@@ -56,7 +59,9 @@ const CORE = {
     chooseCharacter: 'Who will play?', newCharacter: 'Make from photos', del: 'Delete', delAsk: 'Delete this character?',
     dressUp: 'Dress up', wear: 'Wear', remove: 'Remove', wearing: 'Wearing', buy: 'Buy', owned: 'Owned',
     shopCosmetics: 'Dress up', shopItems: 'Items', bought: 'You bought {name}!', qty: '×{n}',
-    slot_outfit: 'Outfit', slot_head: 'Headwear', slot_face: 'Glasses', slot_back: 'Bag',
+    tryBeforeBuy: 'Tap an item to try it on first.', tryingOn: 'Trying on', buyAndWear: 'Buy and wear',
+    slot_pet: 'Pets', petTogether: 'Together', petPreview: 'Previewing together', petJoin: 'Bring along', petRemove: 'Send home', buyAndAdopt: 'Buy and bring along',
+    slot_outfit: 'Outfit', slot_head: 'Headwear', slot_face: 'Glasses', slot_back: 'Bag', newItems: 'New Items', newBadge: 'NEW',
     earned: '+{n} Sparkles!', noEarn: 'Take a short break to earn Sparkles again.',
     today: 'Today', noRecord: 'No records yet. Shall we play?', plays: '{n} plays', exitAsk: 'Leave this game?',
     keepPlaying: 'Keep playing', goLobby: 'Lobby', offlineSave: "Couldn't save the result. Check your connection.",
@@ -105,7 +110,7 @@ export function t(key, vars, dict) {
 export const pick = (obj) => obj?.[lang] ?? obj?.en ?? '';
 
 export function apply(root, dict) {
-  for (const el of root.querySelectorAll('[data-i18n]')) el.textContent = t(el.dataset.i18n, null, dict);
+  for (const el of root.querySelectorAll('[data-i18n]')) setIconText(el, t(el.dataset.i18n, null, dict));
   for (const el of root.querySelectorAll('[data-i18n-html]')) el.innerHTML = t(el.dataset.i18nHtml, null, dict);
   for (const el of root.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', t(el.dataset.i18nAria, null, dict));
 }

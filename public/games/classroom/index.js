@@ -1,3 +1,4 @@
+import { iconMarkup } from '../../core/icons.js';
 /*
  * classroom - 수지와 지호의 교실. 시험지를 풀고(DONE!) 선생님께 채점받아요.
  *   시험 → 제출 → 채점 → 선생님 반응 → 보상(ctx.finish) → 다음 라운드
@@ -57,7 +58,6 @@ export const dict = {
 };
 
 const FONT_HREF = 'https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nunito:wght@700;800;900&display=swap';
-const UI = 'assets/ui/';
 /* 공통 아이템(core/catalog.js) 중 교실에서 쓰는 4종: 아이콘 파일과 도크 이름 */
 const ITEMS = { eraser: 'cheat-sneak', hint: 'hint-bulb', pill: 'smart-pill', shield: 'score-protection' };
 const DOCK_LABEL = { eraser: 'dockCheat', hint: 'dockCookie', pill: 'dockPill', shield: 'dockProtect' };
@@ -93,10 +93,10 @@ const TEMPLATE = `
           <span id="player-progress" class="player-progress"></span>
         </span>
       </button>
-      <button id="home-shop" class="home-shop-button"><img src="${UI}cookie.webp" alt="" /><span data-i18n="homeShop"></span><b>→</b></button>
+      <button id="home-shop" class="home-shop-button">${iconMarkup('cookie')}<span data-i18n="homeShop"></span><b>→</b></button>
     </div>
-    <button id="home-exit" class="round-icon exit-button" data-i18n-aria="homeAria"><img src="${UI}home.webp" alt="" /></button>
-    <button id="home-sound" class="round-icon sound-button" data-i18n-aria="soundAria"><img src="${UI}sound.webp" alt="" /></button>
+    <button id="home-exit" class="round-icon exit-button" data-i18n-aria="homeAria">${iconMarkup('home')}</button>
+    <button id="home-sound" class="round-icon sound-button" data-i18n-aria="soundAria">${iconMarkup('sound')}</button>
     <p class="home-footer" data-i18n-html="homeFooter"></p>
   </section>
 
@@ -107,7 +107,7 @@ const TEMPLATE = `
         <span id="hud-name"></span>
       </button>
       <div class="hud-stat hearts" id="hud-hearts"></div>
-      <div class="hud-stat sparkles"><img src="${UI}sparkle.webp" alt="" /><b id="hud-sparkles">0</b></div>
+      <div class="hud-stat sparkles">${iconMarkup('sparkle')}<b id="hud-sparkles">0</b></div>
     </header>
     <div class="round-strip">
       <span id="round-label"></span>
@@ -130,7 +130,7 @@ const TEMPLATE = `
     <div class="item-dock" data-i18n-aria="itemDockAria">
       ${Object.entries(ITEMS).map(([key, icon]) => `
       <button class="item-button" data-item="${key}">
-        <span class="item-art"><img src="${UI}${icon}.webp" alt="" /></span><b data-count></b><small data-i18n="${DOCK_LABEL[key]}"></small>
+        <span class="item-art">${iconMarkup(icon)}</span><b data-count></b><small data-i18n="${DOCK_LABEL[key]}"></small>
       </button>`).join('')}
     </div>
     <div id="hint-toast" class="hint-toast" role="status"></div>
@@ -148,7 +148,7 @@ const TEMPLATE = `
     <div id="celebration" class="celebration" aria-hidden="true"></div>
     <header class="result-hud">
       <span id="result-round"></span>
-      <span class="result-wallet"><img src="${UI}sparkle.webp" alt="" /> <b id="result-total-sparkles">0</b></span>
+      <span class="result-wallet">${iconMarkup('sparkle')} <b id="result-total-sparkles">0</b></span>
     </header>
     <div class="result-stage">
       <div class="teacher-mini">${TEACHER}</div>
@@ -160,7 +160,7 @@ const TEMPLATE = `
       <div id="grade-letter" class="grade-letter"></div>
       <div id="grade-stars" class="grade-stars"></div>
       <p id="score-detail"></p>
-      <div class="reward-row"><img src="${UI}sparkle.webp" alt="" /><b id="reward-amount"></b></div>
+      <div class="reward-row">${iconMarkup('sparkle')}<b id="reward-amount"></b></div>
       <div id="heart-result" class="heart-result"></div>
     </article>
     <div id="mistake-overlay" class="mistake-overlay" hidden>
@@ -172,8 +172,8 @@ const TEMPLATE = `
     </div>
     <div class="result-actions">
       <button id="next-round" class="primary-action"></button>
-      <button id="open-shop" class="secondary-action"><img class="action-icon" src="${UI}sparkle.webp" alt="" /> <span data-i18n="shop"></span></button>
-      <button id="result-home" class="secondary-action"><img class="action-icon" src="${UI}home.webp" alt="" /> <span data-i18n="home"></span></button>
+      <button id="open-shop" class="secondary-action">${iconMarkup('sparkle', 'action-icon')} <span data-i18n="shop"></span></button>
+      <button id="result-home" class="secondary-action">${iconMarkup('home', 'action-icon')} <span data-i18n="home"></span></button>
     </div>
   </section>
 
@@ -192,7 +192,7 @@ const TEMPLATE = `
 
   <div id="confirm-modal" class="confirm-modal" hidden>
     <div class="confirm-card">
-      <div class="confirm-icon"><img id="confirm-img" src="${UI}home.webp" alt="" /></div>
+      <div class="confirm-icon">${iconMarkup('home')}</div>
       <h2 id="confirm-title"></h2>
       <p data-i18n="quitHelp"></p>
       <div>
@@ -331,7 +331,7 @@ export function mount(el, ctx) {
     $('#hud-sparkles').textContent = ctx.sparkles();
     $('#hud-hearts').innerHTML = Array.from({ length: MAX_HEARTS }, (_, i) => {
       const full = i < progress.hearts;
-      return `<img class="heart-icon${full ? '' : ' is-empty'}" src="${UI}${full ? 'heart-full' : 'heart-empty'}.webp" alt="" />`;
+      return iconMarkup(full ? 'heart-full' : 'heart-empty', 'heart-icon' + (full ? '' : ' is-empty'));
     }).join('');
     $('#hud-hearts').setAttribute('aria-label', t('heartsAria', { count: progress.hearts }));
   }
@@ -532,7 +532,6 @@ export function mount(el, ctx) {
   function ask() {
     $('#confirm-title').textContent = t('quitTitle');
     $('#quit-quiz').textContent = t('goHome');
-    $('#confirm-img').src = UI + 'home.webp';
     $('#confirm-modal').hidden = false;
   }
 

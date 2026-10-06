@@ -1,3 +1,4 @@
+import { icon, iconFromSource, iconMarkup, setIconText } from '../../core/icons.js';
 /*
  * 구구단 디펜스 - 울타리 뒤의 캐릭터가 미사일을 자동으로 쏘고, 위에서 끝없이 내려오는 좀비를 막는 게임.
  * 좀비가 울타리에 닿으면 울타리가 조금씩 부서지고, 다 부서지면 끝. 금빛 퀴즈 좀비를 잡으면 구구단 퀴즈가 나오고,
@@ -63,7 +64,7 @@ const HTML = `
   <canvas class="df-canvas"></canvas>
   <header class="df-hud">
     <span class="df-pill df-wave"></span>
-    <span class="df-pill">⭐ <b class="df-score">0</b></span>
+    <span class="df-pill">${iconMarkup('star')} <b class="df-score">0</b></span>
     <span class="df-fence" role="meter" aria-valuemin="0" aria-valuemax="100" data-i18n-aria="fence"><i></i></span>
     <button type="button" class="df-pill df-sound" data-i18n-aria="sound"></button>
     <button type="button" class="df-pill df-pause" data-i18n-aria="pause">⏸️</button>
@@ -401,7 +402,7 @@ export function mount(el, ctx) {
 
   let bannerTimer = 0;
   function say(text) {
-    banner.textContent = text;
+    setIconText(banner, text);
     banner.classList.remove('show');
     void banner.offsetWidth;
     banner.classList.add('show');
@@ -421,7 +422,7 @@ export function mount(el, ctx) {
   function renderSound() {
     const b = $('.df-sound');
     const on = ctx.audio.getSound();
-    b.textContent = on ? '🔊' : '🔇';
+    b.replaceChildren(icon(on ? 'sound' : 'sound-muted'));
     b.setAttribute('aria-pressed', String(on));
   }
 
@@ -431,7 +432,7 @@ export function mount(el, ctx) {
     overlay.dataset.mode = mode;
     overlay.hidden = false;
     $('.df-go').textContent = t(mode === 'start' ? 'start' : mode === 'over' ? 'again' : 'resume');
-    $('.df-best').textContent = t('best', { n: best });
+    setIconText($('.df-best'), t('best', { n: best }));
     $('.df-best').hidden = !best;
     if (G) $('.df-result').textContent = t('result', { w: G.wave, k: G.kills, s: G.score }) + (G.bonus ? ' · ' + t('bonusLine', { n: G.bonus }) : '');
     cardHero.expression(mode === 'over' ? (G.score > G.prevBest ? 'happy' : 'sad') : 'happy');
@@ -547,12 +548,12 @@ export function mount(el, ctx) {
     ].filter(Boolean);
     G.mode = 'pick';
     $('h1[data-show="pick"]').textContent = t('rewardTitle');
-    $('.df-picks').replaceChildren(...cards.map(([, icon, name, desc, use]) => {
+    $('.df-picks').replaceChildren(...cards.map(([, source, name, desc, use]) => {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'df-pick';
-      b.innerHTML = '<img class="df-pick-icon" alt=""><b></b><small></small><em></em>';
-      b.querySelector('.df-pick-icon').src = icon;
+      b.innerHTML = '<b></b><small></small><em></em>';
+      b.prepend(iconFromSource(source, 'df-pick-icon'));
       b.querySelector('b').textContent = name;
       b.querySelector('small').textContent = desc;
       b.addEventListener('click', () => {
@@ -581,8 +582,8 @@ export function mount(el, ctx) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'df-pick';
-      b.innerHTML = '<img class="df-pick-icon" alt=""><b></b><small></small><em></em>';
-      b.querySelector('.df-pick-icon').src = `${ART}icon-${id}.png`;
+      b.innerHTML = '<b></b><small></small><em></em>';
+      b.prepend(iconFromSource(`${ART}icon-${id}.png`, 'df-pick-icon'));
       b.querySelector('b').textContent = u.name[lang];
       b.querySelector('small').textContent = u.desc[lang];
       b.querySelector('em').textContent = t('level', { a: lv, b: lv + 1 });

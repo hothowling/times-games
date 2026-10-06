@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
 <link rel="stylesheet" href="core/ui.css">
+<link rel="stylesheet" href="core/icons.css">
 <link rel="stylesheet" href="core/character.css">
 </head>
 <body>
@@ -21,8 +22,8 @@
     <span id="tb-face" class="tb-face"></span>
     <span id="tb-name" class="tb-name"></span>
   </button>
-  <span class="tb-sparkles"><img src="assets/ui/sparkle.webp" alt="" width="22" height="22"><b id="tb-sparkles">0</b></span>
-  <button type="button" id="tb-settings" class="icon-btn" data-i18n-aria="settings">⚙︎</button>
+  <span class="tb-sparkles"><span class="ui-icon" data-icon="sparkle" aria-hidden="true" style="--icon-size:22px"></span><b id="tb-sparkles">0</b></span>
+  <button type="button" id="tb-settings" class="icon-btn" data-i18n-aria="settings"><span class="ui-icon" data-icon="settings" aria-hidden="true"></span></button>
 </header>
 
 <main id="view"></main>

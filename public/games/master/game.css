@@ -98,7 +98,7 @@
   transition: transform 150ms ease;
 }
 
-.game-master .m-icon img { width: 32px; height: 32px; }
+.game-master .m-icon img, .game-master .m-icon .ui-icon { width: 32px; height: 32px; }
 .game-master .m-icon:active { transform: scale(0.92); }
 
 .game-master .badge {

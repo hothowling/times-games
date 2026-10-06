@@ -2,7 +2,7 @@
  * character.js - 캐릭터 그리기. 모든 화면과 게임이 이것 하나로 캐릭터를 보여 줍니다.
  *
  *   const c = createCharacter(el, look, { body: true })
- *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'photo', equipped: { outfit, head, face, back } }
+ *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'photo', equipped: { outfit, head, face, back, pet } }
  *     body: false 면 얼굴만(머리 장식·안경은 그대로) 그립니다.
  *   c.react('correct'|'wrong'|'timeout'|'clear'|'fail'|'idle')   표정 + 동작
  *   c.expression('neutral'|'happy'|'angry'|'surprised'|'sad')     표정만 바꾸기(다음 react 전까지 유지)
@@ -12,7 +12,7 @@
  * 몸은 250×275 기준 좌표에서 얼굴·옷·장식을 겹치고(교실 게임의 레이어 방식), 요소 너비에 맞춰 통째로 늘이고 줄입니다.
  * 움직임(숨쉬기·흔들기·점프·반짝이)은 구구단 마스터의 마스코트 애니메이션을 그대로 씁니다(character.css).
  */
-import { COSMETICS } from './catalog.js';
+import { COSMETICS, BASE_OUTFIT } from './catalog.js';
 
 const EXPRESSIONS = ['neutral', 'happy', 'angry', 'surprised', 'sad'];
 const BOX_W = 250;
@@ -84,7 +84,8 @@ export function createCharacter(el, look, { body = true } = {}) {
     outfit: node('img', 'chr-w chr-outfit', rig),
     face: node('span', 'chr-face', rig),
     head: node('img', 'chr-w chr-head', rig),
-    glasses: node('img', 'chr-w chr-glasses', rig)
+    glasses: node('img', 'chr-w chr-glasses', rig),
+    pet: node('img', 'chr-w chr-pet', rig)
   };
 
   let current = look;
@@ -110,12 +111,14 @@ export function createCharacter(el, look, { body = true } = {}) {
     current = next;
     const r = RIGS[next.rig] || RIGS.photo;
     const eq = next.equipped || {};
+    /* 가면처럼 위로 긴 안경도 렌즈 구멍을 캐릭터 눈높이에 맞춥니다(그림은 2:1). */
+    const glassesY = r.glassesY + (0.53 - (COSMETICS[eq.face]?.lensY ?? 0.53)) * r.glassesW / 2;
     const bow = COSMETICS[eq.head]?.style === 'bow';
     const vars = {
       '--face-x': r.faceX, '--face-y': r.faceY, '--face-w': r.faceW, '--face-h': r.faceH,
       '--head-x': r.headX, '--head-y': bow ? r.bow.headY : r.headY, '--head-w': bow ? r.bow.headW : r.headW,
       '--head-angle': r.headAngle + 'deg',
-      '--glasses-x': r.glassesX, '--glasses-y': r.glassesY, '--glasses-w': r.glassesW, '--glasses-angle': r.glassesAngle + 'deg',
+      '--glasses-x': r.glassesX, '--glasses-y': glassesY, '--glasses-w': r.glassesW, '--glasses-angle': r.glassesAngle + 'deg',
       '--back-right': r.backRight, '--back-bottom': r.backBottom, '--back-w': r.backW, '--outfit-bottom': r.outfitBottom
     };
     for (const [k, v] of Object.entries(vars)) rig.style.setProperty(k, px(v));
@@ -125,10 +128,13 @@ export function createCharacter(el, look, { body = true } = {}) {
     shift = body ? '' : ` translate(${r.faceW / 2 - BOX_W / 2}px, ${-r.faceY}px)`;
     boxW = body ? BOX_W : r.faceW;
     L.face.style.backgroundImage = `url("${next.face}")`;
-    wear(L.outfit, body && eq.outfit);
+    L.outfit.hidden = !body;
+    if (body) L.outfit.src = COSMETICS[eq.outfit]?.img || BASE_OUTFIT;
+    else L.outfit.removeAttribute('src');
     wear(L.back, body && eq.back);
     wear(L.head, eq.head);
     wear(L.glasses, eq.face);
+    wear(L.pet, body && eq.pet);
     fit();
   }
 

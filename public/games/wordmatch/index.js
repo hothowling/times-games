@@ -1,3 +1,4 @@
+import { icon, setIconText } from '../../core/icons.js';
 /*
  * 영단어 짝맞추기 - 펼쳐진 영어 카드와 한글 카드에서 같은 뜻 두 장을 골라 없애는 게임.
  * 맞히면 그림 카드(사진 → 없으면 이모지 → 없으면 글자만)가 뜨고 영어 → 한글 순서로 읽어 줍니다(core/audio.js speak).
@@ -239,7 +240,7 @@ export function mount(el, ctx) {
     if (!S) return;
     if (S.cfg.timed) {
       const left = remaining();
-      timeEl.textContent = '⏳ ' + fmtTime(Math.ceil(left));
+      setIconText(timeEl, '⏳ ' + fmtTime(Math.ceil(left)));
       timeEl.classList.toggle('low', left <= 10);
       if (left <= 0 && !S.done && !S.locked) timeUp();
     } else {
@@ -280,7 +281,7 @@ export function mount(el, ctx) {
       apply() {
         S.wrong--;
         S.erased++;
-        msg.textContent = t('tipEraser');
+        setIconText(msg, t('tipEraser'));
         flashTime('up');
       }
     },
@@ -288,7 +289,7 @@ export function mount(el, ctx) {
       can: () => playing() && S.cfg.timed,
       apply() {
         S.bonus += TIME_ATTACK.item;
-        msg.textContent = t('tipTime');
+        setIconText(msg, t('tipTime'));
         flashTime('up');
       }
     },
@@ -302,7 +303,7 @@ export function mount(el, ctx) {
       const card = left.find((c) => c.wordId === S.target);
       if (!card) return;
       card.el.classList.add('glow');
-      msg.textContent = t('tipHintListen');
+      setIconText(msg, t('tipHintListen'));
       later(() => card.el.classList.remove('glow'), HINT_MS);
       sayPrompt();
       return;
@@ -313,14 +314,14 @@ export function mount(el, ctx) {
     pair.forEach((c) => c.el.classList.add('glow'));
     if (S.cfg.faceDown) {
       pair.forEach((c) => c.el.classList.add('open'));
-      msg.textContent = t('tipHintMemory');
+      setIconText(msg, t('tipHintMemory'));
       later(() => pair.forEach((c) => {
         c.el.classList.remove('glow');
         if (!c.gone && S.sel !== c && !S.flipped.includes(c)) c.el.classList.remove('open');
       }), HINT_MS);
       return;
     }
-    msg.textContent = t('tipHint');
+    setIconText(msg, t('tipHint'));
     later(() => pair.forEach((c) => c.el.classList.remove('glow')), HINT_MS);
   }
 
@@ -379,14 +380,14 @@ export function mount(el, ctx) {
   function renderSound() {
     const b = $('.wm-sound');
     const on = audio.getSound();
-    b.textContent = on ? '🔊' : '🔇';
+    b.replaceChildren(icon(on ? 'sound' : 'sound-muted'));
     b.setAttribute('aria-pressed', String(on));
   }
 
   function renderBest() {
     const mode = overlay.dataset.mode === 'over' && S ? S.mode : pick.mode;
     const n = bestBy[mode] || 0;
-    $('.wm-best').textContent = t('best', { n });
+    setIconText($('.wm-best'), t('best', { n }));
     $('.wm-best').hidden = !n;
   }
 
@@ -772,7 +773,7 @@ export function mount(el, ctx) {
       hero.react(S.stars ? 'clear' : 'timeout');
     }
     $('.wm-over-title').textContent = cleared ? t('over') : t('timeUp');
-    $('.wm-score').textContent = '⭐'.repeat(S.stars) + ' ' + t('score', { s: score });
+    setIconText($('.wm-score'), '⭐'.repeat(S.stars) + ' ' + t('score', { s: score }));
     $('.wm-result').textContent = (cleared ? '' : t('progress', { m: S.matched, p: pairs }) + ' · ') +
       t('result', { t: fmtTime(seconds), w: S.wrong, c: S.maxCombo });
     $('.wm-learned').replaceChildren(...S.words.map((w) => {

@@ -107,6 +107,16 @@
   transform: translateX(-50%);
 }
 
+/* 펫은 캐릭터 옆의 앞쪽에 두어 몸이나 옷에 가려지지 않게 합니다. */
+.chr-pet {
+  z-index: 7;
+  left: 196px;
+  bottom: -34px;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
 .chr-glow {
   position: absolute;
   left: 14%;

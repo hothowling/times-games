@@ -1,3 +1,4 @@
+import { icon, iconMarkup, setIconText } from '../../core/icons.js';
 /*
  * 구구단 슈터 - 떨어지는 구구단 식의 답을 골라 미사일로 터뜨리는 게임.
  * 규칙 함수는 rules.js(DOM 없음), 여기는 화면과 게임 루프입니다.
@@ -54,7 +55,7 @@ const HTML = `
 <div class="sh-app">
   <header class="sh-hud">
     <span class="pill sh-round"></span>
-    <span class="pill">⭐ <b class="sh-score">0</b></span>
+    <span class="pill">${iconMarkup('star')} <b class="sh-score">0</b></span>
     <button type="button" class="pill sh-sound" data-i18n-aria="sound"></button>
     <button type="button" class="pill sh-pause" data-i18n-aria="pause">⏸️</button>
   </header>
@@ -62,7 +63,7 @@ const HTML = `
   <footer class="sh-panel">
     <div class="sh-hero" aria-hidden="true"><div class="sh-face"></div></div>
     <div class="sh-items"></div>
-    <div class="sh-hearts" role="img">${'<span>❤️</span>'.repeat(LIVES)}</div>
+    <div class="sh-hearts" role="img">${iconMarkup('heart-full').repeat(LIVES)}</div>
     <div class="sh-choices">${'<button type="button" class="choice"></button>'.repeat(5)}</div>
   </footer>
   <div class="sh-layer" aria-hidden="true"></div>
@@ -127,7 +128,7 @@ export function mount(el, ctx) {
     $('.sh-round').textContent = t('round', { n: S.round });
     $('.sh-score').textContent = S.score;
     $('.result').textContent = t('result', { s: S.score, n: S.round });
-    $('.best').textContent = t('best', { n: best });
+    setIconText($('.best'), t('best', { n: best }));
     $('.best').hidden = !best;
   }
 
@@ -145,7 +146,7 @@ export function mount(el, ctx) {
   function renderSound() {
     const b = $('.sh-sound');
     const on = ctx.audio.getSound();
-    b.textContent = on ? '🔊' : '🔇';
+    b.replaceChildren(icon(on ? 'sound' : 'sound-muted'));
     b.setAttribute('aria-pressed', String(on));
   }
 

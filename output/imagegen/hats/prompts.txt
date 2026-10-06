@@ -1,0 +1,37 @@
+Built-in image_gen, using red-cap.webp as a pose and placement template. True transparent backgrounds.
+
+01-cat-ears
+Use case: precise-object-edit
+Asset type: transparent headwear sprite for an existing children's dress-up game.
+Input image is a red cap used as exact scale, head alignment and visual style template. Create one new headwear sprite: A cute black cat-ear headband, thin curved black band with two upright triangular ears and soft pink inner ears. The center under the band is completely empty transparent to reveal the character's existing hair. No cat face, no hair, no human head.
+Preserve the template's square canvas, centered fitting position, head-facing camera, slightly visible top surface and polished illustrated game look with crisp dark outlines and soft shading. The hat's lower brim or head-contact band should align with the template's cap lower rim (around 78% of canvas height), with total hat width about 78% of canvas; preserve comfortable transparent margins. For the cat headband place ears above this head contact line, empty middle. Wearable object only, no head, no person, no hair, no face, no mannequin, no labels or text. Actual RGBA transparent background, no checkerboard, no backdrop, no floor shadow. Keep all shapes inside canvas.
+
+02-cowboy-hat
+Use case: precise-object-edit
+Asset type: transparent headwear sprite for an existing children's dress-up game.
+Input image is a red cap used as exact scale, head alignment and visual style template. Create one new headwear sprite: A warm brown cowboy hat, classic curved wide brim with upward curled outer sides, softly pinched crown, darker leather band with one small gold buckle. Friendly playful western style.
+Preserve the template's square canvas, centered fitting position, head-facing camera, slightly visible top surface and polished illustrated game look with crisp dark outlines and soft shading. The hat's lower brim or head-contact band should align with the template's cap lower rim (around 78% of canvas height), with total hat width about 78% of canvas; preserve comfortable transparent margins. For the cat headband place ears above this head contact line, empty middle. Wearable object only, no head, no person, no hair, no face, no mannequin, no labels or text. Actual RGBA transparent background, no checkerboard, no backdrop, no floor shadow. Keep all shapes inside canvas.
+
+03-yellow-hard-hat
+Use case: precise-object-edit
+Asset type: transparent headwear sprite for an existing children's dress-up game.
+Input image is a red cap used as exact scale, head alignment and visual style template. Create one new headwear sprite: A bright yellow construction safety hard hat, smooth rounded dome, clear reinforced top ridge, short broad protective brim, small simple gray front plate without text. Cheerful shiny yellow plastic.
+Preserve the template's square canvas, centered fitting position, head-facing camera, slightly visible top surface and polished illustrated game look with crisp dark outlines and soft shading. The hat's lower brim or head-contact band should align with the template's cap lower rim (around 78% of canvas height), with total hat width about 78% of canvas; preserve comfortable transparent margins. For the cat headband place ears above this head contact line, empty middle. Wearable object only, no head, no person, no hair, no face, no mannequin, no labels or text. Actual RGBA transparent background, no checkerboard, no backdrop, no floor shadow. Keep all shapes inside canvas.
+
+04-propeller-hat
+Use case: precise-object-edit
+Asset type: transparent headwear sprite for an existing children's dress-up game.
+Input image is a red cap used as exact scale, head alignment and visual style template. Create one new headwear sprite: A funny rainbow propeller beanie hat: rounded red, blue, green and yellow cap panels, short brim, a tiny red and blue propeller on a small yellow spindle at the top. Cute playful recognizable propeller cap.
+Preserve the template's square canvas, centered fitting position, head-facing camera, slightly visible top surface and polished illustrated game look with crisp dark outlines and soft shading. The hat's lower brim or head-contact band should align with the template's cap lower rim (around 78% of canvas height), with total hat width about 78% of canvas; preserve comfortable transparent margins. For the cat headband place ears above this head contact line, empty middle. Wearable object only, no head, no person, no hair, no face, no mannequin, no labels or text. Actual RGBA transparent background, no checkerboard, no backdrop, no floor shadow. Keep all shapes inside canvas.
+
+05-chicken-hat
+Use case: precise-object-edit
+Asset type: transparent headwear sprite for an existing children's dress-up game.
+Input image is a red cap used as exact scale, head alignment and visual style template. Create one new headwear sprite: A funny cute chicken hat: rounded creamy white plush chicken beanie, a short red comb on top, tiny round black chicken eyes and a small orange beak on the hat's front. No face or head below the hat, no straps, no separate bird.
+Preserve the template's square canvas, centered fitting position, head-facing camera, slightly visible top surface and polished illustrated game look with crisp dark outlines and soft shading. The hat's lower brim or head-contact band should align with the template's cap lower rim (around 78% of canvas height), with total hat width about 78% of canvas; preserve comfortable transparent margins. For the cat headband place ears above this head contact line, empty middle. Wearable object only, no head, no person, no hair, no face, no mannequin, no labels or text. Actual RGBA transparent background, no checkerboard, no backdrop, no floor shadow. Keep all shapes inside canvas.
+
+06-watermelon-hat
+Use case: precise-object-edit
+Asset type: transparent headwear sprite for an existing children's dress-up game.
+Input image is a red cap used as exact scale, head alignment and visual style template. Create one new headwear sprite: A funny watermelon hat: rounded watermelon-slice helmet cap, pink-red top with a few black seed shapes and a thick curved green rind rim with light green stripes. Cute simple summertime novelty headwear.
+Preserve the template's square canvas, centered fitting position, head-facing camera, slightly visible top surface and polished illustrated game look with crisp dark outlines and soft shading. The hat's lower brim or head-contact band should align with the template's cap lower rim (around 78% of canvas height), with total hat width about 78% of canvas; preserve comfortable transparent margins. For the cat headband place ears above this head contact line, empty middle. Wearable object only, no head, no person, no hair, no face, no mannequin, no labels or text. Actual RGBA transparent background, no checkerboard, no backdrop, no floor shadow. Keep all shapes inside canvas.

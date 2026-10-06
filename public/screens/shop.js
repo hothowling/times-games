@@ -1,3 +1,4 @@
+import { icon, iconFromSource } from '../core/icons.js';
 /*
  * shop.js - 상점. 꾸미기(계정 공유, 지금 캐릭터에 입혀 봄)와 게임별 아이템(소모품).
  *   #/shop?game=<id>  게임에서 왔으면 아이템 탭부터 열고, 뒤로 가면 그 게임으로 돌아갑니다.
@@ -12,26 +13,29 @@ import { openBox } from '../core/box.js';
 import { audio } from '../core/audio.js';
 import { GAMES } from '../games/index.js';
 
-const SPARK = 'assets/ui/sparkle.webp';
 
 export function render(view, { go, toast, errorText, params }) {
   const fromGame = params.get('game');
   let tab = fromGame ? 'items' : 'cosmetics';
   let busy = false;
+  let actionBusy = false;
+  let selected = null;
+  let alive = true;
   const key = currentKey();
 
   const preview = h('div');
+  const previewActions = h('div', { class: 'shop-preview-actions', 'aria-live': 'polite' });
   const tabs = h('div', { class: 'tabs', role: 'tablist' });
   const body = h('div');
   view.append(
     h('button', { type: 'button', class: 'back-btn', onclick: () => go(fromGame ? 'play/' + fromGame : 'lobby') }, '‹ ' + t('back')),
-    h('section', { class: 'shop-preview' }, preview),
+    h('section', { class: 'shop-preview' }, preview, previewActions),
     tabs,
     body
   );
   const chr = createCharacter(preview, lookFor(key));
 
-  const price = (n) => h('span', { class: 'price' }, h('img', { src: SPARK, alt: '' }), n);
+  const price = (n) => h('span', { class: 'price' }, icon('sparkle'), n);
 
   async function buy(itemId, name) {
     if (busy) return false;
@@ -56,35 +60,89 @@ export function render(view, { go, toast, errorText, params }) {
     try {
       const r = await api('PUT', 'looks/' + key, { equipped });
       patch((me) => { me.looks[key] = r.equipped; });
-      chr.update(lookFor(key));
-      chr.react('correct');
+      if (alive) { chr.update(lookFor(key)); chr.react('correct'); }
+      return true;
     } catch (err) {
       toast(errorText(err));
+      return false;
     }
   }
 
-  async function onCosmetic(id) {
-    const c = COSMETICS[id];
-    const worn = lookFor(key).equipped[c.slot] === id;
-    if (!state.me.inventory[id] && !(await buy(id, pick(c.name)))) return;
-    /* 옷은 벗을 수 없고(항상 하나), 장식은 다시 누르면 벗습니다. */
-    if (worn) { if (c.slot !== 'outfit') await wear(c.slot, null); }
-    else await wear(c.slot, id);
+  const owns = (id) => COSMETICS[id].price === 0 || !!state.me.inventory[id];
+
+  function onCosmetic(id) {
+    if (actionBusy || busy) return;
+    selected = id;
     draw();
+  }
+
+  function cancelPreview() {
+    if (actionBusy) return;
+    selected = null;
+    draw();
+  }
+
+  async function confirmCosmetic() {
+    if (!selected || actionBusy || busy) return;
+    const id = selected;
+    const c = COSMETICS[id];
+    const remove = owns(id) && lookFor(key).equipped[c.slot] === id;
+    actionBusy = true;
+    draw();
+    try {
+      if (!owns(id) && !(await buy(id, pick(c.name)))) return;
+      if (await wear(c.slot, remove ? null : id)) selected = null;
+    } finally {
+      actionBusy = false;
+      if (alive) draw();
+    }
+  }
+
+  function drawPreview() {
+    const look = lookFor(key);
+    previewActions.hidden = tab !== 'cosmetics';
+    if (!selected || tab !== 'cosmetics') {
+      chr.update(look);
+      previewActions.replaceChildren(h('p', { class: 'shop-try-hint' }, t('tryBeforeBuy')));
+      return;
+    }
+    const c = COSMETICS[selected];
+    chr.update({ ...look, equipped: { ...look.equipped, [c.slot]: selected } });
+    const owned = owns(selected);
+    const worn = look.equipped[c.slot] === selected;
+    previewActions.replaceChildren(
+      h('p', { class: 'shop-try-name' }, pick(c.name), ' · ', t(c.slot === 'pet' ? (worn ? 'petTogether' : 'petPreview') : (worn ? 'wearing' : 'tryingOn'))),
+      h('div', { class: 'shop-try-buttons' },
+        h('button', { type: 'button', class: 'btn btn-small shop-confirm', disabled: actionBusy, onclick: confirmCosmetic },
+          owned ? t(c.slot === 'pet' ? (worn ? 'petRemove' : 'petJoin') : (worn ? 'remove' : 'wear')) : [t(c.slot === 'pet' ? 'buyAndAdopt' : 'buyAndWear'), ' · ', icon('sparkle'), ' ' + c.price]),
+        h('button', { type: 'button', class: 'btn btn-sub btn-small', disabled: actionBusy, onclick: cancelPreview }, t('cancel'))));
   }
 
   function cosmetics() {
     const eq = lookFor(key).equipped;
-    return SLOTS.map((slot) => h('div', { class: 'shop-section' },
-      h('h3', null, t('slot_' + slot)),
-      h('div', { class: 'shop-grid' }, Object.entries(COSMETICS).filter(([, c]) => c.slot === slot).map(([id, c]) => {
-        const owned = !!state.me.inventory[id];
-        const worn = eq[slot] === id;
-        return h('button', { type: 'button', class: 'shop-item' + (worn ? ' is-worn' : ''), onclick: () => onCosmetic(id) },
-          h('img', { src: c.img, alt: '' }),
-          pick(c.name),
-          worn ? h('span', { class: 'tag' }, t('wearing')) : owned ? h('span', { class: 'tag' }, t('wear')) : price(c.price));
-      }))));
+    const entries = Object.entries(COSMETICS);
+    const card = ([id, c]) => {
+      const owned = owns(id);
+      const worn = eq[c.slot] === id;
+      return h('button', { type: 'button', 'data-cosmetic': id,
+        'aria-pressed': String(selected === id), disabled: actionBusy,
+        class: 'shop-item' + (worn ? ' is-worn' : '') + (selected === id ? ' is-selected' : '') + (c.isNew ? ' is-new' : ''), onclick: () => onCosmetic(id) },
+        c.isNew ? h('span', { class: 'shop-new-badge' }, t('newBadge')) : null,
+        h('img', { src: c.img, alt: '' }), pick(c.name),
+        selected === id && !worn ? h('span', { class: 'tag' }, t(c.slot === 'pet' ? 'petPreview' : 'tryingOn')) : worn ? h('span', { class: 'tag' }, t(c.slot === 'pet' ? 'petTogether' : 'wearing')) : owned ? h('span', { class: 'tag' }, t('owned')) : price(c.price));
+    };
+    const section = (title, list, cls = '') => h('div', { class: 'shop-section ' + cls },
+      h('h3', null, title), h('div', { class: 'shop-grid' }, list.map(card)));
+    /* 최신 머리 장식부터 보여 주고, 기존 분류에는 신규 아이템을 중복해서 놓지 않습니다. */
+    const order = { pet: -1, head: 0, face: 1, outfit: 2 };
+    const recent = entries.filter(([, c]) => c.isNew).sort((a, b) => order[a[1].slot] - order[b[1].slot]);
+    return [
+      recent.length ? section(t('newItems'), recent, 'shop-new-items') : null,
+      ...SLOTS.flatMap((slot) => {
+        const list = entries.filter(([, c]) => c.slot === slot && !c.isNew);
+        return list.length ? [section(t('slot_' + slot), list)] : [];
+      })
+    ].filter(Boolean);
   }
 
   /* 랜덤박스: 사면 바로 열고, 매일 받은 상자가 있으면 '열기'. 열고 나면 개수·잔액을 다시 그립니다. */
@@ -95,9 +153,9 @@ export function render(view, { go, toast, errorText, params }) {
       h('h3', null, pick(BOX.name)),
       h('div', { class: 'shop-grid' },
         h('button', { type: 'button', class: 'shop-item', onclick: () => open(true) },
-          h('img', { src: BOX.icon, alt: '' }), pick(BOX.name), h('span', { class: 'desc' }, pick(BOX.desc)), price(BOX.price)),
+          iconFromSource(BOX.icon), pick(BOX.name), h('span', { class: 'desc' }, pick(BOX.desc)), price(BOX.price)),
         have ? h('button', { type: 'button', class: 'shop-item', onclick: () => open(false) },
-          h('img', { src: BOX.icon, alt: '' }), t('boxOpen'), h('span', { class: 'tag' }, t('boxHave', { n: have }))) : null));
+          iconFromSource(BOX.icon), t('boxOpen'), h('span', { class: 'tag' }, t('boxHave', { n: have }))) : null));
   }
 
   /* 아이템 5종은 모든 게임이 같이 씁니다. '쓰는 곳'은 games/index.js 의 items. 게임에서 왔으면 그 게임 아이템을 강조합니다. */
@@ -108,7 +166,7 @@ export function render(view, { go, toast, errorText, params }) {
         const where = GAMES.filter((g) => g.items?.includes(id));
         return h('button', { type: 'button', class: 'shop-item' + (fromGame && where.some((g) => g.id === fromGame) ? ' is-worn' : ''),
           onclick: async () => { if (await buy(id, pick(i.name))) draw(); } },
-          h('img', { src: i.icon, alt: '' }),
+          iconFromSource(i.icon),
           pick(i.name),
           h('span', { class: 'desc' }, pick(i.desc)),
           h('span', { class: 'where' }, t('itemWhere', { games: where.map((g) => pick(g.short)).join(' · ') })),
@@ -118,13 +176,14 @@ export function render(view, { go, toast, errorText, params }) {
   }
 
   function draw() {
+    drawPreview();
     tabs.replaceChildren(...['cosmetics', 'items'].map((k) => h('button', {
       type: 'button', class: 'tab', role: 'tab', 'aria-selected': String(tab === k),
-      onclick: () => { tab = k; draw(); }
+      disabled: actionBusy, onclick: () => { selected = null; tab = k; draw(); }
     }, t(k === 'cosmetics' ? 'shopCosmetics' : 'shopItems'))));
     body.replaceChildren(...(tab === 'cosmetics' ? cosmetics() : items()));
   }
 
   draw();
-  return () => chr.destroy();
+  return () => { alive = false; chr.destroy(); };
 }

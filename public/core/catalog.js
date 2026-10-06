@@ -6,9 +6,10 @@
 /* 프리셋 캐릭터. 모든 계정에 항상 보입니다. 사진 캐릭터 키는 'p<id>' 입니다. */
 export const PRESETS = ['sooji', 'jiho', 'nayeon'];
 
-/* 착용 슬롯. outfit 은 항상 하나를 입고, 나머지는 비울 수 있습니다. */
-export const SLOTS = ['outfit', 'head', 'face', 'back'];
-export const DEFAULT_LOOK = { outfit: 'whiteTee', head: null, face: null, back: null };
+/* 의상 선택이 없으면 렌더러가 기본 흰색 티셔츠를 그립니다. */
+export const SLOTS = ['outfit', 'head', 'face', 'back', 'pet'];
+export const DEFAULT_LOOK = { outfit: null, head: null, face: null, back: null, pet: null };
+export const BASE_OUTFIT = 'assets/wearables/outfits/11-white-tee.webp';
 
 const W = 'assets/wearables/';
 const cos = (slot, file, price, ko, en, extra) =>
@@ -16,7 +17,6 @@ const cos = (slot, file, price, ko, en, extra) =>
 
 /* 꾸미기: 계정 공유, 한 번 사면 계속 보유. price 0 은 처음부터 보유. */
 export const COSMETICS = {
-  whiteTee: cos('outfit', 'outfits/11-white-tee.webp', 0, '기본 흰색 반팔티', 'Plain White T-Shirt'),
   uniform: cos('outfit', 'outfits/01-school-uniform.webp', 0, '단정한 교복', 'Classic Uniform'),
   sailor: cos('outfit', 'outfits/02-sailor-uniform.webp', 18, '세일러 교복', 'Sailor Uniform'),
   hoodie: cos('outfit', 'outfits/03-casual-hoodie.webp', 20, '컬러 후드', 'Color Hoodie'),
@@ -25,11 +25,18 @@ export const COSMETICS = {
   mintDress: cos('outfit', 'outfits/06-mint-dress.webp', 25, '민트 플라워 드레스', 'Mint Flower Dress'),
   labCoat: cos('outfit', 'outfits/07-lab-coat.webp', 30, '꼬마 과학자 가운', 'Junior Scientist Coat'),
   heroSuit: cos('outfit', 'outfits/08-hero-suit.webp', 35, '별빛 히어로 슈트', 'Star Hero Suit'),
+  strongBoy: cos('outfit', 'outfits/14-strong-boy.webp', 35, '스트롱보이 의상', 'Strong Boy Costume', { isNew: true }),
   jersey: cos('outfit', 'outfits/09-sports-jersey.webp', 28, '7번 스포츠 저지', 'Number 7 Jersey'),
   magic: cos('outfit', 'outfits/10-magic-costume.webp', 40, '마법학교 제복', 'Magic Academy Uniform'),
-  pinkFlowerDress: cos('outfit', 'outfits/12-pink-flower-dress.webp', 25, '핑크 플라워 드레스', 'Pink Flower Dress'),
-  purpleSunflowerDress: cos('outfit', 'outfits/13-purple-sunflower-dress.webp', 25, '해바라기 퍼플 드레스', 'Purple Sunflower Dress'),
+  pinkFlowerDress: cos('outfit', 'outfits/12-pink-flower-dress.webp', 25, '핑크 플라워 드레스', 'Pink Flower Dress', { isNew: true }),
+  purpleSunflowerDress: cos('outfit', 'outfits/13-purple-sunflower-dress.webp', 25, '해바라기 퍼플 드레스', 'Purple Sunflower Dress', { isNew: true }),
   redCap: cos('head', 'red-cap.webp', 10, '빨간 모자', 'Red Cap'),
+  catEars: cos('head', 'hats/01-cat-ears.webp', 15, '고양이 머리띠', 'Cat Ear Headband', { isNew: true }),
+  cowboyHat: cos('head', 'hats/02-cowboy-hat.webp', 20, '카우보이 모자', 'Cowboy Hat', { isNew: true }),
+  hardHat: cos('head', 'hats/03-yellow-hard-hat.webp', 20, '노란 안전모', 'Yellow Hard Hat', { isNew: true }),
+  propellerHat: cos('head', 'hats/04-propeller-hat.webp', 20, '프로펠러 모자', 'Propeller Hat', { isNew: true }),
+  chickenHat: cos('head', 'hats/05-chicken-hat.webp', 20, '꼬꼬닭 모자', 'Chicken Hat', { isNew: true }),
+  watermelonHat: cos('head', 'hats/06-watermelon-hat.webp', 20, '수박 모자', 'Watermelon Hat', { isNew: true }),
   bowRed: cos('head', 'hair-bows/01-classic-red-bow.webp', 10, '클래식 빨간 리본', 'Classic Red Bow', { style: 'bow' }),
   bowPink: cos('head', 'hair-bows/02-pink-polka-bow.webp', 10, '핑크 도트 리본', 'Pink Polka Bow', { style: 'bow' }),
   bowNavy: cos('head', 'hair-bows/03-navy-school-bow.webp', 10, '네이비 스쿨 리본', 'Navy School Bow', { style: 'bow' }),
@@ -37,7 +44,21 @@ export const COSMETICS = {
   bowMint: cos('head', 'hair-bows/05-mint-flower-bow.webp', 10, '민트 꽃 리본', 'Mint Flower Bow', { style: 'bow' }),
   bowPurple: cos('head', 'hair-bows/06-purple-magic-bow.webp', 10, '보라 마법 리본', 'Purple Magic Bow', { style: 'bow' }),
   glasses: cos('face', 'glasses.webp', 20, '동그란 안경', 'Round Glasses'),
-  backpack: cos('back', 'backpack.webp', 30, '파란 가방', 'Blue Backpack')
+  batmanGlasses: cos('face', 'glasses/01-batman-mask.webp', 30, '배트맨 가면 안경', 'Batman Mask Glasses', { lensY: 0.65, isNew: true }),
+  heartGlasses: cos('face', 'glasses/02-heart-glasses.webp', 20, '하트 안경', 'Heart Glasses', { isNew: true }),
+  starGlasses: cos('face', 'glasses/03-star-glasses.webp', 20, '별 안경', 'Star Glasses', { isNew: true }),
+  spiralGlasses: cos('face', 'glasses/04-spiral-glasses.webp', 20, '빙글빙글 안경', 'Spiral Glasses', { isNew: true }),
+  frogGlasses: cos('face', 'glasses/05-frog-glasses.webp', 20, '개구리 안경', 'Frog Glasses', { isNew: true }),
+  petPuppy: cos('pet', 'pets/01-puppy.webp', 25, '강아지 펫', 'Puppy Pet', { isNew: true }),
+  petKitten: cos('pet', 'pets/02-kitten.webp', 25, '고양이 펫', 'Kitten Pet', { isNew: true }),
+  petBunny: cos('pet', 'pets/03-bunny.webp', 25, '토끼 펫', 'Bunny Pet', { isNew: true }),
+  petHamster: cos('pet', 'pets/04-hamster.webp', 25, '햄스터 펫', 'Hamster Pet', { isNew: true }),
+  petFox: cos('pet', 'pets/05-fox.webp', 25, '여우 펫', 'Fox Pet', { isNew: true }),
+  petSteve: cos('pet', 'pets/06-minecraft-steve.webp', 35, '스티브 펫', 'Steve Pet', { isNew: true }),
+  petAlex: cos('pet', 'pets/07-minecraft-alex.webp', 35, '알렉스 펫', 'Alex Pet', { isNew: true }),
+  petCreeper: cos('pet', 'pets/08-minecraft-creeper.webp', 35, '크리퍼 펫', 'Creeper Pet', { isNew: true }),
+  petNoob: cos('pet', 'pets/09-roblox-noob.webp', 35, '로블록스 눕 펫', 'Roblox Noob Pet', { isNew: true }),
+  petBacon: cos('pet', 'pets/10-roblox-bacon.webp', 35, '베이컨 헤어 펫', 'Bacon Hair Pet', { isNew: true })
 };
 
 /*
@@ -105,7 +126,6 @@ export function validLook(equipped, owned) {
   for (const slot of SLOTS) {
     const id = equipped[slot];
     if (id == null) {
-      if (slot === 'outfit') return false;
       continue;
     }
     const c = COSMETICS[id];

@@ -286,7 +286,7 @@ html[lang="en"] .game-classroom .title-card p {
   font: 900 19px "Gaegu";
 }
 
-.game-classroom .home-shop-button img {
+.game-classroom .home-shop-button img, .game-classroom .home-shop-button .ui-icon {
   width: 39px;
   height: 32px;
   object-fit: cover;
@@ -334,7 +334,7 @@ html[lang="en"] .game-classroom .title-card p {
   padding: 6px;
 }
 
-.game-classroom .exit-button img {
+.game-classroom .exit-button img, .game-classroom .exit-button .ui-icon {
   display: block;
   width: 100%;
   height: 100%;
@@ -346,14 +346,14 @@ html[lang="en"] .game-classroom .title-card p {
   padding: 0;
 }
 
-.game-classroom .sound-button img {
+.game-classroom .sound-button img, .game-classroom .sound-button .ui-icon {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.game-classroom .sound-button.is-muted img {
+.game-classroom .sound-button.is-muted img, .game-classroom .sound-button.is-muted .ui-icon {
   filter: grayscale(1);
   opacity: .45;
 }
@@ -454,7 +454,7 @@ html[lang="en"] .game-classroom .title-card p {
   color: #d99700;
 }
 
-.game-classroom .sparkles img {
+.game-classroom .sparkles img, .game-classroom .sparkles .ui-icon {
   width: 31px;
   height: 31px;
   object-fit: cover;
@@ -729,7 +729,7 @@ html[lang="en"] .game-classroom .title-card p {
   box-shadow: 0 3px 6px rgb(4 18 32 / 22%);
 }
 
-.game-classroom .item-button .item-art img {
+.game-classroom .item-button .item-art img, .game-classroom .item-button .item-art .ui-icon {
   display: block;
   width: 100%;
   height: 100%;
@@ -982,7 +982,7 @@ html[lang="en"] .game-classroom .title-card p {
   gap: 3px;
 }
 
-.game-classroom .result-wallet img {
+.game-classroom .result-wallet img, .game-classroom .result-wallet .ui-icon {
   width: 27px;
   height: 27px;
   object-fit: cover;
@@ -1109,7 +1109,7 @@ html[lang="en"] .game-classroom .title-card p {
   font-size: 22px;
 }
 
-.game-classroom .reward-row img {
+.game-classroom .reward-row img, .game-classroom .reward-row .ui-icon {
   width: 32px;
   height: 32px;
   object-fit: cover;
@@ -1486,7 +1486,7 @@ html[lang="en"] .game-classroom .title-card p {
   text-align: center;
 }
 
-.game-classroom .confirm-icon img {
+.game-classroom .confirm-icon img, .game-classroom .confirm-icon .ui-icon {
   width: 52px;
   height: 52px;
   border-radius: 15px;

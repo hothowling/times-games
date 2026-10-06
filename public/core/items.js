@@ -1,3 +1,4 @@
+import { icon, iconFromSource } from './icons.js';
 /*
  * items.js - 게임 안 아이템. 모든 게임이 같은 5종(catalog.js ITEMS)을 쓰고, 게임이 효과를 정합니다.
  *   askBuy(id)                         가진 게 없을 때 '사서 바로 쓸까요?' 팝업 → true/false
@@ -11,17 +12,16 @@ import { h, sheet } from './dom.js';
 import { state } from './state.js';
 import { ITEMS } from './catalog.js';
 
-const SPARK = 'assets/ui/sparkle.webp';
 
 export function askBuy(id) {
   const it = ITEMS[id];
   return new Promise((done) => {
     const dlg = sheet(
-      h('img', { class: 'item-ask-icon', src: it.icon, alt: '' }),
+      iconFromSource(it.icon, 'item-ask-icon'),
       h('h2', null, pick(it.name)),
       h('p', null, t('itemBuyAsk', { price: it.price, n: state.me.user.sparkles })),
       h('button', { type: 'button', class: 'btn', onclick: () => { dlg.returnValue = 'buy'; dlg.close(); } },
-        h('img', { class: 'item-ask-spark', src: SPARK, alt: '' }), ' ' + t('itemBuy', { price: it.price })),
+        icon('sparkle', 'item-ask-spark'), ' ' + t('itemBuy', { price: it.price })),
       h('button', { type: 'button', class: 'btn btn-sub', onclick: () => dlg.close() }, t('cancel')));
     dlg.addEventListener('close', () => done(dlg.returnValue === 'buy'));
   });
@@ -31,7 +31,7 @@ export function createItemBar(el, ids, items, handlers) {
   let busy = false;
   const buttons = ids.filter((id) => handlers[id]).map((id) =>
     h('button', { type: 'button', class: 'item-btn', 'data-item': id, 'aria-label': pick(ITEMS[id].name), onclick: () => press(id) },
-      h('img', { src: ITEMS[id].icon, alt: '' }), h('b')));
+      iconFromSource(ITEMS[id].icon), h('b')));
   const bar = h('div', { class: 'item-bar' }, ...buttons);
   el.append(bar);
 

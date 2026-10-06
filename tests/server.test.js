@@ -41,7 +41,7 @@ test('signup, login, lockout', async () => {
   assert.equal(r.status, 200);
   assert.equal(r.body.user.sparkles, 0);
   assert.equal(r.body.inventory.uniform, 1);
-  assert.equal(r.body.inventory.whiteTee, 1);
+  assert.equal(r.body.inventory.whiteTee, undefined);
   assert.equal((await a('GET', '/api/me')).status, 200);
   assert.equal((await client()('GET', '/api/me')).status, 401);
   assert.equal((await client()('POST', '/api/signup', { nickname: '수지', pin: '1111' })).status, 409);
@@ -81,12 +81,34 @@ test('plays reward, idempotency, shop, looks', async () => {
   assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { head: 'redCap' } })).status, 200);
   assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { face: 'glasses' } })).body.error, 'badLook', 'not owned');
   assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { face: 'redCap' } })).body.error, 'badLook', 'wrong slot');
-  assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { outfit: null } })).body.error, 'badLook');
+  assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { outfit: null, head: 'redCap' } })).status, 200);
   assert.equal((await a('PUT', '/api/looks/nobody', { equipped: {} })).status, 404);
-  assert.deepEqual((await a('GET', '/api/me')).body.looks.jiho, { outfit: 'whiteTee', head: 'redCap', face: null, back: null });
+  assert.deepEqual((await a('GET', '/api/me')).body.looks.jiho, { outfit: null, head: 'redCap', face: null, back: null, pet: null });
 
   r = await a('GET', '/api/records?days=1');
   assert.equal(r.body.plays.length, 4);
+});
+
+test('pets can be bought, saved per character and removed without changing the outfit', async () => {
+  const a = client();
+  const signup = await a('POST', '/api/signup', { nickname: 'pet-test', pin: '1234' });
+  const userId = signup.body.user.id;
+  db.prepare('update users set sparkles = 100 where id = ?').run(userId);
+  assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { pet: 'petPuppy' } })).body.error, 'badLook');
+  const purchase = await a('POST', '/api/shop/buy', { itemId: 'petPuppy' });
+  assert.equal(purchase.body.sparkles, 75);
+  assert.equal(purchase.body.inventory.petPuppy, 1);
+  assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { outfit: 'uniform', pet: 'petPuppy' } })).status, 200);
+  let me = (await a('GET', '/api/me')).body;
+  assert.equal(me.looks.jiho.pet, 'petPuppy');
+  assert.equal(me.looks.jiho.outfit, 'uniform');
+  assert.equal(me.looks.sooji, undefined);
+  assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { outfit: 'uniform', pet: null } })).status, 200);
+  me = (await a('GET', '/api/me')).body;
+  assert.equal(me.looks.jiho.pet, null);
+  assert.equal(me.looks.jiho.outfit, 'uniform');
+  assert.equal(me.inventory.petPuppy, 1);
+  assert.equal(me.user.sparkles, 75);
 });
 
 test('Nayeon preset can be selected, dressed and loaded without a photo upload', async () => {
@@ -212,7 +234,7 @@ test('ranking: week/all, ties, hidden users, photo users show a preset face', as
   s = (await c('GET', '/api/ranking?board=shooter')).body;
   const ra = s.top.find((x) => x.nickname === 'rank-a');
   assert.equal(ra.look.face, 'jiho');
-  assert.equal(ra.look.equipped.outfit, 'whiteTee');
+  assert.equal(ra.look.equipped.outfit, null);
   assert.ok(!JSON.stringify(s).includes('/face'), 'no photo face urls');
 
   assert.equal((await a('GET', '/api/ranking?board=nope')).status, 400);

@@ -1,0 +1,41 @@
+Built-in image_gen, using existing glasses.webp as the fit template. True transparent backgrounds and lens openings.
+
+01-batman-mask
+Use case: precise-object-edit
+Asset type: transparent face accessory sprite for a children's dress-up game.
+Input is the existing glasses template; preserve front-facing symmetric fit, lens positions, bridge position, accessory scale and wide 2:1 canvas.
+Primary request: Batman mask glasses: a black bat-shaped eye mask with two pointed bat ears above the outer corners, dark charcoal softly shaded frame, small nose bridge. Angular hollow eye openings. Mask covers only forehead and eye area, leaves nose below and mouth free. Classic recognizable Batman silhouette, no head or face.
+Style: crisp polished illustrated game art, clean dark outlines, subtle soft shading, readable at small sizes.
+Composition: one isolated accessory only. Lens/eye opening centers are at 29% and 71% of canvas width and 53% of canvas height, as in template. Frame outer width about 78% of canvas; maintain generous transparent margins. For bat mask ears, extend upward within the existing margin. No arms beyond short temple tips. Both eye/lens holes must be actual transparent pixels so the character's real eyes show through. No tinted glass, no white lens fill, no printed eyes inside lens openings. True RGBA transparent background. No head, face, nose, neck, text, labels, watermark or checkerboard.
+
+02-heart-glasses
+Use case: precise-object-edit
+Asset type: transparent face accessory sprite for a children's dress-up game.
+Input is the existing glasses template; preserve front-facing symmetric fit, lens positions, bridge position, accessory scale and wide 2:1 canvas.
+Primary request: Heart glasses: bold bright pink heart-shaped rims, two symmetric hollow heart-shaped lens openings, tiny gold bridge, cute smooth glossy finish.
+Style: crisp polished illustrated game art, clean dark outlines, subtle soft shading, readable at small sizes.
+Composition: one isolated accessory only. Lens/eye opening centers are at 29% and 71% of canvas width and 53% of canvas height, as in template. Frame outer width about 78% of canvas; maintain generous transparent margins. For bat mask ears, extend upward within the existing margin. No arms beyond short temple tips. Both eye/lens holes must be actual transparent pixels so the character's real eyes show through. No tinted glass, no white lens fill, no printed eyes inside lens openings. True RGBA transparent background. No head, face, nose, neck, text, labels, watermark or checkerboard.
+
+03-star-glasses
+Use case: precise-object-edit
+Asset type: transparent face accessory sprite for a children's dress-up game.
+Input is the existing glasses template; preserve front-facing symmetric fit, lens positions, bridge position, accessory scale and wide 2:1 canvas.
+Primary request: Funny star glasses: two cheerful five-pointed golden yellow star-shaped rims, purple bridge and temple tips, hollow star-shaped openings, festive playful silhouette.
+Style: crisp polished illustrated game art, clean dark outlines, subtle soft shading, readable at small sizes.
+Composition: one isolated accessory only. Lens/eye opening centers are at 29% and 71% of canvas width and 53% of canvas height, as in template. Frame outer width about 78% of canvas; maintain generous transparent margins. For bat mask ears, extend upward within the existing margin. No arms beyond short temple tips. Both eye/lens holes must be actual transparent pixels so the character's real eyes show through. No tinted glass, no white lens fill, no printed eyes inside lens openings. True RGBA transparent background. No head, face, nose, neck, text, labels, watermark or checkerboard.
+
+04-spiral-glasses
+Use case: precise-object-edit
+Asset type: transparent face accessory sprite for a children's dress-up game.
+Input is the existing glasses template; preserve front-facing symmetric fit, lens positions, bridge position, accessory scale and wide 2:1 canvas.
+Primary request: Funny spiral glasses: chunky round bright turquoise rims with a decorative purple spiral curling around each outer rim. Keep the centers fully open and transparent, spirals decorate the rims only and never cross the eyes. Quirky playful lightweight accessory.
+Style: crisp polished illustrated game art, clean dark outlines, subtle soft shading, readable at small sizes.
+Composition: one isolated accessory only. Lens/eye opening centers are at 29% and 71% of canvas width and 53% of canvas height, as in template. Frame outer width about 78% of canvas; maintain generous transparent margins. For bat mask ears, extend upward within the existing margin. No arms beyond short temple tips. Both eye/lens holes must be actual transparent pixels so the character's real eyes show through. No tinted glass, no white lens fill, no printed eyes inside lens openings. True RGBA transparent background. No head, face, nose, neck, text, labels, watermark or checkerboard.
+
+05-frog-glasses
+Use case: precise-object-edit
+Asset type: transparent face accessory sprite for a children's dress-up game.
+Input is the existing glasses template; preserve front-facing symmetric fit, lens positions, bridge position, accessory scale and wide 2:1 canvas.
+Primary request: Funny frog glasses: chunky bright leaf-green rounded eye rims, two small frog eye bumps above the outer edges with black pupils, cute frog-inspired frame and small bridge. The two large central lens openings remain completely empty and transparent.
+Style: crisp polished illustrated game art, clean dark outlines, subtle soft shading, readable at small sizes.
+Composition: one isolated accessory only. Lens/eye opening centers are at 29% and 71% of canvas width and 53% of canvas height, as in template. Frame outer width about 78% of canvas; maintain generous transparent margins. For bat mask ears, extend upward within the existing margin. No arms beyond short temple tips. Both eye/lens holes must be actual transparent pixels so the character's real eyes show through. No tinted glass, no white lens fill, no printed eyes inside lens openings. True RGBA transparent background. No head, face, nose, neck, text, labels, watermark or checkerboard.

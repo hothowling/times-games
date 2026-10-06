@@ -1,0 +1,40 @@
+/* All menu and item sprites share one 512 × 256 transparent WebP request. */
+:where(.ui-icon) {
+  display: inline-block;
+  flex: none;
+  width: var(--icon-size, 1.25em);
+  height: var(--icon-size, 1.25em);
+  vertical-align: middle;
+  background-image: url('../assets/ui/icons.webp');
+  background-repeat: no-repeat;
+  background-size: 800% 400%;
+}
+.ui-icon[data-icon="ranking"] { background-position: 0% 0%; }
+.ui-icon[data-icon="characters"] { background-position: 14.285714285714286% 0%; }
+.ui-icon[data-icon="shop"] { background-position: 28.571428571428573% 0%; }
+.ui-icon[data-icon="records"] { background-position: 42.857142857142854% 0%; }
+.ui-icon[data-icon="settings"] { background-position: 57.142857142857146% 0%; }
+.ui-icon[data-icon="sound-muted"] { background-position: 71.42857142857143% 0%; }
+.ui-icon[data-icon="star"] { background-position: 85.71428571428571% 0%; }
+.ui-icon[data-icon="crown"] { background-position: 100% 0%; }
+.ui-icon[data-icon="heart-empty"] { background-position: 0% 33.333333333333336%; }
+.ui-icon[data-icon="cheat-sneak"] { background-position: 14.285714285714286% 33.333333333333336%; }
+.ui-icon[data-icon="cookie"] { background-position: 28.571428571428573% 33.333333333333336%; }
+.ui-icon[data-icon="hint-bulb"] { background-position: 42.857142857142854% 33.333333333333336%; }
+.ui-icon[data-icon="sparkle"] { background-position: 57.142857142857146% 33.333333333333336%; }
+.ui-icon[data-icon="red-cap"] { background-position: 71.42857142857143% 33.333333333333336%; }
+.ui-icon[data-icon="smart-pill"] { background-position: 85.71428571428571% 33.333333333333336%; }
+.ui-icon[data-icon="call-friend"] { background-position: 100% 33.333333333333336%; }
+.ui-icon[data-icon="hourglass"] { background-position: 0% 66.66666666666667%; }
+.ui-icon[data-icon="heart-full"] { background-position: 14.285714285714286% 66.66666666666667%; }
+.ui-icon[data-icon="backpack"] { background-position: 28.571428571428573% 66.66666666666667%; }
+.ui-icon[data-icon="gift-box"] { background-position: 42.857142857142854% 66.66666666666667%; }
+.ui-icon[data-icon="score-protection"] { background-position: 57.142857142857146% 66.66666666666667%; }
+.ui-icon[data-icon="glasses"] { background-position: 71.42857142857143% 66.66666666666667%; }
+.ui-icon[data-icon="home"] { background-position: 85.71428571428571% 66.66666666666667%; }
+.ui-icon[data-icon="sound"] { background-position: 100% 66.66666666666667%; }
+.ui-icon[data-icon="power"] { background-position: 0% 100%; }
+.ui-icon[data-icon="rapid"] { background-position: 14.285714285714286% 100%; }
+.ui-icon[data-icon="multi"] { background-position: 28.571428571428573% 100%; }
+.ui-icon[data-icon="pierce"] { background-position: 42.857142857142854% 100%; }
+.ui-icon[data-icon="blast"] { background-position: 57.142857142857146% 100%; }

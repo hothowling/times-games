@@ -1,3 +1,4 @@
+import { icon, iconMarkup, setIconText } from '../../core/icons.js';
 /*
  * blocks/index.js - 구구단 땅따먹기(원본 times-block/js/game.js). 화면, 판 그리기(끌기), 카드, 소리/캐릭터 연결.
  * 규칙 판정은 rules.js, 효과음·숫자 읽기는 ctx.audio, 캐릭터는 ctx.character 가 맡습니다.
@@ -85,7 +86,7 @@ export const dict = {
 const HTML = `
 <div class="app">
   <section class="screen screen-home is-active" data-screen="home">
-    <button type="button" class="icon-btn btn-exit" data-i18n-aria="goLobby"><img src="assets/ui/home.webp" alt=""></button>
+    <button type="button" class="icon-btn btn-exit" data-i18n-aria="goLobby">${iconMarkup('home')}</button>
     <h1 class="title" data-i18n-html="titleHtml"></h1>
     <div class="mascot mascot-home"></div>
     <p class="level-line" data-ref="homeLevel"></p>
@@ -200,7 +201,7 @@ export function mount(el, ctx) {
   }
 
   function say(text, tone) {
-    $.bubble.textContent = text;
+    setIconText($.bubble, text);
     $.bubble.className = 'bubble' + (tone ? ' is-' + tone : '');
   }
 
@@ -513,7 +514,7 @@ export function mount(el, ctx) {
 
   function renderSound() {
     const on = A.getSound();
-    $.sound.textContent = on ? '🔊' : '🔇';
+    $.sound.replaceChildren(icon(on ? 'sound' : 'sound-muted'));
     $.sound.setAttribute('aria-label', t(on ? 'soundOff' : 'soundOn'));
   }
 

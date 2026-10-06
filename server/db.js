@@ -75,6 +75,10 @@ export function openDb(file) {
   db.exec('pragma journal_mode = wal; pragma foreign_keys = on;');
   db.exec(SCHEMA);
   migrateItems(db);
+  /* 판매 종료된 가방을 해제해 이후 다른 장식으로 갈아입을 때도 유효한 착용 상태를 유지합니다. */
+  db.exec("update looks set equipped = json_set(equipped, '$.back', null) where json_extract(equipped, '$.back') = 'backpack'");
+  /* 기본 티셔츠는 상품이 아닌 의상 미선택 상태로 바꿉니다. */
+  db.exec("update looks set equipped = json_set(equipped, '$.outfit', null) where json_extract(equipped, '$.outfit') = 'whiteTee'; delete from inventory where item_id = 'whiteTee'");
   return db;
 }
 

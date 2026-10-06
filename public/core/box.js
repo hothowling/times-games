@@ -1,3 +1,4 @@
+import { icon, iconFromSource } from './icons.js';
 /*
  * box.js - 랜덤박스 팝업. 서버가 상품을 정하면(POST box/open) 슬롯머신처럼 그림 띠를 돌리다가 그 상품에서 멈춥니다.
  *   openBox({ buy, toast, errorText })  buy: 상점에서 사서 바로 열기 / 아니면 가진 상자(매일 선물)를 엽니다. 팝업이 닫히면 끝나는 Promise.
@@ -32,7 +33,7 @@ function filler() {
 
 const cell = (p) => {
   const f = face(p);
-  return h('div', { class: 'box-cell' }, h('img', { src: f.img, alt: '' }), h('span', null, f.label));
+  return h('div', { class: 'box-cell' }, iconFromSource(f.img), h('span', null, f.label));
 };
 
 function boxSheet(...children) {
@@ -58,7 +59,7 @@ export async function openBox({ buy, toast, errorText }) {
   const strip = h('div', { class: 'box-strip' }, ...Array.from({ length: CELLS }, filler).map(cell), cell(r.prize), cell(filler()));
   const result = h('p', { class: 'box-result', hidden: true });
   const ok = h('button', { type: 'button', class: 'btn', disabled: true, onclick: () => dlg.close() }, t('boxOk'));
-  const dlg = boxSheet(h('h2', null, '🎁 ' + pick(BOX.name)), h('div', { class: 'box-reel' }, strip), result, ok);
+  const dlg = boxSheet(h('h2', null, icon('gift-box'), ' ' + pick(BOX.name)), h('div', { class: 'box-reel' }, strip), result, ok);
   dlg.addEventListener('cancel', (e) => { if (ok.disabled) e.preventDefault(); });
   const closed = new Promise((done) => dlg.addEventListener('close', done));
 
@@ -89,7 +90,7 @@ export async function openBox({ buy, toast, errorText }) {
 export function showGift(opts) {
   const dlg = boxSheet(
     h('h2', null, t('boxGift')),
-    h('img', { class: 'box-gift', src: BOX.icon, alt: '' }),
+    iconFromSource(BOX.icon, 'box-gift'),
     h('p', null, t('boxGiftText')),
     h('button', { type: 'button', class: 'btn', onclick: () => { dlg.close(); openBox(opts); } }, t('boxOpen')),
     h('button', { type: 'button', class: 'btn btn-sub', onclick: () => dlg.close() }, t('boxLater')));

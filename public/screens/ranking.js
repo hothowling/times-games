@@ -1,3 +1,4 @@
+import { icon } from '../core/icons.js';
 /*
  * ranking.js - 랭킹. 이번 주(월요일 0시 KST 초기화) / 명예의 전당, 전체(별 합계) + 게임별 최고 기록.
  * 1~3위는 단상 위 전신 캐릭터, 4~20위는 목록, 맨 아래에 내 순위를 고정합니다.
@@ -25,7 +26,7 @@ export function render(view, { go, errorText }) {
   const mine = h('div', { class: 'rank-me' });
   view.append(
     h('button', { type: 'button', class: 'back-btn', onclick: () => go('lobby') }, '‹ ' + t('back')),
-    h('h2', { class: 'screen-title' }, '🏆 ' + t('ranking')),
+    h('h2', { class: 'screen-title' }, icon('ranking'), ' ' + t('ranking')),
     periods, boards, body, mine
   );
 
@@ -69,7 +70,7 @@ export function render(view, { go, errorText }) {
     body.replaceChildren(...[
       data.top.length ? h('div', { class: 'podium' }, order.map((r) =>
         h('div', { class: `podium-spot place-${Math.min(r.rank, 3)}` + (r.me ? ' is-me' : '') },
-          r.rank === 1 ? h('span', { class: 'crown' }, '👑') : null,
+          r.rank === 1 ? h('span', { class: 'crown' }, icon('crown')) : null,
           avatar(r.look, true),
           h('b', { class: 'podium-name' }, r.nickname),
           h('span', { class: 'podium-value' }, fmt(r.value)),
