@@ -23,6 +23,8 @@ const BASE_RIG = {
   faceX: '50%', faceY: -8, faceW: 194, faceH: 218,
   headX: '50%', headY: -80, headW: 205, headAngle: -3,
   glassesX: '50%', glassesY: 60, glassesW: 132, glassesAngle: 0,
+  /* 안경 크기 배율. 렌즈 중심(눈높이)은 그대로 두고 크기만 키웁니다. */
+  glassesScale: 1.25,
   backRight: 100, backBottom: -20, backW: 150,
   outfitBottom: -50,
   bow: { headY: -42, headW: 145 }
@@ -37,7 +39,7 @@ export const RIGS = {
   nayeon: {
     ...BASE_RIG, faceY: -8, faceW: 194, faceH: 218,
     headY: -68, headW: 198, headAngle: 0,
-    glassesY: 80, glassesW: 114, bow: { headY: -29, headW: 140 }
+    glassesY: 80, glassesW: 114, glassesScale: 1.35, bow: { headY: -29, headW: 140 }
   },
   /* 사진 캐릭터: 정사각형 칸, 눈이 칸의 54% 높이(core/maker.js 의 EYE_Y) */
   photo: { ...BASE_RIG, faceY: 2, faceW: 200, faceH: 200, headY: -70, glassesY: 75, glassesW: 128, bow: { headY: -34, headW: 140 } }
@@ -112,13 +114,16 @@ export function createCharacter(el, look, { body = true } = {}) {
     const r = RIGS[next.rig] || RIGS.photo;
     const eq = next.equipped || {};
     /* 가면처럼 위로 긴 안경도 렌즈 구멍을 캐릭터 눈높이에 맞춥니다(그림은 2:1). */
-    const glassesY = r.glassesY + (0.53 - (COSMETICS[eq.face]?.lensY ?? 0.53)) * r.glassesW / 2;
+    /* 렌즈 중심 = glassesY + 0.53 × glassesW/2 를 기준점으로 두고, 배율을 키워도 이 점이 움직이지 않게 합니다. */
+    const glassesW = r.glassesW * (r.glassesScale ?? 1);
+    const lensCenter = r.glassesY + 0.53 * r.glassesW / 2;
+    const glassesY = lensCenter - (COSMETICS[eq.face]?.lensY ?? 0.53) * glassesW / 2;
     const bow = COSMETICS[eq.head]?.style === 'bow';
     const vars = {
       '--face-x': r.faceX, '--face-y': r.faceY, '--face-w': r.faceW, '--face-h': r.faceH,
       '--head-x': r.headX, '--head-y': bow ? r.bow.headY : r.headY, '--head-w': bow ? r.bow.headW : r.headW,
       '--head-angle': r.headAngle + 'deg',
-      '--glasses-x': r.glassesX, '--glasses-y': glassesY, '--glasses-w': r.glassesW, '--glasses-angle': r.glassesAngle + 'deg',
+      '--glasses-x': r.glassesX, '--glasses-y': glassesY, '--glasses-w': glassesW, '--glasses-angle': r.glassesAngle + 'deg',
       '--back-right': r.backRight, '--back-bottom': r.backBottom, '--back-w': r.backW, '--outfit-bottom': r.outfitBottom
     };
     for (const [k, v] of Object.entries(vars)) rig.style.setProperty(k, px(v));
