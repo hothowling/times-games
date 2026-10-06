@@ -3,7 +3,11 @@ import assert from 'node:assert/strict';
 import { WORDS, TOPICS, GRADES, slug } from '../public/games/wordmatch/words.js';
 import { VOICES } from '../public/games/wordmatch/voices.js';
 import { readdirSync } from 'node:fs';
-import { makeRound, judge, scoreFor, starsFor, pairsFor, shuffle, nextReview, REVIEW_MAX } from '../public/games/wordmatch/rules.js';
+import {
+  makeRound, judge, scoreFor, starsFor, pairsFor, shuffle, nextReview, REVIEW_MAX,
+  MODES, MODE_CONFIG, modeConfig, isListenMode, TIME_ATTACK, timeLeft, cardsForMode, listenOrder, nextTarget, judgeTarget,
+  scoreForMode, starsForMode, mergeLearned, learnedStats
+} from '../public/games/wordmatch/rules.js';
 
 /* 재현 가능한 난수 */
 function seeded(seed) {
@@ -136,4 +140,117 @@ test('voices.js: listed ids are real words and match the m4a files on disk', () 
     const onDisk = files.filter((f) => f.endsWith('.m4a')).map((f) => f.slice(0, -4)).filter((id) => ids.has(id)).sort();
     assert.deepEqual([...VOICES[l]].sort(), onDisk, `${l}: voices.js matches files`);
   }
+});
+
+test('modes: five modes, listen and reverse share one shape with opposite sides', () => {
+  assert.deepEqual(MODES, ['basic', 'timeattack', 'memory', 'listen', 'reverse']);
+  for (const m of MODES) assert.ok(MODE_CONFIG[m], m);
+  assert.equal(modeConfig('nope'), MODE_CONFIG.basic);
+  assert.deepEqual([MODE_CONFIG.listen.cardSide, MODE_CONFIG.listen.promptLang], ['ko', 'en']);
+  assert.deepEqual([MODE_CONFIG.reverse.cardSide, MODE_CONFIG.reverse.promptLang], ['en', 'ko']);
+  assert.deepEqual(MODES.filter(isListenMode), ['listen', 'reverse']);
+  assert.ok(MODE_CONFIG.timeattack.timed && MODE_CONFIG.memory.faceDown && MODE_CONFIG.basic.preview);
+});
+
+test('timeLeft: 60s, +5 per pair, -3 per wrong, +bonus, floor 0', () => {
+  assert.equal(timeLeft({ elapsed: 0 }), 60);
+  assert.equal(timeLeft({ elapsed: 10, matched: 2, wrong: 1 }), 60 + 10 - 3 - 10);
+  assert.equal(timeLeft({ elapsed: 10, bonus: TIME_ATTACK.item }), 65);
+  assert.equal(timeLeft({ elapsed: 100, wrong: 5 }), 0);
+  /* 지우개로 틀림을 하나 지우면 3초가 돌아옴 */
+  assert.equal(timeLeft({ elapsed: 20, wrong: 1 }) + 3, timeLeft({ elapsed: 20, wrong: 0 }));
+});
+
+test('cardsForMode: listen keeps ko cards, reverse keeps en cards, others keep all', () => {
+  const { cards, words } = makeRound({ grade: 3, topic: 'food', pairs: 8, rng: seeded(11) });
+  assert.equal(cardsForMode('basic', cards).length, 16);
+  assert.equal(cardsForMode('memory', cards).length, 16);
+  const ko = cardsForMode('listen', cards);
+  const en = cardsForMode('reverse', cards);
+  assert.equal(ko.length, words.length);
+  assert.ok(ko.every((c) => c.side === 'ko'));
+  assert.ok(en.every((c) => c.side === 'en'));
+  assert.deepEqual(new Set(ko.map((c) => c.wordId)), new Set(words.map((w) => w.id)));
+});
+
+test('listen sequencing: every word once, wrong keeps the target, ends with null', () => {
+  const { words, cards } = makeRound({ grade: 4, topic: 'animals', pairs: 10, rng: seeded(12) });
+  const order = listenOrder(words, seeded(13));
+  assert.deepEqual([...order].sort(), words.map((w) => w.id).sort());
+  const cleared = [];
+  const asked = [];
+  let target = nextTarget(order, cleared);
+  while (target) {
+    asked.push(target);
+    const wrongCard = cards.find((c) => c.side === 'ko' && c.wordId !== target && !cleared.includes(c.wordId));
+    if (wrongCard) {
+      assert.equal(judgeTarget(wrongCard, target), false);
+      assert.equal(nextTarget(order, cleared), target, 'same target after a miss');
+    }
+    const right = cards.find((c) => c.side === 'ko' && c.wordId === target);
+    assert.ok(judgeTarget(right, target));
+    cleared.push(target);
+    target = nextTarget(order, cleared);
+  }
+  assert.deepEqual(asked, order);
+  assert.equal(judgeTarget(null, 'cat'), false);
+});
+
+test('scoreForMode: basic = scoreFor; never negative; more mistakes / time never help', () => {
+  const st = { pairs: 8, wrong: 1, seconds: 50, maxCombo: 4 };
+  assert.equal(scoreForMode('basic', st), scoreFor(st));
+  for (const mode of MODES) {
+    assert.equal(scoreForMode(mode, { pairs: 1, matched: 0, wrong: 200, seconds: 999, cleared: false }), 0, mode);
+    const a = scoreForMode(mode, { pairs: 10, wrong: 3, seconds: 60, maxCombo: 3, remaining: 20 });
+    assert.ok(Number.isInteger(a), mode);
+    assert.ok(scoreForMode(mode, { pairs: 10, wrong: 30, seconds: 60, maxCombo: 3, remaining: 20 }) <= a, mode);
+    assert.ok(scoreForMode(mode, { pairs: 10, wrong: 3, seconds: 600, maxCombo: 3, remaining: 20 }) <= a, mode);
+  }
+  /* 뒤집기: 쌍 수까지의 엇갈림은 깎지 않음 */
+  assert.equal(scoreForMode('memory', { pairs: 8, wrong: 0, seconds: 200 }), scoreForMode('memory', { pairs: 8, wrong: 8, seconds: 200 }));
+  assert.ok(scoreForMode('memory', { pairs: 8, wrong: 9, seconds: 200 }) < scoreForMode('memory', { pairs: 8, wrong: 8, seconds: 200 }));
+});
+
+test('scoreForMode timeattack: clear bonus and remaining time; beats basic for the same play', () => {
+  const play = { pairs: 8, matched: 8, wrong: 1, seconds: 40, maxCombo: 5 };
+  const ta = scoreForMode('timeattack', { ...play, cleared: true, remaining: timeLeft({ elapsed: 40, matched: 8, wrong: 1 }) });
+  assert.equal(ta, 8 * 150 + 5 * 30 - 30 + 300 + 57 * 10);
+  assert.ok(ta > scoreForMode('basic', play));
+  const timeout = scoreForMode('timeattack', { ...play, matched: 5, cleared: false, remaining: 0 });
+  assert.equal(timeout, 5 * 150 + 5 * 30 - 30);
+  assert.ok(timeout < ta);
+});
+
+test('starsForMode: timeattack timeout by progress (0 under half), memory tolerant of misses', () => {
+  assert.equal(starsForMode('timeattack', { pairs: 8, matched: 3, cleared: false }), 0);
+  assert.equal(starsForMode('timeattack', { pairs: 8, matched: 4, cleared: false }), 1);
+  assert.equal(starsForMode('timeattack', { pairs: 8, matched: 6, cleared: false }), 2);
+  assert.equal(starsForMode('timeattack', { pairs: 8, matched: 8, wrong: 0, cleared: true }), 3);
+  assert.equal(starsForMode('timeattack', { pairs: 8, matched: 8, wrong: 5, cleared: true }), 2);
+  assert.equal(starsForMode('memory', { pairs: 8, wrong: 8, seconds: 100 }), 3);
+  assert.equal(starsForMode('memory', { pairs: 8, wrong: 16, seconds: 100 }), 2);
+  assert.equal(starsForMode('memory', { pairs: 8, wrong: 17, seconds: 100 }), 1);
+  assert.equal(starsForMode('listen', { pairs: 8, wrong: 0, seconds: 30 }), starsFor({ pairs: 8, wrong: 0, seconds: 30 }));
+  for (const mode of MODES) {
+    assert.equal(starsForMode(mode, { pairs: 0 }), 0);
+    for (let wrong = 0; wrong < 30; wrong++) {
+      const s = starsForMode(mode, { pairs: 10, wrong, seconds: 90 });
+      assert.ok(s >= 1 && s <= 3, mode);
+      assert.ok(starsForMode(mode, { pairs: 10, wrong: wrong + 1, seconds: 90 }) <= s, mode);
+    }
+  }
+});
+
+test('learned words: merge dedupes and drops unknown ids; per-topic counts', () => {
+  const m = mergeLearned(['dog', 'cat'], ['cat', 'nope', 'apple']);
+  assert.deepEqual(m, ['dog', 'cat', 'apple']);
+  const st = learnedStats(m);
+  assert.equal(st.animals.n, 2);
+  assert.equal(st.food.n, 1);
+  assert.equal(st.all.n, 3);
+  assert.equal(st.all.total, WORDS.length);
+  assert.equal(st.animals.total, WORDS.filter((w) => w.topic === 'animals').length);
+  /* 모든 단어를 익혀도 진행도 저장(32KB) 안에 들어감 */
+  const all = mergeLearned([], WORDS.map((w) => w.id));
+  assert.ok(JSON.stringify({ learned: all, review: all.slice(0, REVIEW_MAX) }).length < 32 * 1024);
 });
