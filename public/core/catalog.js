@@ -115,6 +115,10 @@ export function pickPrize(rand, owned) {
 export const REWARD = [1, 3, 6, 10];
 /* 게임이 한 판에 따로 얹어 줄 수 있는 Sparkles 의 상한(예: 디펜스의 업그레이드를 다 채운 뒤 퀴즈 정답). 서버가 자릅니다. */
 export const BONUS_MAX = 30;
+/* 홈 화면에 추가한 앱(standalone)으로 처음 들어오면 계정마다 한 번 주는 Sparkles(POST /api/reward/install). */
+export const INSTALL_REWARD = 30;
+/* 설치 안내 팝업의 '다음에': 이만큼 지나면 다시 보여 줍니다. */
+export const INSTALL_SNOOZE_MS = 3 * 864e5;
 
 export const GAMES = ['master', 'blocks', 'shooter', 'classroom', 'capitals', 'defense', 'wordmatch'];
 

@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { randomBytes, scryptSync, timingSafeEqual, createHash, randomInt } from 'node:crypto';
 import { tx } from './db.js';
 import { adminRoutes } from './admin.js';
-import { PRESETS, COSMETICS, ITEMS, REWARD, BONUS_MAX, GAMES, DEFAULT_LOOK, BOX, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
+import { PRESETS, COSMETICS, ITEMS, REWARD, BONUS_MAX, GAMES, DEFAULT_LOOK, BOX, INSTALL_REWARD, INSTALL_SNOOZE_MS, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const SESSION_DAYS = 180;
@@ -119,7 +119,8 @@ export function createApp({ db, dataDir, adminPassword }) {
     lastReward: q('select max(created_at) as t from plays where user_id = ? and game_id = ? and sparkles > 0'),
     insertPlay: q('insert into plays (user_id, game_id, round_key, char_key, stars, score, detail, sparkles, created_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?)'),
     plays: q('select game_id, char_key, stars, score, sparkles, created_at from plays where user_id = ? and created_at >= ? order by created_at desc limit 1000'),
-    log: q('insert into sparkle_log (user_id, delta, reason, ref, created_at) values (?, ?, ?, ?, ?)')
+    log: q('insert into sparkle_log (user_id, delta, reason, ref, created_at) values (?, ?, ?, ?, ?)'),
+    installLog: q("select 1 from sparkle_log where user_id = ? and reason = 'install'")
   };
 
   /* ---------- 세션 ---------- */
@@ -175,7 +176,8 @@ export function createApp({ db, dataDir, adminPassword }) {
       inventory: inventoryOf(user.id),
       characters: S.chars.all(user.id).map((c) => ({ key: 'p' + c.id, id: c.id, name: c.name })),
       looks,
-      gift
+      gift,
+      installRewarded: !!S.installLog.get(user.id)
     };
   }
 
@@ -269,6 +271,9 @@ export function createApp({ db, dataDir, adminPassword }) {
     if ('sound' in body) s.sound = !!body.sound;
     if ('tts' in body) s.tts = !!body.tts;
     if ('rankHidden' in body) s.rankHidden = !!body.rankHidden;
+    /* 홈 화면 설치 안내 팝업: '다음에'는 서버 시계로 3일 뒤까지 쉬고, '다시 보지 않기'는 계속. */
+    if ('installSnooze' in body) s.installSnoozeUntil = body.installSnooze ? Date.now() + INSTALL_SNOOZE_MS : 0;
+    if ('installNever' in body) s.installNever = !!body.installNever;
     if ('character' in body) {
       if (typeof body.character !== 'string' || !charExists(user.id, body.character)) fail(400, 'badCharacter');
       s.character = body.character;
@@ -365,6 +370,25 @@ export function createApp({ db, dataDir, adminPassword }) {
       return p;
     });
     send(res, 200, { prize, sparkles: S.userById.get(user.id).sparkles, inventory: inventoryOf(user.id) });
+  });
+
+  /*
+   * 홈 화면 앱 보상: 홈 화면 아이콘(standalone)으로 들어온 계정에 INSTALL_REWARD 를 한 번만 줍니다.
+   * 두 번째부터는 오류 없이 { granted: false }. 한 번만은 sparkle_log 의 부분 unique 인덱스가 지켜 줍니다.
+   * ponytail: standalone 인지는 브라우저가 알려 주는 값이라 꾸밀 수 있습니다. 계정마다 30 한 번이라 그대로 둡니다.
+   */
+  route('POST', '/api/reward/install', async (req, res) => {
+    const user = currentUser(req);
+    const { standalone, platform } = await readJson(req);
+    if (standalone !== true) fail(400, 'notStandalone');
+    const ref = ['ios', 'android'].includes(platform) ? platform : 'other';
+    const granted = tx(db, () => {
+      if (S.installLog.get(user.id)) return false;
+      S.addSparkles.run(INSTALL_REWARD, user.id);
+      S.log.run(user.id, INSTALL_REWARD, 'install', ref, Date.now());
+      return true;
+    });
+    send(res, 200, { granted, amount: granted ? INSTALL_REWARD : 0, sparkles: S.userById.get(user.id).sparkles });
   });
 
   /* 아이템 쓰기. buy 면 가진 것 대신 그 자리에서 사서 바로 씁니다(게임 중 구매, 인벤토리는 그대로). */

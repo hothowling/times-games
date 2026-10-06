@@ -9,12 +9,19 @@
 <title>똑똑 놀이터</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="assets/ui/sparkle.webp">
+<!-- 홈 화면에 추가(iOS): 아이콘, 이름, 주소창 없이 열기 -->
+<link rel="apple-touch-icon" href="assets/app/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="똑똑 놀이터">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
 <link rel="stylesheet" href="core/ui.css">
 <link rel="stylesheet" href="core/icons.css">
 <link rel="stylesheet" href="core/character.css">
+<link rel="stylesheet" href="core/install.css">
 </head>
 <body>
 <header id="topbar" class="topbar" hidden>
@@ -36,6 +43,7 @@
     <label class="toggle"><span data-i18n="rankHide"></span><input type="checkbox" id="set-rank-hidden"></label>
     <button type="button" id="set-lang" class="btn btn-sub" data-i18n="language"></button>
     <button type="button" id="set-account" class="btn" data-i18n="guestMake" hidden></button>
+    <button type="button" id="set-install" class="btn btn-sub" data-i18n="installMenu" hidden></button>
     <button type="button" id="set-logout" class="btn btn-sub" data-i18n="logout"></button>
     <button class="btn" data-i18n="close"></button>
   </form>

@@ -48,6 +48,7 @@ const CORE = {
     boxOpen: '열기', boxLater: '나중에', boxOk: '좋아요!', boxGot: '{name}을(를) 받았어요!', boxHave: '{n}개 있어요',
     itemBuyAsk: '가진 게 없어요. {price} Sparkles 로 사서 바로 쓸까요? (내 Sparkles {n})', itemBuy: '{price} 로 사서 쓰기',
     itemWhere: '쓰는 곳: {games}', itemsTitle: '아이템',
+    installMenu: '앱처럼 쓰기',
     boxGift: '오늘의 선물!', boxGiftText: '매일 처음 들어오면 랜덤박스를 하나 줘요. 지금 열어 볼까요?', noItem: '가진 게 없어요.'
   },
   en: {
@@ -92,6 +93,7 @@ const CORE = {
     boxOpen: 'Open', boxLater: 'Later', boxOk: 'Yay!', boxGot: 'You got {name}!', boxHave: 'You have {n}',
     itemBuyAsk: "You don't have one. Buy it for {price} Sparkles and use it now? (You have {n})", itemBuy: 'Buy for {price} and use',
     itemWhere: 'Used in: {games}', itemsTitle: 'Items',
+    installMenu: 'Use like an app',
     boxGift: "Today's gift!", boxGiftText: 'You get a free Mystery Box every day. Open it now?', noItem: "You don't have one."
   }
 };

@@ -369,3 +369,49 @@ test('guest: at most 20 per IP per hour', async () => {
   for (let i = 0; i < 21; i++) codes.push((await fetch(base + '/api/guest', { method: 'POST', headers: { 'x-real-ip': '10.9.9.9' } })).status);
   assert.deepEqual([codes.slice(0, 20).every((c) => c === 200), codes[20]], [true, 429]);
 });
+
+test('home screen install reward: once per account, logged, reflected in /api/me', async () => {
+  assert.equal((await client()('POST', '/api/reward/install', { standalone: true, platform: 'ios' })).status, 401);
+  const a = client();
+  const signup = await a('POST', '/api/signup', { nickname: 'install-test', pin: '1234' });
+  assert.equal(signup.body.installRewarded, false);
+  assert.equal((await a('POST', '/api/reward/install', { platform: 'ios' })).body.error, 'notStandalone');
+  let r = await a('POST', '/api/reward/install', { standalone: true, platform: 'ios' });
+  assert.deepEqual(r.body, { granted: true, amount: 30, sparkles: 30 });
+  r = await a('POST', '/api/reward/install', { standalone: true, platform: 'android' });
+  assert.equal(r.status, 200);
+  assert.deepEqual(r.body, { granted: false, amount: 0, sparkles: 30 });
+  const me = (await a('GET', '/api/me')).body;
+  assert.equal(me.installRewarded, true);
+  assert.equal(me.user.sparkles, 30);
+  const log = db.prepare("select delta, ref from sparkle_log where user_id = ? and reason = 'install'").all(me.user.id);
+  assert.deepEqual(log.map((x) => ({ ...x })), [{ delta: 30, ref: 'ios' }]);
+  /* 같은 사용자의 install 줄은 DB 에서도 하나만 */
+  assert.throws(() => db.prepare("insert into sparkle_log (user_id, delta, reason, created_at) values (?, 30, 'install', 0)").run(me.user.id));
+});
+
+test('install guide dismissal is saved in settings', async () => {
+  const a = client();
+  await a('POST', '/api/signup', { nickname: 'snooze-test', pin: '1234' });
+  const before = Date.now();
+  let s = (await a('PATCH', '/api/settings', { installSnooze: true })).body.settings;
+  assert.ok(s.installSnoozeUntil >= before + 3 * 864e5 - 1000 && s.installSnoozeUntil <= Date.now() + 3 * 864e5);
+  s = (await a('PATCH', '/api/settings', { installNever: true })).body.settings;
+  assert.equal(s.installNever, true);
+  assert.equal((await a('GET', '/api/me')).body.user.settings.installNever, true);
+});
+
+test('app install files are served with the right types', async () => {
+  const c = client();
+  const res = async (path) => { const r = await fetch(base + path); await r.arrayBuffer(); return [r.status, r.headers.get('content-type')]; };
+  assert.deepEqual(await res('/manifest.json'), [200, 'application/json']);
+  assert.deepEqual(await res('/sw.js'), [200, 'text/javascript; charset=utf-8']);
+  for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']) {
+    assert.deepEqual(await res('/assets/app/' + f), [200, 'image/png'], f);
+  }
+  const manifest = (await c('GET', '/manifest.json')).body;
+  assert.equal(manifest.start_url, './');
+  assert.equal(manifest.scope, './');
+  assert.ok(manifest.icons.some((i) => i.purpose === 'maskable'));
+  assert.ok(manifest.icons.every((i) => !i.src.startsWith('/')), 'relative icon paths (served under /games/)');
+});

@@ -10,6 +10,8 @@ import { createCharacter } from './character.js';
 import { ITEMS, PRESETS } from './catalog.js';
 import { askBuy, createItemBar } from './items.js';
 import { GAMES } from '../games/index.js';
+/* 먼저 불러 두어야 Android Chrome 의 beforeinstallprompt 를 놓치지 않습니다. */
+import { openInstallGuide, claimInstallReward, guideAvailable } from './install-ui.js';
 
 const $ = (id) => document.getElementById(id);
 const t = i18n.t;
@@ -91,6 +93,7 @@ function bindSettings() {
     $('set-tts').checked = audio.getTts();
     $('set-rank-hidden').checked = !!settings().rankHidden;
     $('set-account').hidden = !state.me?.user.guest;
+    $('set-install').hidden = !guideAvailable();
     dlg.showModal();
   });
   $('set-sound').addEventListener('change', (e) => { audio.setSound(e.target.checked); saveSetting({ sound: e.target.checked }); });
@@ -102,6 +105,7 @@ function bindSettings() {
     route();
   });
   $('set-account').addEventListener('click', () => { dlg.close(); go('login?upgrade=1'); });
+  $('set-install').addEventListener('click', () => { dlg.close(); openInstallGuide({ go, toast }); });
   $('set-logout').addEventListener('click', async () => {
     if (state.me?.user.guest && !confirm(t('guestLogoutAsk'))) return;
     dlg.close();
@@ -265,6 +269,8 @@ async function route() {
 
 async function boot() {
   i18n.setLang(i18n.detect());
+  /* 홈 화면 앱 설치에 필요한 서비스 워커(public/sw.js, 캐시 없음). 상대 주소라 /games/ 아래에서도 범위가 앱 루트입니다. */
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   bindSettings();
   bus.addEventListener('change', renderTopbar);
   /* iOS: 첫 터치에서 오디오를 깨웁니다. */
@@ -278,6 +284,7 @@ async function boot() {
   applySettings();
   window.addEventListener('hashchange', route);
   route();
+  if (state.me) claimInstallReward();
 }
 
 /* 로그인/가입 직후 화면 셸을 다시 맞춥니다(screens/login.js 가 부릅니다). */
@@ -285,6 +292,8 @@ export function afterLogin() {
   applySettings();
   renderTopbar();
   go('lobby');
+  /* iOS 홈 화면 앱은 Safari 와 로그인이 따로라, 앱에서 처음 로그인한 순간에 보상을 받습니다. */
+  claimInstallReward();
 }
 
 boot();

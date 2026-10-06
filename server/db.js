@@ -64,10 +64,12 @@ create table if not exists sparkle_log (
   id integer primary key,
   user_id integer not null references users(id) on delete cascade,
   delta integer not null,
-  reason text not null,                    -- 'play' | 'buy' | 'box'
+  reason text not null,                    -- 'play' | 'buy' | 'box' | 'install'
   ref text,
   created_at integer not null
 );
+-- 홈 화면 앱 보상은 계정마다 한 번: 같은 사용자의 'install' 줄은 하나만(조회에도 씁니다).
+create unique index if not exists sparkle_log_install on sparkle_log (user_id) where reason = 'install';
 `;
 
 export function openDb(file) {
