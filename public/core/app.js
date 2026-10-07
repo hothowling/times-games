@@ -116,7 +116,8 @@ function bindSettings() {
     lastSparkles = null;
     go('login');
   });
-  $('tb-me').addEventListener('click', () => go('chars'));
+  /* 상단 캐릭터·이름을 누르면 로비로(캐릭터 고르기는 로비의 캐릭터 버튼). */
+  $('tb-me').addEventListener('click', () => go('lobby'));
 }
 
 /* ---------- 게임 실행 ---------- */
