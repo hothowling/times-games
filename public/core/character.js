@@ -34,7 +34,7 @@ const BASE_RIG = {
 export const RIGS = {
   /* 애니메이션 수지: 제작 시트의 공통 투명 여백을 정리한 512×512 런타임 셀. */
   sooji: { ...BASE_RIG, faceY: -56, faceW: 300, faceH: 300,
-    headX: '45.5%', headY: -96, headW: 218, clipY: -10, glassesX: '47%', glassesY: 62,
+    headX: '45.5%', headY: -96, headW: 218, clipY: -10, glassesX: '45%', glassesY: 62,
     glassesW: 142, glassesScale: 1.1, glassesAngle: -8.7,
     bow: { headY: -58, headW: 155 } },
   jiho: {
