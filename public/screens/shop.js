@@ -133,9 +133,9 @@ export function render(view, { go, toast, errorText, params }) {
     };
     const section = (title, list, cls = '') => h('div', { class: 'shop-section ' + cls },
       h('h3', null, title), h('div', { class: 'shop-grid' }, list.map(card)));
-    /* 분류(옷·머리 장식·안경·가방·펫)별로 보여 줍니다. 새 아이템은 따로 모으지 않고 각 분류 맨 앞에 NEW 배지로. */
+    /* 분류(옷·머리 장식·안경·가방·펫)별로, 최근에 들어온 아이템부터 보여 줍니다(catalog.js ADDED). 같은 날이면 카탈로그 순서. */
     return SLOTS.flatMap((slot) => {
-      const list = entries.filter(([, c]) => c.slot === slot).sort((a, b) => Number(!!b[1].isNew) - Number(!!a[1].isNew));
+      const list = entries.filter(([, c]) => c.slot === slot).sort((a, b) => b[1].added.localeCompare(a[1].added));
       return list.length ? [section(t('slot_' + slot), list)] : [];
     });
   }

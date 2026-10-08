@@ -52,3 +52,12 @@ test('retired backpack is unselected on startup, preserving other wearables and 
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('cosmetics: only the latest batch is NEW, every item has an added day', async () => {
+  const { COSMETICS } = await import('../public/core/catalog.js');
+  const all = Object.values(COSMETICS);
+  assert.ok(all.every((c) => typeof c.added === 'string'));
+  const latest = all.map((c) => c.added).sort().at(-1);
+  assert.deepEqual(all.filter((c) => c.isNew), all.filter((c) => c.added === latest));
+  assert.ok(all.some((c) => c.isNew) && all.some((c) => !c.isNew));
+});

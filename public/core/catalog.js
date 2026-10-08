@@ -25,44 +25,67 @@ export const COSMETICS = {
   mintDress: cos('outfit', 'outfits/06-mint-dress.webp', 25, '민트 플라워 드레스', 'Mint Flower Dress'),
   labCoat: cos('outfit', 'outfits/07-lab-coat.webp', 30, '꼬마 과학자 가운', 'Junior Scientist Coat'),
   heroSuit: cos('outfit', 'outfits/08-hero-suit.webp', 35, '별빛 히어로 슈트', 'Star Hero Suit'),
-  strongBoy: cos('outfit', 'outfits/14-strong-boy.webp', 35, '스트롱보이 의상', 'Strong Boy Costume', { isNew: true }),
+  strongBoy: cos('outfit', 'outfits/14-strong-boy.webp', 35, '스트롱보이 의상', 'Strong Boy Costume'),
   jersey: cos('outfit', 'outfits/09-sports-jersey.webp', 28, '7번 스포츠 저지', 'Number 7 Jersey'),
   magic: cos('outfit', 'outfits/10-magic-costume.webp', 40, '마법학교 제복', 'Magic Academy Uniform'),
-  pinkFlowerDress: cos('outfit', 'outfits/12-pink-flower-dress.webp', 25, '핑크 플라워 드레스', 'Pink Flower Dress', { isNew: true }),
-  purpleSunflowerDress: cos('outfit', 'outfits/13-purple-sunflower-dress.webp', 25, '해바라기 퍼플 드레스', 'Purple Sunflower Dress', { isNew: true }),
+  pinkFlowerDress: cos('outfit', 'outfits/12-pink-flower-dress.webp', 25, '핑크 플라워 드레스', 'Pink Flower Dress'),
+  purpleSunflowerDress: cos('outfit', 'outfits/13-purple-sunflower-dress.webp', 25, '해바라기 퍼플 드레스', 'Purple Sunflower Dress'),
   redCap: cos('head', 'red-cap.webp', 10, '빨간 모자', 'Red Cap'),
-  catEars: cos('head', 'hats/01-cat-ears.webp', 15, '고양이 머리띠', 'Cat Ear Headband', { isNew: true }),
-  cowboyHat: cos('head', 'hats/02-cowboy-hat.webp', 20, '카우보이 모자', 'Cowboy Hat', { isNew: true }),
-  hardHat: cos('head', 'hats/03-yellow-hard-hat.webp', 20, '노란 안전모', 'Yellow Hard Hat', { isNew: true }),
-  propellerHat: cos('head', 'hats/04-propeller-hat.webp', 20, '프로펠러 모자', 'Propeller Hat', { isNew: true }),
-  chickenHat: cos('head', 'hats/05-chicken-hat.webp', 20, '꼬꼬닭 모자', 'Chicken Hat', { isNew: true }),
-  watermelonHat: cos('head', 'hats/06-watermelon-hat.webp', 20, '수박 모자', 'Watermelon Hat', { isNew: true }),
+  catEars: cos('head', 'hats/01-cat-ears.webp', 15, '고양이 머리띠', 'Cat Ear Headband'),
+  cowboyHat: cos('head', 'hats/02-cowboy-hat.webp', 20, '카우보이 모자', 'Cowboy Hat'),
+  hardHat: cos('head', 'hats/03-yellow-hard-hat.webp', 20, '노란 안전모', 'Yellow Hard Hat'),
+  propellerHat: cos('head', 'hats/04-propeller-hat.webp', 20, '프로펠러 모자', 'Propeller Hat'),
+  chickenHat: cos('head', 'hats/05-chicken-hat.webp', 20, '꼬꼬닭 모자', 'Chicken Hat'),
+  watermelonHat: cos('head', 'hats/06-watermelon-hat.webp', 20, '수박 모자', 'Watermelon Hat'),
   bowRed: cos('head', 'hair-bows/01-classic-red-bow.webp', 10, '클래식 빨간 리본', 'Classic Red Bow', { style: 'bow' }),
   bowPink: cos('head', 'hair-bows/02-pink-polka-bow.webp', 10, '핑크 도트 리본', 'Pink Polka Bow', { style: 'bow' }),
   bowNavy: cos('head', 'hair-bows/03-navy-school-bow.webp', 10, '네이비 스쿨 리본', 'Navy School Bow', { style: 'bow' }),
   bowYellow: cos('head', 'hair-bows/04-yellow-star-bow.webp', 10, '노란 별 리본', 'Yellow Star Bow', { style: 'bow' }),
   bowMint: cos('head', 'hair-bows/05-mint-flower-bow.webp', 10, '민트 꽃 리본', 'Mint Flower Bow', { style: 'bow' }),
   bowPurple: cos('head', 'hair-bows/06-purple-magic-bow.webp', 10, '보라 마법 리본', 'Purple Magic Bow', { style: 'bow' }),
-  bowPurpleFlower: cos('head', 'hair-bows/07-purple-flower-bow.webp', 10, '퍼플 플라워 리본', 'Purple Flower Ribbon', { style: 'bow', isNew: true }),
-  bowPinkFlower: cos('head', 'hair-bows/08-pink-flower-bow.webp', 10, '핑크 플라워 리본', 'Pink Flower Ribbon', { style: 'bow', isNew: true }),
-  sunflowerClip: cos('head', 'hair-clips/01-large-sunflower.webp', 10, '큰 해바라기 머리핀', 'Large Sunflower Hair Clip', { style: 'clip', isNew: true }),
+  bowPurpleFlower: cos('head', 'hair-bows/07-purple-flower-bow.webp', 10, '퍼플 플라워 리본', 'Purple Flower Ribbon', { style: 'bow' }),
+  bowPinkFlower: cos('head', 'hair-bows/08-pink-flower-bow.webp', 10, '핑크 플라워 리본', 'Pink Flower Ribbon', { style: 'bow' }),
+  sunflowerClip: cos('head', 'hair-clips/01-large-sunflower.webp', 10, '큰 해바라기 머리핀', 'Large Sunflower Hair Clip', { style: 'clip' }),
   glasses: cos('face', 'glasses.webp', 20, '동그란 안경', 'Round Glasses'),
-  batmanGlasses: cos('face', 'glasses/01-batman-mask.webp', 30, '배트맨 가면 안경', 'Batman Mask Glasses', { lensY: 0.65, isNew: true }),
-  heartGlasses: cos('face', 'glasses/02-heart-glasses.webp', 20, '하트 안경', 'Heart Glasses', { isNew: true }),
-  starGlasses: cos('face', 'glasses/03-star-glasses.webp', 20, '별 안경', 'Star Glasses', { isNew: true }),
-  spiralGlasses: cos('face', 'glasses/04-spiral-glasses.webp', 20, '빙글빙글 안경', 'Spiral Glasses', { isNew: true }),
-  frogGlasses: cos('face', 'glasses/05-frog-glasses.webp', 20, '개구리 안경', 'Frog Glasses', { isNew: true }),
-  petPuppy: cos('pet', 'pets/01-puppy.webp', 25, '강아지 펫', 'Puppy Pet', { isNew: true }),
-  petKitten: cos('pet', 'pets/02-kitten.webp', 25, '고양이 펫', 'Kitten Pet', { isNew: true }),
-  petBunny: cos('pet', 'pets/03-bunny.webp', 25, '토끼 펫', 'Bunny Pet', { isNew: true }),
-  petHamster: cos('pet', 'pets/04-hamster.webp', 25, '햄스터 펫', 'Hamster Pet', { isNew: true }),
-  petFox: cos('pet', 'pets/05-fox.webp', 25, '여우 펫', 'Fox Pet', { isNew: true }),
-  petSteve: cos('pet', 'pets/06-minecraft-steve.webp', 35, '스티브 펫', 'Steve Pet', { isNew: true }),
-  petAlex: cos('pet', 'pets/07-minecraft-alex.webp', 35, '알렉스 펫', 'Alex Pet', { isNew: true }),
-  petCreeper: cos('pet', 'pets/08-minecraft-creeper.webp', 35, '크리퍼 펫', 'Creeper Pet', { isNew: true }),
-  petNoob: cos('pet', 'pets/09-roblox-noob.webp', 35, '로블록스 눕 펫', 'Roblox Noob Pet', { isNew: true }),
-  petBacon: cos('pet', 'pets/10-roblox-bacon.webp', 35, '베이컨 헤어 펫', 'Bacon Hair Pet', { isNew: true })
+  batmanGlasses: cos('face', 'glasses/01-batman-mask.webp', 30, '배트맨 가면 안경', 'Batman Mask Glasses', { lensY: 0.65 }),
+  heartGlasses: cos('face', 'glasses/02-heart-glasses.webp', 20, '하트 안경', 'Heart Glasses'),
+  starGlasses: cos('face', 'glasses/03-star-glasses.webp', 20, '별 안경', 'Star Glasses'),
+  spiralGlasses: cos('face', 'glasses/04-spiral-glasses.webp', 20, '빙글빙글 안경', 'Spiral Glasses'),
+  frogGlasses: cos('face', 'glasses/05-frog-glasses.webp', 20, '개구리 안경', 'Frog Glasses'),
+  petPuppy: cos('pet', 'pets/01-puppy.webp', 25, '강아지 펫', 'Puppy Pet'),
+  petKitten: cos('pet', 'pets/02-kitten.webp', 25, '고양이 펫', 'Kitten Pet'),
+  petBunny: cos('pet', 'pets/03-bunny.webp', 25, '토끼 펫', 'Bunny Pet'),
+  petHamster: cos('pet', 'pets/04-hamster.webp', 25, '햄스터 펫', 'Hamster Pet'),
+  petFox: cos('pet', 'pets/05-fox.webp', 25, '여우 펫', 'Fox Pet'),
+  petSteve: cos('pet', 'pets/06-minecraft-steve.webp', 35, '스티브 펫', 'Steve Pet'),
+  petAlex: cos('pet', 'pets/07-minecraft-alex.webp', 35, '알렉스 펫', 'Alex Pet'),
+  petCreeper: cos('pet', 'pets/08-minecraft-creeper.webp', 35, '크리퍼 펫', 'Creeper Pet'),
+  petNoob: cos('pet', 'pets/09-roblox-noob.webp', 35, '로블록스 눕 펫', 'Roblox Noob Pet'),
+  petBacon: cos('pet', 'pets/10-roblox-bacon.webp', 35, '베이컨 헤어 펫', 'Bacon Hair Pet')
 };
+
+/*
+ * 아이템이 상점에 들어온 날. 여기에 없는 아이템은 처음부터 있던 것(BASE_DAY)입니다.
+ * 새 아이템을 넣을 때 오늘 날짜 줄을 맨 위에 추가하면:
+ *   - 가장 최근 날짜의 아이템에만 NEW 배지가 붙고(이전 NEW 는 자동으로 빠짐),
+ *   - 상점 각 분류에서 최근에 들어온 것부터 보입니다.
+ * 같은 날 두 번 넣었으면 '2026-10-06a', '2026-10-06b' 처럼 글자를 붙여 순서를 정합니다(문자열 순서로 비교).
+ */
+const BASE_DAY = '2026-10-03';
+const ADDED = {
+  '2026-10-08': ['bowPurpleFlower', 'bowPinkFlower', 'sunflowerClip'],
+  '2026-10-06b': ['strongBoy', 'catEars', 'cowboyHat', 'hardHat', 'propellerHat', 'chickenHat', 'watermelonHat',
+    'batmanGlasses', 'heartGlasses', 'starGlasses', 'spiralGlasses', 'frogGlasses',
+    'petPuppy', 'petKitten', 'petBunny', 'petHamster', 'petFox', 'petSteve', 'petAlex', 'petCreeper', 'petNoob', 'petBacon'],
+  '2026-10-06a': ['pinkFlowerDress', 'purpleSunflowerDress']
+};
+const LATEST_DAY = Object.keys(ADDED).sort().at(-1);
+for (const [day, ids] of Object.entries(ADDED)) for (const id of ids) COSMETICS[id].added = day;
+for (const c of Object.values(COSMETICS)) {
+  c.added ??= BASE_DAY;
+  c.isNew = c.added === LATEST_DAY;
+}
+
 
 /*
  * 아이템(소모품): 모든 게임이 같은 종류를 쓰고, 효과는 게임마다 다릅니다. 어느 게임이 무엇을 쓰는지는 games/index.js 의 items.
