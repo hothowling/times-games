@@ -4,7 +4,7 @@
  */
 
 /* 프리셋 캐릭터. 모든 계정에 항상 보입니다. 사진 캐릭터 키는 'p<id>' 입니다. */
-export const PRESETS = ['sooji', 'jiho', 'nayeon', 'angie'];
+export const PRESETS = ['sooji', 'jiho', 'nayeon', 'angie', 'bs'];
 
 /* 의상 선택이 없으면 렌더러가 기본 흰색 티셔츠를 그립니다. */
 export const SLOTS = ['outfit', 'head', 'face', 'back', 'pet'];
@@ -26,6 +26,10 @@ export const COSMETICS = {
   labCoat: cos('outfit', 'outfits/07-lab-coat.webp', 30, '꼬마 과학자 가운', 'Junior Scientist Coat'),
   heroSuit: cos('outfit', 'outfits/08-hero-suit.webp', 35, '별빛 히어로 슈트', 'Star Hero Suit'),
   strongBoy: cos('outfit', 'outfits/14-strong-boy.webp', 35, '스트롱보이 의상', 'Strong Boy Costume'),
+  denimJacket: cos('outfit', 'outfits/15-denim-jacket.webp', 25, '데님 재킷', 'Denim Jacket'),
+  basketballUniform: cos('outfit', 'outfits/16-basketball-uniform.webp', 28, '23번 농구 유니폼', 'Number 23 Basketball Uniform'),
+  juniorAstronaut: cos('outfit', 'outfits/17-junior-astronaut.webp', 35, '꼬마 우주복', 'Junior Astronaut Suit'),
+  jungleExplorer: cos('outfit', 'outfits/18-jungle-explorer.webp', 30, '정글 탐험가', 'Jungle Explorer'),
   jersey: cos('outfit', 'outfits/09-sports-jersey.webp', 28, '7번 스포츠 저지', 'Number 7 Jersey'),
   magic: cos('outfit', 'outfits/10-magic-costume.webp', 40, '마법학교 제복', 'Magic Academy Uniform'),
   pinkFlowerDress: cos('outfit', 'outfits/12-pink-flower-dress.webp', 25, '핑크 플라워 드레스', 'Pink Flower Dress'),
@@ -73,7 +77,8 @@ export const COSMETICS = {
  */
 const BASE_DAY = '2026-10-03';
 const ADDED = {
-  '2026-10-08': ['bowPurpleFlower', 'bowPinkFlower', 'sunflowerClip'],
+  '2026-10-08': ['denimJacket', 'basketballUniform', 'juniorAstronaut', 'jungleExplorer',
+    'bowPurpleFlower', 'bowPinkFlower', 'sunflowerClip'],
   '2026-10-06b': ['strongBoy', 'catEars', 'cowboyHat', 'hardHat', 'propellerHat', 'chickenHat', 'watermelonHat',
     'batmanGlasses', 'heartGlasses', 'starGlasses', 'spiralGlasses', 'frogGlasses',
     'petPuppy', 'petKitten', 'petBunny', 'petHamster', 'petFox', 'petSteve', 'petAlex', 'petCreeper', 'petNoob', 'petBacon'],

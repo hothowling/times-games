@@ -2,7 +2,7 @@
  * character.js - 캐릭터 그리기. 모든 화면과 게임이 이것 하나로 캐릭터를 보여 줍니다.
  *
  *   const c = createCharacter(el, look, { body: true })
- *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'angie'|'photo', equipped: { outfit, head, face, back, pet } }
+ *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'angie'|'bs'|'photo', equipped: { outfit, head, face, back, pet } }
  *     body: false 면 얼굴만(머리 장식·안경은 그대로) 그립니다.
  *   c.react('correct'|'wrong'|'timeout'|'clear'|'fail'|'idle')   표정 + 동작
  *   c.expression('neutral'|'happy'|'angry'|'surprised'|'sad')     표정만 바꾸기(다음 react 전까지 유지)
@@ -55,6 +55,12 @@ export const RIGS = {
     headX: '47%', headY: -111, headW: 218, headAngle: 0, clipY: -25,
     glassesY: 59, glassesW: 140, glassesScale: 1.1,
     bow: { headY: -73, headW: 155 }
+  },
+  bs: {
+    ...BASE_RIG, faceX: '49.3%', faceY: -30, faceW: 225.2, faceH: 225.2,
+    headY: -83, headW: 190, headAngle: 0, clipY: 6,
+    glassesY: 65.8, glassesW: 114, glassesScale: 1.1,
+    bow: { headY: -47, headW: 135 }
   },
   /* 사진 캐릭터: 정사각형 칸, 눈이 칸의 54% 높이(core/maker.js 의 EYE_Y) */
   photo: { ...BASE_RIG, faceY: 2, faceW: 200, faceH: 200, headY: -70, glassesY: 75, glassesW: 128, bow: { headY: -34, headW: 140 } }

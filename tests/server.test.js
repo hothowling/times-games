@@ -111,7 +111,7 @@ test('pets can be bought, saved per character and removed without changing the o
   assert.equal(me.user.sparkles, 75);
 });
 
-for (const preset of ['nayeon', 'angie']) test(`${preset} preset can be selected, dressed and loaded without a photo upload`, async () => {
+for (const preset of ['nayeon', 'angie', 'bs']) test(`${preset} preset can be selected, dressed and loaded without a photo upload`, async () => {
   const a = client();
   await a('POST', '/api/signup', { nickname: `${preset}-test`, pin: '1234' });
   const selected = await a('PATCH', '/api/settings', { character: preset });
