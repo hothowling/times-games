@@ -84,13 +84,13 @@ export function scoreFor({ pairs, wrong = 0, seconds = 0, maxCombo = 0 }) {
 /*
  * 별(다 맞힌 판만 부르므로 최소 1개).
  *   3: 틀린 횟수 ≤ 쌍/8(내림) 이고 쌍당 10초 안
- *   2: 틀린 횟수 ≤ 쌍/3(올림)
+ *   2: 틀린 횟수 ≤ 쌍 수(2026-10-08 완화: 예전 쌍/3 은 별 1개가 60% 넘게 나왔음. 마구 누르기는 여전히 1개)
  *   1: 그 밖
  */
 export function starsFor({ pairs, wrong = 0, seconds = 0 }) {
   if (!pairs) return 0;
   if (wrong <= Math.floor(pairs / 8) && seconds <= pairs * 10) return 3;
-  if (wrong <= Math.ceil(pairs / 3)) return 2;
+  if (wrong <= pairs) return 2;
   return 1;
 }
 

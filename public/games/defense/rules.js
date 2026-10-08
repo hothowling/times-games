@@ -93,3 +93,5 @@ export function makeQuiz(rand = Math.random) {
 
 /* 별: 버틴 웨이브. 3웨이브 → 1개, 5웨이브 → 2개, 8웨이브 → 3개 */
 export const starsFor = (wave) => (wave >= 8 ? 3 : wave >= 5 ? 2 : wave >= 3 ? 1 : 0);
+/* 넘긴 웨이브 수만큼 보너스 Sparkles(웨이브 1 에서 끝나면 0). */
+export const waveBonus = (wave) => Math.max(0, wave - 1);

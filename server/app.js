@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { randomBytes, scryptSync, timingSafeEqual, createHash, randomInt } from 'node:crypto';
 import { tx } from './db.js';
 import { adminRoutes } from './admin.js';
-import { PRESETS, COSMETICS, ITEMS, REWARD, BONUS_MAX, GAMES, DEFAULT_LOOK, BOX, INSTALL_REWARD, INSTALL_SNOOZE_MS, UPGRADE_REWARD, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
+import { PRESETS, COSMETICS, ITEMS, REWARD, BONUS_MAX, GAMES, DEFAULT_LOOK, BOX, INSTALL_REWARD, INSTALL_SNOOZE_MS, UPGRADE_REWARD, rewardFor, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const SESSION_DAYS = 180;
@@ -117,7 +117,7 @@ export function createApp({ db, dataDir, adminPassword, version = {} }) {
     setProgress: q('insert into progress (user_id, game_id, data) values (?, ?, ?) on conflict do update set data = excluded.data'),
     playByKey: q('select sparkles from plays where user_id = ? and game_id = ? and round_key = ?'),
     lastReward: q('select max(created_at) as t from plays where user_id = ? and game_id = ? and sparkles > 0'),
-    insertPlay: q('insert into plays (user_id, game_id, round_key, char_key, stars, score, detail, sparkles, created_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?)'),
+    insertPlay: q('insert into plays (user_id, game_id, round_key, char_key, stars, score, detail, sparkles, created_at, duration_ms) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'),
     plays: q('select game_id, char_key, stars, score, sparkles, created_at from plays where user_id = ? and created_at >= ? order by created_at desc limit 1000'),
     log: q('insert into sparkle_log (user_id, delta, reason, ref, created_at) values (?, ?, ?, ?, ?)'),
     installLog: q("select 1 from sparkle_log where user_id = ? and reason = 'install'")
@@ -431,7 +431,8 @@ export function createApp({ db, dataDir, adminPassword, version = {} }) {
     send(res, 200, {});
   });
 
-  /* 게임 결과: Sparkles 는 서버가 별 개수로 정합니다. 같은 roundKey 는 한 번만 지급. */
+  /* 게임 결과: Sparkles 는 서버가 별 개수 × 게임별 배율(rewardFor) + 보너스로 정합니다. 같은 roundKey 는 한 번만 지급.
+   * ms: 이번 판에 걸린 시간(클라이언트가 잰 값, 보상에는 쓰지 않고 밸런스 조정용으로만 저장). */
   route('POST', '/api/plays', async (req, res) => {
     const user = currentUser(req);
     const b = await readJson(req);
@@ -443,13 +444,14 @@ export function createApp({ db, dataDir, adminPassword, version = {} }) {
     const charKey = typeof b.character === 'string' && charExists(user.id, b.character) ? b.character : null;
     const detail = b.detail === undefined ? null : JSON.stringify(b.detail);
     const bonus = Math.min(BONUS_MAX, Math.max(0, Math.floor(Number(b.bonus)) || 0));
+    const ms = Number.isFinite(Number(b.ms)) ? Math.min(3 * 3600e3, Math.max(0, Math.round(Number(b.ms)))) : null;
     const earned = tx(db, () => {
       const prev = S.playByKey.get(user.id, b.game, b.roundKey);
       if (prev) return prev.sparkles;
       const now = Date.now();
       const last = S.lastReward.get(user.id, b.game).t || 0;
-      const sparkles = now - last < PLAY_GAP_MS ? 0 : REWARD[stars] + bonus;
-      S.insertPlay.run(user.id, b.game, b.roundKey, charKey, stars, score, detail, sparkles, now);
+      const sparkles = now - last < PLAY_GAP_MS ? 0 : rewardFor(b.game, stars) + bonus;
+      S.insertPlay.run(user.id, b.game, b.roundKey, charKey, stars, score, detail, sparkles, now, ms);
       if (sparkles) {
         S.addSparkles.run(sparkles, user.id);
         S.log.run(user.id, sparkles, 'play', b.game, now);

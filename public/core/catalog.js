@@ -142,8 +142,15 @@ export function pickPrize(rand, owned) {
   return left.length ? { kind, id: left[rand(left.length)] } : { kind: 'sparkles', amount: 30 };
 }
 
-/* 게임 결과 별(0~3) → Sparkles. 모든 게임 공통. */
+/* 게임 결과 별(0~3) → Sparkles 기본값. 게임별 배율(GAME_REWARD)을 곱합니다. */
 export const REWARD = [1, 3, 6, 10];
+/*
+ * 게임별 보상 배율: 한 판이 긴 게임일수록 크게 해서, 어느 게임이든 1분에 비슷한 Sparkles(약 7~9)를 벌게 합니다.
+ * 2026-10-08 운영 기록(390판)으로 잡은 값: 한 판 길이 추정 교실·땅따먹기 ~0.8분, 수도 ~1분, 마스터·영단어 ~1.5분, 슈터 ~2분, 디펜스 ~4분.
+ * 이후 plays.duration_ms 가 쌓이면 실제 판 길이로 다시 맞춥니다. 없는 게임은 1.
+ */
+export const GAME_REWARD = { defense: 4, shooter: 2, master: 1.5, wordmatch: 1.5 };
+export const rewardFor = (game, stars) => Math.round(REWARD[stars] * (GAME_REWARD[game] ?? 1));
 /* 게임이 한 판에 따로 얹어 줄 수 있는 Sparkles 의 상한(예: 디펜스의 업그레이드를 다 채운 뒤 퀴즈 정답). 서버가 자릅니다. */
 export const BONUS_MAX = 30;
 /* 홈 화면에 추가한 앱(standalone)으로 처음 들어오면 계정마다 한 번 주는 Sparkles(POST /api/reward/install). */

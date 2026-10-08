@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { waveConfig, pickType, stats, upgradeChoices, makeQuiz, starsFor, UPGRADES } from '../public/games/defense/rules.js';
+import { waveConfig, pickType, stats, upgradeChoices, makeQuiz, starsFor, waveBonus, UPGRADES } from '../public/games/defense/rules.js';
 
 test('waves only get harder; fast from wave 2, tank from wave 3', () => {
   for (let w = 1; w < 30; w++) {
@@ -40,4 +40,5 @@ test('quiz: 4 distinct positive choices with the answer', () => {
 
 test('stars by wave', () => {
   assert.deepEqual([1, 2, 3, 4, 5, 7, 8, 20].map(starsFor), [0, 0, 1, 1, 2, 2, 3, 3]);
+  assert.deepEqual([1, 2, 8, 40].map(waveBonus), [0, 1, 7, 39]);
 });

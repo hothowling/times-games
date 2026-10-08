@@ -164,6 +164,7 @@ async function launch(view, id, token) {
   const chars = [];
   const usable = new Set(meta.items || []);
   let usedItems = {};  /* 이번 판에 쓴 아이템 개수. finish 에 실어 보내고 비웁니다. */
+  let roundStart = Date.now();  /* 판 길이(밸런스 조정용): 게임을 연 때나 직전 finish 부터 잽니다. */
   const ctx = {
     id,
     lang: i18n.getLang(),
@@ -212,9 +213,11 @@ async function launch(view, id, token) {
       if (usedItems.pill) stars = Math.min(stars, 2);
       if (Object.keys(usedItems).length) detail = { ...detail, items: usedItems };
       usedItems = {};
+      const ms = Date.now() - roundStart;
+      roundStart = Date.now();
       try {
         const r = await api('POST', 'plays', {
-          game: id, roundKey: crypto.randomUUID(), stars, score, detail, bonus, character: key
+          game: id, roundKey: crypto.randomUUID(), stars, score, detail, bonus, character: key, ms
         });
         patch((me) => { me.user.sparkles = r.sparkles; });
         toast(!r.earned ? t('noEarn') : r.weekRank ? t('earnedRank', { n: r.earned, r: r.weekRank }) : t('earned', { n: r.earned }));

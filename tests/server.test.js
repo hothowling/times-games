@@ -63,7 +63,7 @@ test('plays reward, idempotency, shop, looks', async () => {
   r = await a('POST', '/api/plays', { game: 'blocks', roundKey: 'r2', stars: 3 });
   assert.equal(r.body.earned, 0, 'too soon after last reward');
   r = await a('POST', '/api/plays', { game: 'master', roundKey: 'r1', stars: 2 });
-  assert.equal(r.body.earned, 6);
+  assert.equal(r.body.earned, 9, 'master pays ×1.5');
   assert.equal((await a('POST', '/api/plays', { game: 'nope', roundKey: 'x', stars: 1 })).status, 400);
   assert.equal((await a('POST', '/api/plays', { game: 'master', roundKey: 'x', stars: 4 })).status, 400);
 
@@ -71,7 +71,7 @@ test('plays reward, idempotency, shop, looks', async () => {
   await a('POST', '/api/plays', { game: 'shooter', roundKey: 'r1', stars: 3 });
   assert.equal((await a('POST', '/api/shop/buy', { itemId: 'constructor' })).body.error, 'badItem');
   r = await a('POST', '/api/shop/buy', { itemId: 'redCap' });
-  assert.equal(r.body.sparkles, 16);
+  assert.equal(r.body.sparkles, 10 + 9 + 20 - 10, "blocks 10 + master 9 + shooter ×2 20 - red cap 10");
   assert.equal(r.body.inventory.redCap, 1);
   assert.equal((await a('POST', '/api/shop/buy', { itemId: 'redCap' })).body.error, 'owned');
   r = await a('POST', '/api/shop/buy', { itemId: 'eraser' });
@@ -308,13 +308,14 @@ test('plays: bonus Sparkles are added and capped by BONUS_MAX', async () => {
   const a = client();
   await a('POST', '/api/signup', { nickname: 'bonuskid', pin: '1234' });
   let r = await a('POST', '/api/plays', { game: 'defense', roundKey: 'b1', stars: 1, bonus: 6 });
-  assert.equal(r.body.earned, 3 + 6);
+  assert.equal(r.body.earned, 3 * 4 + 6, 'defense pays ×4 plus bonus');
   db.prepare("update plays set created_at = 0 where round_key = 'b1'").run();
   r = await a('POST', '/api/plays', { game: 'defense', roundKey: 'b2', stars: 0, bonus: 9999 });
-  assert.equal(r.body.earned, 1 + 30);
+  assert.equal(r.body.earned, 1 * 4 + 30);
   db.prepare("update plays set created_at = 0 where round_key = 'b2'").run();
-  r = await a('POST', '/api/plays', { game: 'defense', roundKey: 'b3', stars: 0, bonus: -5 });
-  assert.equal(r.body.earned, 1);
+  r = await a('POST', '/api/plays', { game: 'defense', roundKey: 'b3', stars: 0, bonus: -5, ms: 245000 });
+  assert.equal(r.body.earned, 1 * 4);
+  assert.equal(db.prepare("select duration_ms from plays where round_key = 'b3'").get().duration_ms, 245000, 'play length is stored');
 });
 
 test("odd request paths like '//' get an answer instead of crashing the server", async () => {
@@ -340,7 +341,7 @@ test('guest: play right away, hidden from others in ranking, upgrade keeps every
   assert.match(r.body.user.nickname, /^손님\d+$/);
   const guestNick = r.body.user.nickname;
   await g('POST', '/api/plays', { game: 'master', roundKey: 'g1', stars: 3, score: 99 });
-  assert.equal((await g('GET', '/api/me')).body.user.sparkles, 10);
+  assert.equal((await g('GET', '/api/me')).body.user.sparkles, 15, 'master ×1.5');
 
   /* 다른 사람 랭킹에는 안 보이고, 자기 순위는 봅니다. */
   const other = client();
@@ -359,7 +360,7 @@ test('guest: play right away, hidden from others in ranking, upgrade keeps every
   assert.equal(r.body.user.guest, false);
   assert.equal(r.body.user.nickname, '새친구');
   assert.equal(r.body.reward, 30);
-  assert.equal(r.body.user.sparkles, 10 + 30);
+  assert.equal(r.body.user.sparkles, 15 + 30);
   assert.equal(db.prepare("select count(*) n from sparkle_log where user_id = ? and reason = 'upgrade'").get(r.body.user.id).n, 1);
   assert.equal((await client()('POST', '/api/login', { nickname: '새친구', pin: '1111' })).status, 200);
   assert.equal((await g('POST', '/api/upgrade', { nickname: '또다른', pin: '2222' })).body.error, 'notGuest');

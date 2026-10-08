@@ -6,7 +6,7 @@ import { icon, iconFromSource, iconMarkup, setIconText } from '../../core/icons.
  * 규칙·수치는 rules.js(DOM 없음). 들판·좀비·울타리·미사일·폭발은 assets/games/defense/ 그림을 캔버스에 그립니다.
  */
 import { PRESETS } from '../../core/catalog.js';
-import { WORLD_W, FENCE_HP, WAVE_SEC, QUIZ_EVERY, ZOMBIES, UPGRADES, waveConfig, pickType, stats, upgradeChoices, makeQuiz, starsFor } from './rules.js';
+import { WORLD_W, FENCE_HP, WAVE_SEC, QUIZ_EVERY, ZOMBIES, UPGRADES, waveConfig, pickType, stats, upgradeChoices, makeQuiz, starsFor, waveBonus } from './rules.js';
 
 export const dict = {
   ko: {
@@ -480,6 +480,8 @@ export function mount(el, ctx) {
       ctx.saveProgress({ best });
     }
     overlay.classList.toggle('new-best', G.score > G.prevBest);
+    /* 버틴 만큼 더: 넘긴 웨이브마다 Sparkles 1(퀴즈 보너스와 합쳐 서버가 BONUS_MAX 로 자름). 결과 글에도 합친 값을 보여 줍니다. */
+    G.bonus += waveBonus(G.wave);
     ctx.finish({ stars: starsFor(G.wave), score: G.score, bonus: G.bonus, detail: { wave: G.wave, kills: G.kills, lv: G.lv, bonus: G.bonus } });
     draw();
     setTimeout(() => { if (G?.mode === 'over') showOverlay('over'); }, 900);
