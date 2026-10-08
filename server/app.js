@@ -137,7 +137,10 @@ export function createApp({ db, dataDir, adminPassword, version = {} }) {
     if (!token) fail(401, 'login');
     const row = S.session.get(sha(token), Date.now());
     if (!row) fail(401, 'login');
-    return S.userById.get(row.user_id);
+    const user = S.userById.get(row.user_id);
+    /* 정지된 계정: 세션을 지워 로그인 화면으로 보냅니다(정지할 때도 지우지만 혹시 남은 세션 대비). */
+    if (user.suspended_until > Date.now()) { S.deleteSession.run(sha(token)); fail(401, 'login'); }
+    return user;
   }
 
   /* ---------- 상태 묶음 ---------- */
@@ -249,6 +252,7 @@ export function createApp({ db, dataDir, adminPassword, version = {} }) {
     const user = typeof nickname === 'string' && S.userByNick.get(nickname.trim());
     if (!user) fail(401, 'badLogin');
     const now = Date.now();
+    if (user.suspended_until > now) fail(403, 'suspended');
     if (user.locked_until > now) fail(429, 'locked');
     if (typeof pin !== 'string' || !/^\d{4}$/.test(pin) || !checkPin(pin, user.pin)) {
       const fails = user.fails + 1;
@@ -476,7 +480,7 @@ export function createApp({ db, dataDir, adminPassword, version = {} }) {
   BOARD_SQL.classroom = "max(json_extract(p.detail, '$.round'))";
   const boardStmts = Object.fromEntries(Object.entries(BOARD_SQL).map(([board, expr]) => [board, q(
     `select u.id, u.nickname, u.settings, u.guest, ${expr} as value from plays p join users u on u.id = p.user_id
-     where p.created_at >= ? ${board === 'all' ? '' : 'and p.game_id = ?'}
+     where p.created_at >= ? and u.suspended_until <= strftime('%s', 'now') * 1000 ${board === 'all' ? '' : 'and p.game_id = ?'}
      group by u.id having value > 0 order by value desc, u.id`)]));
   const lookOf = q('select equipped from looks where user_id = ? and char_key = ?');
 
@@ -522,7 +526,7 @@ export function createApp({ db, dataDir, adminPassword, version = {} }) {
     send(res, 200, { plays: rows.map((r) => ({ game: r.game_id, character: r.char_key, stars: r.stars, score: r.score, sparkles: r.sparkles, at: r.created_at })) });
   });
 
-  adminRoutes(db, adminPassword, { route, fail, send, readJson, hashPin });
+  adminRoutes(db, adminPassword, { route, fail, send, readJson, hashPin, facesDir });
 
   /* ---------- 정적 파일 ---------- */
 

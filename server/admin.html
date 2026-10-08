@@ -59,7 +59,10 @@ import { COSMETICS, ITEMS, BOX } from '../core/catalog.js';
 const $ = (id) => document.getElementById(id);
 const gameName = (id) => GAMES.find((g) => g.id === id)?.title.ko || id;
 const itemName = (id) => (COSMETICS[id] || ITEMS[id] || (id === BOX.id && BOX))?.name.ko || id;
-const charName = (k) => ({ sooji: '수지', jiho: '지호', nayeon: '나연' }[k] || (k ? '사진 ' + k.slice(1) : '-'));
+const charName = (k) => ({ sooji: '수지', jiho: '지호', nayeon: '나연', angie: '앤지', bs: 'BS' }[k] || (k ? '사진 ' + k.slice(1) : '-'));
+const FOREVER = 9e15;
+const suspendText = (u) => (u.suspended_until > Date.now() ? (u.suspended_until >= FOREVER ? '정지(무기한)' : `정지(${when(u.suspended_until)}까지)`) : '');
+const json = (method, body) => ({ method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
 const when = (ms) => (ms ? new Date(ms).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' }) : '-');
 
 /* 글자는 모두 textContent 로 넣습니다(닉네임·detail 은 사용자가 보낸 값). */
@@ -107,7 +110,7 @@ function drawUsers() {
     el('tbody', null, list.map((u) => {
       const tr = el('tr', { className: 'click' + (u.id === selected ? ' on' : '') },
         td(u.guest ? u.nickname + ' (손님)' : u.nickname), td(u.sparkles, 'num'), td(u.plays, 'num'), td(when(u.last_play)), td(when(u.created_at)),
-        td(u.photos, 'num'), td(u.locked_until > Date.now() ? '잠김' : '', 'bad'));
+        td(u.photos, 'num'), td(suspendText(u) || (u.locked_until > Date.now() ? '잠김' : ''), 'bad'));
       tr.addEventListener('click', () => showUser(u.id));
       return tr;
     })));
@@ -137,6 +140,44 @@ async function showUser(id) {
     } catch (e) { msg.textContent = '실패: ' + e.message; }
   });
 
+  /* 정지 / 해제 */
+  const days = el('select', { className: 'search', style: 'max-width:120px' },
+    [['1', '1일'], ['3', '3일'], ['7', '7일'], ['30', '30일'], ['', '무기한']].map(([v, t]) => el('option', { value: v }, t)));
+  const reason = el('input', { className: 'search', placeholder: '정지 사유(관리자만 봄)', maxLength: 200, style: 'max-width:220px' });
+  const smsg = el('span', { className: 'muted' });
+  const suspended = u.suspended_until > Date.now();
+  const sbtn = el('button', { className: 'btn', type: 'button', style: 'background:var(--bad)' }, '정지');
+  sbtn.addEventListener('click', async () => {
+    const d = days.value ? Number(days.value) : null;
+    if (!confirm(`${u.nickname} 을(를) ${d ? d + '일' : '무기한'} 정지할까요? 지금 로그인도 끊기고 랭킹에서 빠집니다.`)) return;
+    try { await get(`users/${id}/suspend`, json('POST', { days: d, reason: reason.value })); await loadUsers(); showUser(id); }
+    catch (e) { smsg.textContent = '실패: ' + e.message; }
+  });
+  const ubtn = el('button', { className: 'btn sub', type: 'button' }, '정지 해제');
+  ubtn.addEventListener('click', async () => {
+    if (!confirm(`${u.nickname} 의 정지를 풀까요?`)) return;
+    try { await get(`users/${id}/unsuspend`, json('POST', {})); await loadUsers(); showUser(id); }
+    catch (e) { smsg.textContent = '실패: ' + e.message; }
+  });
+  const suspendRow = suspended
+    ? el('span', { className: 'row' }, el('b', { className: 'bad' }, suspendText(u)), u.suspend_reason ? el('span', { className: 'muted' }, '사유: ' + u.suspend_reason) : null, ubtn, smsg)
+    : el('span', { className: 'row' }, days, reason, sbtn, smsg);
+
+  /* 삭제: 닉네임을 그대로 입력해야 지워집니다. */
+  const dbtn = el('button', { className: 'btn', type: 'button', style: 'background:var(--bad)' }, '회원 삭제');
+  const dmsg = el('span', { className: 'muted' });
+  dbtn.addEventListener('click', async () => {
+    const typed = prompt(`정말 ${u.nickname} 을(를) 삭제할까요? 플레이 기록·Sparkles·아이템·사진 캐릭터가 모두 지워지고 되돌릴 수 없습니다.\n확인하려면 닉네임을 그대로 입력하세요.`);
+    if (typed == null) return;
+    if (typed !== u.nickname) { dmsg.textContent = '닉네임이 달라서 지우지 않았어요.'; return; }
+    try {
+      await get(`users/${id}`, json('DELETE', { confirm: typed }));
+      selected = null;
+      $('detail').hidden = true;
+      await Promise.all([loadUsers(), loadSummary()]);
+    } catch (e) { dmsg.textContent = '실패: ' + e.message; }
+  });
+
   const plays = el('table', null,
     head([['시각'], ['게임'], ['캐릭터'], ['별', 'num'], ['점수', 'num'], ['Sparkles', 'num'], ['내용']]),
     el('tbody', null, d.plays.length ? d.plays.map((p) => el('tr', null,
@@ -146,7 +187,7 @@ async function showUser(id) {
 
   const log = el('table', null, head([['시각'], ['내역'], ['변화', 'num']]),
     el('tbody', null, d.log.length ? d.log.map((l) => el('tr', null,
-      td(when(l.created_at)), td(l.reason === 'buy' ? '구매: ' + itemName(l.ref) : '보상: ' + gameName(l.ref)),
+      td(when(l.created_at)), td(l.reason === 'buy' ? '구매: ' + itemName(l.ref) : l.reason === 'play' ? '보상: ' + gameName(l.ref) : ({ box: '랜덤박스', install: '홈 화면 앱 보상', upgrade: '계정 만들기 보상' }[l.reason] || l.reason)),
       td((l.delta > 0 ? '+' : '') + l.delta, 'num'))) : el('tr', null, el('td', { colSpan: 3, className: 'muted' }, '내역 없음'))));
 
   $('detail').hidden = false;
@@ -155,7 +196,9 @@ async function showUser(id) {
     el('div', { className: 'box' }, el('div', { className: 'kv' }, [
       ['가입', when(u.created_at)], ['Sparkles', u.sparkles], ['사진 캐릭터', `${d.photos}개 (얼굴은 본인만 볼 수 있어 표시하지 않음)`],
       ['설정', JSON.stringify(u.settings)], ['로그인 실패', u.locked_until > Date.now() ? `잠김 (${when(u.locked_until)}까지)` : `${u.fails}회`],
-      ['PIN', el('span', { className: 'row' }, pin, reset, msg)]
+      ['PIN', el('span', { className: 'row' }, pin, reset, msg)],
+      ['정지', suspendRow],
+      ['삭제', el('span', { className: 'row' }, dbtn, dmsg)]
     ].flatMap(([k, v]) => [el('span', { className: 'muted' }, k), el('span', null, v)]))),
     el('h2', null, `플레이 기록 (최근 ${d.plays.length}판)`),
     el('div', { className: 'box', style: 'max-height:480px' }, plays),

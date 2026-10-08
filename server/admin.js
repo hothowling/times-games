@@ -3,7 +3,7 @@
  * 비밀번호는 환경 변수 ADMIN_PASSWORD. 없으면 관리자 기능 전체가 404 입니다.
  * 사진 얼굴 그림은 "본인만 보기" 원칙이라 관리자에게도 보여 주지 않고 개수만 알려 줍니다.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { timingSafeEqual, createHash } from 'node:crypto';
@@ -12,8 +12,11 @@ const PAGE = join(dirname(fileURLToPath(import.meta.url)), 'admin.html');
 const MAX_FAILS = 10;
 const LOCK_MS = 10 * 60 * 1000;
 const sha = (s) => createHash('sha256').update(s).digest();
+/* 무기한 정지 값(ms). 0 = 정지 아님. */
+export const SUSPEND_FOREVER = 9e15;
+const SUSPEND_DAYS_MAX = 3650;
 
-/* h = { route, fail, send, readJson, hashPin } (app.js 의 도우미) */
+/* h = { route, fail, send, readJson, hashPin, facesDir } (app.js 의 도우미) */
 export function adminRoutes(db, password, h) {
   // ponytail: IP별 실패 횟수는 메모리에만 둡니다(재시작하면 초기화). 여러 프로세스로 늘리면 DB 로.
   const fails = new Map();
@@ -38,12 +41,15 @@ export function adminRoutes(db, password, h) {
 
   const q = (sql) => db.prepare(sql);
   const S = {
-    users: q(`select u.id, u.nickname, u.guest, u.sparkles, u.created_at, u.locked_until,
+    users: q(`select u.id, u.nickname, u.guest, u.sparkles, u.created_at, u.locked_until, u.suspended_until, u.suspend_reason,
       (select count(*) from plays p where p.user_id = u.id) as plays,
       (select max(created_at) from plays p where p.user_id = u.id) as last_play,
       (select count(*) from characters c where c.user_id = u.id) as photos
       from users u order by coalesce(last_play, u.created_at) desc`),
-    user: q('select id, nickname, sparkles, settings, created_at, fails, locked_until from users where id = ?'),
+    user: q('select id, nickname, guest, sparkles, settings, created_at, fails, locked_until, suspended_until, suspend_reason from users where id = ?'),
+    suspend: q('update users set suspended_until = ?, suspend_reason = ? where id = ?'),
+    photoIds: q('select id from characters where user_id = ?'),
+    deleteUser: q('delete from users where id = ?'),
     plays: q('select game_id, char_key, stars, score, sparkles, detail, created_at from plays where user_id = ? order by created_at desc limit 300'),
     log: q('select delta, reason, ref, created_at from sparkle_log where user_id = ? order by id desc limit 200'),
     inventory: q('select item_id, qty from inventory where user_id = ? and qty > 0 order by item_id'),
@@ -89,6 +95,41 @@ export function adminRoutes(db, password, h) {
       inventory: S.inventory.all(id),
       progress: Object.fromEntries(S.progress.all(id).map((p) => [p.game_id, JSON.parse(p.data)]))
     });
+  }));
+
+  /*
+   * 정지: { days: 1~3650 | null(무기한), reason }. 정지되면 로그인할 수 없고(403 suspended) 지금 로그인도 끊기며 랭킹에서 빠집니다.
+   * 기록·Sparkles·아이템은 그대로라 해제하면 원래대로 돌아옵니다.
+   */
+  h.route('POST', '/admin/api/users/(\\d+)/suspend', guard(async (req, res, m) => {
+    const id = Number(m[1]);
+    const { days = null, reason = '' } = await h.readJson(req);
+    if (days !== null && !(Number.isInteger(days) && days >= 1 && days <= SUSPEND_DAYS_MAX)) h.fail(400, 'badDays');
+    const until = days === null ? SUSPEND_FOREVER : Date.now() + days * 864e5;
+    if (!S.suspend.run(until, String(reason).slice(0, 200) || null, id).changes) h.fail(404, 'notFound');
+    S.dropSessions.run(id);
+    h.send(res, 200, { suspended_until: until });
+  }));
+
+  h.route('POST', '/admin/api/users/(\\d+)/unsuspend', guard(async (req, res, m) => {
+    if (!S.suspend.run(0, null, Number(m[1])).changes) h.fail(404, 'notFound');
+    h.send(res, 200, {});
+  }));
+
+  /*
+   * 삭제: 되돌릴 수 없습니다. 실수 방지로 body.confirm 에 그 닉네임을 그대로 보내야 합니다.
+   * 플레이·Sparkles 내역·아이템·착용·진행도·세션·사진 캐릭터는 DB 에서 함께 지워지고(on delete cascade), 얼굴 그림 파일도 지웁니다.
+   */
+  h.route('DELETE', '/admin/api/users/(\\d+)', guard(async (req, res, m) => {
+    const id = Number(m[1]);
+    const user = S.user.get(id);
+    if (!user) h.fail(404, 'notFound');
+    const { confirm } = await h.readJson(req);
+    if (confirm !== user.nickname) h.fail(400, 'confirmNickname');
+    const faces = S.photoIds.all(id).map((c) => c.id);
+    S.deleteUser.run(id);
+    for (const f of faces) rmSync(join(h.facesDir, String(f)), { force: true });
+    h.send(res, 200, { deleted: id, faces: faces.length });
   }));
 
   /* PIN 재설정: 잠금도 풀고, 다른 기기의 로그인은 끊습니다. */

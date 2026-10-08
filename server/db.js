@@ -80,6 +80,10 @@ export function openDb(file) {
   if (!db.prepare("select 1 from pragma_table_info('users') where name = 'guest'").get()) {
     db.exec('alter table users add column guest integer not null default 0');
   }
+  /* 관리자 정지: suspended_until(ms, 0 = 정상, 9e15 = 무기한)과 사유. */
+  if (!db.prepare("select 1 from pragma_table_info('users') where name = 'suspended_until'").get()) {
+    db.exec("alter table users add column suspended_until integer not null default 0; alter table users add column suspend_reason text");
+  }
   /* 판 길이(밸런스 조정용). 예전 DB 에는 열이 없어서 더합니다. */
   if (!db.prepare("select 1 from pragma_table_info('plays') where name = 'duration_ms'").get()) {
     db.exec('alter table plays add column duration_ms integer');

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { openDb } from '../server/db.js';
@@ -430,4 +430,54 @@ test('version: tells which commit the server is running, without login', async (
   } finally { s.close(); }
   const none = await (await fetch(base + '/api/version')).json();
   assert.equal(none.commit, null, 'no version given → null');
+});
+
+test('admin: suspend blocks login and ranking, unsuspend restores, delete removes everything', async () => {
+  const adb = openDb(':memory:');
+  const dataDir = mkdtempSync(join(tmpdir(), 'tg-'));
+  const srv = createServer(createApp({ db: adb, dataDir, adminPassword: 'pw' }));
+  await new Promise((ok) => srv.listen(0, '127.0.0.1', ok));
+  const url = `http://127.0.0.1:${srv.address().port}`;
+  const auth = { authorization: 'Basic ' + Buffer.from('admin:pw').toString('base64'), 'content-type': 'application/json' };
+  const admin = (method, path, body) => fetch(url + '/admin/api/' + path, { method, headers: auth, body: body && JSON.stringify(body) });
+  const jpost = (path, body, cookie) => fetch(url + '/api/' + path, { method: 'POST', headers: { 'content-type': 'application/json', ...(cookie ? { cookie } : {}) }, body: JSON.stringify(body) });
+  try {
+    const signup = await jpost('signup', { nickname: 'bad-kid', pin: '1111' });
+    const cookie = signup.headers.get('set-cookie').split(';')[0];
+    const id = (await signup.json()).user.id;
+    await jpost('plays', { game: 'blocks', roundKey: 'k1', stars: 3, score: 50 }, cookie);
+    const face = await fetch(url + '/api/characters', { method: 'POST', headers: { cookie, 'content-type': 'image/png' }, body: PNG });
+    const faceId = (await face.json()).id;
+    assert.ok(statSync(join(dataDir, 'faces', String(faceId))).isFile());
+    const board = async () => (await (await fetch(url + '/api/ranking?board=blocks&period=all', { headers: { cookie: (await jpost('signup', { nickname: 'viewer' + Math.random().toString(36).slice(2, 6), pin: '2222' })).headers.get('set-cookie').split(';')[0] } })).json()).top.map((x) => x.nickname);
+    assert.ok((await board()).includes('bad-kid'));
+
+    assert.equal((await admin('POST', `users/${id}/suspend`, { days: 0 })).status, 400, 'days must be 1..3650 or null');
+    assert.equal((await admin('POST', `users/${id}/suspend`, { days: 7, reason: '욕설' })).status, 200);
+    assert.equal((await fetch(url + '/api/me', { headers: { cookie } })).status, 401, 'current session is dropped');
+    const blocked = await jpost('login', { nickname: 'bad-kid', pin: '1111' });
+    assert.equal(blocked.status, 403);
+    assert.equal((await blocked.json()).error, 'suspended');
+    assert.ok(!(await board()).includes('bad-kid'), 'hidden from ranking while suspended');
+    const listed = (await (await admin('GET', 'users')).json()).users.find((u) => u.id === id);
+    assert.ok(listed.suspended_until > Date.now());
+    assert.equal(listed.suspend_reason, '욕설');
+
+    assert.equal((await admin('POST', `users/${id}/suspend`, { days: null })).status, 200, 'indefinite');
+    assert.equal((await admin('POST', `users/${id}/unsuspend`)).status, 200);
+    assert.equal((await jpost('login', { nickname: 'bad-kid', pin: '1111' })).status, 200);
+    assert.ok((await board()).includes('bad-kid'));
+
+    assert.equal((await admin('DELETE', `users/${id}`, { confirm: 'wrong' })).status, 400, 'needs the exact nickname');
+    assert.equal((await admin('DELETE', `users/${id}`, { confirm: 'bad-kid' })).status, 200);
+    assert.equal((await admin('GET', `users/${id}`)).status, 404);
+    for (const t of ['plays', 'sparkle_log', 'characters', 'sessions', 'inventory', 'looks', 'progress']) {
+      assert.equal(adb.prepare(`select count(*) n from ${t} where user_id = ?`).get(id).n, 0, t);
+    }
+    assert.throws(() => statSync(join(dataDir, 'faces', String(faceId))), 'face file removed');
+    assert.equal((await jpost('login', { nickname: 'bad-kid', pin: '1111' })).status, 401);
+    assert.equal((await admin('DELETE', 'users/999999', { confirm: 'x' })).status, 404);
+  } finally {
+    srv.close();
+  }
 });
