@@ -10,13 +10,35 @@ import { openInstallGuide, maybeAutoShowInstall, guideAvailable, installText } f
 import { INSTALL_REWARD, UPGRADE_REWARD } from '../core/catalog.js';
 import { createCharacter } from '../core/character.js';
 import { GAMES } from '../games/index.js';
+import { TIPS } from './tips.js';
+
+const TIP_MS = 7000;
 
 export function render(view, { go, toast, errorText }) {
   const hero = h('div');
   /* 캐릭터 오른쪽에 세로로 놓는 작은 아이콘 버튼. 글자는 아이콘 아래 작게. */
   const btn = (name, key, path) => h('button', { type: 'button', class: 'lobby-icon', 'aria-label': t(key), onclick: () => go(path) },
     icon(name), h('small', null, t(key)));
+  /* 캐릭터 위 말풍선: 도움말을 무작위로 돌려 보여 줍니다. 누르면 관련 화면으로(없으면 다음 도움말). */
+  const tipText = h('span');
+  const tip = h('button', { type: 'button', class: 'lobby-tip', 'aria-live': 'polite' }, h('i', { 'aria-hidden': 'true' }, '💡'), tipText);
+  let tipIndex = -1;
+  let tipTimer = 0;
+  const showTip = () => {
+    let i;
+    do i = Math.floor(Math.random() * TIPS.length); while (TIPS.length > 1 && i === tipIndex);
+    tipIndex = i;
+    tip.classList.remove('is-in');
+    void tip.offsetWidth; /* 애니메이션 다시 시작 */
+    tipText.textContent = pick(TIPS[i]);
+    tip.classList.add('is-in');
+    tip.classList.toggle('has-link', !!TIPS[i].go);
+  };
+  const nextTip = () => { clearInterval(tipTimer); showTip(); tipTimer = setInterval(showTip, TIP_MS); };
+  tip.addEventListener('click', () => { const g = TIPS[tipIndex]?.go; if (g) go(g); else nextTip(); });
+  nextTip();
   view.append(
+    tip,
     h('section', { class: 'lobby-hero' }, hero,
       h('nav', { class: 'lobby-actions' },
         btn('ranking', 'ranking', 'ranking'), btn('characters', 'characters', 'chars'), btn('shop', 'shop', 'shop'), btn('records', 'records', 'records'),
@@ -41,5 +63,5 @@ export function render(view, { go, toast, errorText }) {
     state.me.gift = false;
     showGift({ buy: false, toast, errorText });
   } else maybeAutoShowInstall({ go, toast });
-  return () => c.destroy();
+  return () => { clearInterval(tipTimer); c.destroy(); };
 }
