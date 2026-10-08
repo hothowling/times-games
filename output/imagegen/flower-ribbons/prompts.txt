@@ -1,0 +1,11 @@
+Built-in image_gen; existing mint flower bow used as the style and fit template.
+
+07-purple-flower-bow
+Use case: precise-object-edit
+Asset type: transparent hair ribbon sprite for a children's dress-up game.
+Input image is the edit template. Replace only the mint flower ribbon design with a purple lavender satin ribbon bow with a delicate repeating cream and pale-purple blossom print, a little purple flower with a golden center at the knot, cream scalloped trim. Preserve the exact bow silhouette, canvas framing, overall scale, central knot position, front-facing orientation and polished illustrated game style of the template. One isolated symmetrical hair bow, generous transparent margins exactly as template, crisp dark outline, soft shading and fabric folds, readable floral details at small size. True transparent RGBA background, no head, no hair, no person, no text, no labels, no watermark, no checkerboard.
+
+08-pink-flower-bow
+Use case: precise-object-edit
+Asset type: transparent hair ribbon sprite for a children's dress-up game.
+Input image is the edit template. Replace only the mint flower ribbon design with a soft pink satin ribbon bow with a delicate repeating cream and deeper-pink blossom print, a little pink flower with a golden center at the knot, cream scalloped trim. Preserve the exact bow silhouette, canvas framing, overall scale, central knot position, front-facing orientation and polished illustrated game style of the template. One isolated symmetrical hair bow, generous transparent margins exactly as template, crisp dark outline, soft shading and fabric folds, readable floral details at small size. True transparent RGBA background, no head, no hair, no person, no text, no labels, no watermark, no checkerboard.

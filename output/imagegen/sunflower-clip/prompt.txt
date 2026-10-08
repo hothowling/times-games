@@ -1,0 +1,5 @@
+Built-in image_gen; true transparent output.
+
+Use case: stylized-concept
+Asset type: transparent large sunflower hair clip sprite for a children's dress-up game.
+One big beautiful sunflower hairpin, front-facing: vivid golden yellow petals in two lush rings around a rich brown seed-textured round center, two small fresh green leaves peeking from behind at lower right, a tiny hint of a gold clip tucked completely behind the flower. The flower is the dominant shape, no ribbon or bow. Cute polished illustrated game asset with crisp dark outlines and soft rounded shading, cheerful, clearly readable at small sizes. Square canvas; flower centered with generous 12% transparent margins all sides. Actual RGBA transparent background, no head, no person, no hair, no text, no labels, no watermark, no checkerboard, no cast shadow outside asset.

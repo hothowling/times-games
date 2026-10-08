@@ -119,9 +119,12 @@ export function createCharacter(el, look, { body = true } = {}) {
     const lensCenter = r.glassesY + 0.53 * r.glassesW / 2;
     const glassesY = lensCenter - (COSMETICS[eq.face]?.lensY ?? 0.53) * glassesW / 2;
     const bow = COSMETICS[eq.head]?.style === 'bow';
+    const clip = COSMETICS[eq.head]?.style === 'clip';
     const vars = {
       '--face-x': r.faceX, '--face-y': r.faceY, '--face-w': r.faceW, '--face-h': r.faceH,
-      '--head-x': r.headX, '--head-y': bow ? r.bow.headY : r.headY, '--head-w': bow ? r.bow.headW : r.headW,
+      '--head-x': clip ? `calc(${r.faceX} + ${r.faceW * 0.28}px)` : r.headX,
+      '--head-y': clip ? r.faceY + 12 : bow ? r.bow.headY : r.headY,
+      '--head-w': clip ? 90 : bow ? r.bow.headW : r.headW,
       '--head-angle': r.headAngle + 'deg',
       '--glasses-x': r.glassesX, '--glasses-y': glassesY, '--glasses-w': glassesW, '--glasses-angle': r.glassesAngle + 'deg',
       '--back-right': r.backRight, '--back-bottom': r.backBottom, '--back-w': r.backW, '--outfit-bottom': r.outfitBottom
