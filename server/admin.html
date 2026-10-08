@@ -54,11 +54,16 @@
 
 <script type="module">
 import { GAMES } from '../games/index.js';
-import { COSMETICS, ITEMS, BOX } from '../core/catalog.js';
+import { COSMETICS, ITEMS, BOX, ITEM_RENAME } from '../core/catalog.js';
 
 const $ = (id) => document.getElementById(id);
 const gameName = (id) => GAMES.find((g) => g.id === id)?.title.ko || id;
-const itemName = (id) => (COSMETICS[id] || ITEMS[id] || (id === BOX.id && BOX))?.name.ko || id;
+/* 판매가 끝나 카탈로그에서 빠진 아이템도 기록에 남아 있습니다(예: backpack). 없는 id 는 이름표나 id 그대로. */
+const RETIRED = { backpack: '파란 가방(판매 종료)' };
+const itemName = (id) => {
+  const c = COSMETICS[id] || ITEMS[id] || ITEMS[ITEM_RENAME[id]] || (id === BOX.id ? BOX : null);
+  return c?.name.ko || RETIRED[id] || id || '-';
+};
 const charName = (k) => ({ sooji: '수지', jiho: '지호', nayeon: '나연', angie: '앤지', bs: 'BS' }[k] || (k ? '사진 ' + k.slice(1) : '-'));
 const FOREVER = 9e15;
 const suspendText = (u) => (u.suspended_until > Date.now() ? (u.suspended_until >= FOREVER ? '정지(무기한)' : `정지(${when(u.suspended_until)}까지)`) : '');
