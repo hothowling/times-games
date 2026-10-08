@@ -1,0 +1,6 @@
+Generate ONE transparent game outfit sprite: Bright orange basketball sleeveless jersey with black and white edge trim and clear bold numeral 23 centered on chest. Sporty boys' uniform, small star badge; no ball, no shorts or lower body.
+IMAGE1 approved basic whiteTshirt is exact BODY LAYOUT and LOW ARM/HAND POSE reference. IMAGE2 existing denimoveralls is ART STYLE ONLY.
+Use same polished 2D cartoon game style: crisp dark outline, rounded simple proportions, bright colors and smooth cel shading, no realism or 3D.
+Keep torso/neckline/sleeve attachment anchors at same original layout as IMAGE1; same torso scale and original squarecanvas. Target256x256equivalent: collar yabout88, shoulderliney100, torso centerx132, hem y190-205.
+Both arms extend diagonally DOWN and outward like IMAGE1. LEFT open friendly five-finger palm atx28,y170, clearly lower than chest, NOT raised besidehead. RIGHT hand holding same yellow pencil/pinkeraser atx225,y175. Preserve warm cartoon skin tone. Hands completelyvisible outside torso sides belowchest. No handabove collarline.
+ONLY garment and arms/hands/pencil. No head,face,hair,neck,legs,feet,extraobjects,background,textotherthanrequestednumber,groundshadow. Entireartwork insidecanvas8pxsafetyborder. Real transparentRGBA PNG background. Keep identical roomy squarecomposition as reference, don't zoom tofillcanvas.

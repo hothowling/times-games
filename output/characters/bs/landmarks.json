@@ -1,0 +1,7 @@
+{
+  "frame": [512, 512],
+  "left_eye": [204, 287],
+  "right_eye": [316, 286],
+  "chin": [262, 459],
+  "notes": "Manually reviewed runtime neutral, keeping the approved small almond eyes and adult jaw."
+}

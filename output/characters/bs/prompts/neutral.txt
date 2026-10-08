@@ -1,0 +1,8 @@
+Create ONE front-facing neutral master HEAD sprite for BS.
+IMAGE1 supplied man photo is the sole IDENTITY reference. IMAGE2 Sooji character sheet is STYLE ONLY. Do not copy Sooji's identity, hairstyle, pigtails, hair ties or head tilt.
+Preserve BS's recognizable adult male impression: oval slightly elongated face and defined gently tapered jaw, dark brown almond eyes, dark straight gently arched brows, natural medium nose, relaxed thin closed lips, warm light skin, black short-to-medium slightly wavy side-parted hair with a swept fringe falling to one side of forehead and visible ears. No beard, glasses or added accessories.
+Transform into SAME STRONG 2D ANIMATED CARTOON MOBILE GAME style as IMAGE2: subtly chibi rounded proportions, large expressive cartoon eyes, crisp dark contours, small simplified nose/mouth, smooth broad cel shading, bright soft colors. Clearly drawn anime/cartoon, NOT photorealistic or semi-realistic portrait. Retain photographed person's traits without making a copy of a child.
+Neutral calm closed-mouth faint friendly smile, natural forward gaze. Absolutely front-facing, LEVEL eyes and camera, no tilt.
+HEAD ONLY including all hair and ears, skin chin cleanly cut out; NO neck, shoulders, torso, clothing, props, text, floor shadow.
+Target512x960portrait transparent canvas. Eye midpointx256, eyelineabout480, chinabout660. Complete head max330pxwide, at least90px blank transparent eachside and64px above/below. Head deliberately modest sized on roomy canvas, don't zoom tofillframe; all hair fullyvisible.
+Real transparent RGBA PNG background, no opaque black/white/checkerboard. ONE head, not an expression sheet.

@@ -1,0 +1,29 @@
+{
+  "source_size": [
+    916,
+    1717
+  ],
+  "output_size": [
+    512,
+    960
+  ],
+  "common_scale": 0.3867924528301887,
+  "offset": [
+    79,
+    148
+  ],
+  "alpha_bounds": [
+    97,
+    277,
+    420,
+    657
+  ],
+  "margins": {
+    "left": 97,
+    "right": 92,
+    "top": 277,
+    "bottom": 303
+  },
+  "scope": "Neutral front head only; no expressions or game registration",
+  "semantic_review": "manually reviewed identity/style/head-only; pixel-perfect identity not guaranteed"
+}
