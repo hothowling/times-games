@@ -4,12 +4,12 @@
  */
 
 /* 프리셋 캐릭터. 모든 계정에 항상 보입니다. 사진 캐릭터 키는 'p<id>' 입니다. */
-export const PRESETS = ['sooji', 'jiho', 'nayeon'];
+export const PRESETS = ['sooji', 'jiho', 'nayeon', 'angie'];
 
 /* 의상 선택이 없으면 렌더러가 기본 흰색 티셔츠를 그립니다. */
 export const SLOTS = ['outfit', 'head', 'face', 'back', 'pet'];
 export const DEFAULT_LOOK = { outfit: null, head: null, face: null, back: null, pet: null };
-export const BASE_OUTFIT = 'assets/wearables/outfits/11-white-tee.webp';
+export const BASE_OUTFIT = 'assets/wearables/outfits/11-white-tee.webp?v=hands-low-20261008';
 
 const W = 'assets/wearables/';
 const cos = (slot, file, price, ko, en, extra) =>

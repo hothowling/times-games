@@ -45,7 +45,7 @@ export function lookFor(key = currentKey()) {
   return {
     key,
     rig: photo ? 'photo' : key,
-    face: photo ? `api/characters/${key.slice(1)}/face` : `assets/characters/${key}.webp`,
+    face: photo ? `api/characters/${key.slice(1)}/face` : `assets/characters/${key}.webp?v=${key === 'nayeon' ? 'long-hair-20261008' : 'anime-20261008'}`,
     equipped: { ...DEFAULT_LOOK, ...state.me?.looks?.[key] }
   };
 }

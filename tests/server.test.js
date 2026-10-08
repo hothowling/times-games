@@ -111,18 +111,18 @@ test('pets can be bought, saved per character and removed without changing the o
   assert.equal(me.user.sparkles, 75);
 });
 
-test('Nayeon preset can be selected, dressed and loaded without a photo upload', async () => {
+for (const preset of ['nayeon', 'angie']) test(`${preset} preset can be selected, dressed and loaded without a photo upload`, async () => {
   const a = client();
-  await a('POST', '/api/signup', { nickname: 'nayeon-test', pin: '1234' });
-  const selected = await a('PATCH', '/api/settings', { character: 'nayeon' });
+  await a('POST', '/api/signup', { nickname: `${preset}-test`, pin: '1234' });
+  const selected = await a('PATCH', '/api/settings', { character: preset });
   assert.equal(selected.status, 200);
-  assert.equal(selected.body.settings.character, 'nayeon');
-  assert.equal(selected.body.settings.rankFace, 'nayeon');
-  assert.equal((await a('PUT', '/api/looks/nayeon', { equipped: { outfit: 'uniform' } })).status, 200);
+  assert.equal(selected.body.settings.character, preset);
+  assert.equal(selected.body.settings.rankFace, preset);
+  assert.equal((await a('PUT', `/api/looks/${preset}`, { equipped: { outfit: 'uniform' } })).status, 200);
   const me = (await a('GET', '/api/me')).body;
-  assert.equal(me.user.settings.character, 'nayeon');
-  assert.equal(me.looks.nayeon.outfit, 'uniform');
-  const asset = await client()('GET', '/assets/characters/nayeon.webp');
+  assert.equal(me.user.settings.character, preset);
+  assert.equal(me.looks[preset].outfit, 'uniform');
+  const asset = await client()('GET', `/assets/characters/${preset}.webp`);
   assert.equal(asset.status, 200);
   assert.equal(asset.body.subarray(0, 4).toString(), 'RIFF');
   assert.equal(asset.body.subarray(8, 12).toString(), 'WEBP');
