@@ -278,17 +278,19 @@ body.playing #view { padding: 0; }
 /* ---------- 로비 ---------- */
 
 .lobby-hero {
+  /* 캐릭터 너비. 모자·리본은 그림 상자 위로 너비의 약 1/3 까지 솟으므로 그만큼 위 여백을 둡니다(상단 바에 가리지 않게). */
+  --hero-w: min(52vw, 200px);
   position: relative;
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: center;
+  align-items: end;
   gap: 8px;
-  padding: 6px 0 4px;
+  padding: calc(var(--hero-w) * .34) 0 4px;
   margin-bottom: 8px;
 }
 
 .lobby-hero > :first-child { justify-self: center; }
-.lobby-hero .chr { width: min(52vw, 200px); }
+.lobby-hero .chr { width: var(--hero-w); }
 
 /* 랭킹/캐릭터/상점/기록: 캐릭터 오른쪽 세로 한 줄 */
 .lobby-actions { display: grid; gap: 8px; }
