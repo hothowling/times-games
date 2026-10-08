@@ -1,0 +1,179 @@
+{
+  "source_size": [
+    1983,
+    793
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      397,
+      793
+    ],
+    [
+      397,
+      0,
+      396,
+      793
+    ],
+    [
+      793,
+      0,
+      397,
+      793
+    ],
+    [
+      1190,
+      0,
+      396,
+      793
+    ],
+    [
+      1586,
+      0,
+      397,
+      793
+    ]
+  ],
+  "normalized": true,
+  "common_transform": {
+    "scale": 1.210592686002522,
+    "size": [
+      481,
+      960
+    ],
+    "offset": [
+      15,
+      0
+    ]
+  },
+  "structural_pass": false,
+  "semantic_review_required": true,
+  "minimum_margins_px": {
+    "left": 64,
+    "right": 64,
+    "top": 32,
+    "bottom": 32
+  },
+  "errors": [
+    "neutral: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "happy: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "angry: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "surprised: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "crying: visible pixels touch original cell edge; check clipping or neighbor overlap"
+  ],
+  "warnings": [
+    "Input width is not divisible by five; rounded cell boundaries differ by at most one pixel",
+    "happy: silhouette drift; inspect hair/jaw anchors and allow expression-related tears",
+    "angry: silhouette drift; inspect hair/jaw anchors and allow expression-related tears",
+    "surprised: silhouette drift; inspect hair/jaw anchors and allow expression-related tears",
+    "crying: silhouette drift; inspect hair/jaw anchors and allow expression-related tears"
+  ],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        39,
+        222,
+        496,
+        741
+      ],
+      "transparent_margins_px": {
+        "left": 39,
+        "right": 16,
+        "top": 222,
+        "bottom": 219
+      },
+      "transparent_fraction": 0.5906575520833334,
+      "visible_fraction": 0.38929443359375
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        15,
+        225,
+        495,
+        740
+      ],
+      "transparent_margins_px": {
+        "left": 15,
+        "right": 17,
+        "top": 225,
+        "bottom": 220
+      },
+      "transparent_fraction": 0.5822163899739583,
+      "visible_fraction": 0.39244181315104165,
+      "silhouette_iou_vs_neutral": 0.9433,
+      "max_bounds_drift_fraction": 0.0469
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        15,
+        224,
+        496,
+        740
+      ],
+      "transparent_margins_px": {
+        "left": 15,
+        "right": 16,
+        "top": 224,
+        "bottom": 220
+      },
+      "transparent_fraction": 0.5845377604166667,
+      "visible_fraction": 0.38914388020833335,
+      "silhouette_iou_vs_neutral": 0.8752,
+      "max_bounds_drift_fraction": 0.0469
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        15,
+        223,
+        495,
+        740
+      ],
+      "transparent_margins_px": {
+        "left": 15,
+        "right": 17,
+        "top": 223,
+        "bottom": 220
+      },
+      "transparent_fraction": 0.5837646484375,
+      "visible_fraction": 0.392425537109375,
+      "silhouette_iou_vs_neutral": 0.8199,
+      "max_bounds_drift_fraction": 0.0469
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        15,
+        224,
+        475,
+        740
+      ],
+      "transparent_margins_px": {
+        "left": 15,
+        "right": 37,
+        "top": 224,
+        "bottom": 220
+      },
+      "transparent_fraction": 0.5923909505208333,
+      "visible_fraction": 0.38677571614583334,
+      "silhouette_iou_vs_neutral": 0.7733,
+      "max_bounds_drift_fraction": 0.0469
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ]
+}

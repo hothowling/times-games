@@ -1,0 +1,15 @@
+{
+  "source_size": [
+    1983,
+    793
+  ],
+  "source_pitch": 389,
+  "source_origin": 19,
+  "source_crop_width": 390,
+  "common_scale": 1,
+  "common_offset": [
+    61,
+    83
+  ],
+  "note": "Regular strip pitch plus identical padding; no per-expression crop fitting or scaling"
+}

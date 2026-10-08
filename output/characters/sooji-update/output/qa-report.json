@@ -1,0 +1,131 @@
+{
+  "source_size": [
+    2560,
+    960
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      512,
+      960
+    ],
+    [
+      512,
+      0,
+      512,
+      960
+    ],
+    [
+      1024,
+      0,
+      512,
+      960
+    ],
+    [
+      1536,
+      0,
+      512,
+      960
+    ],
+    [
+      2048,
+      0,
+      512,
+      960
+    ]
+  ],
+  "normalized": false,
+  "common_transform": {
+    "scale": 1.0,
+    "size": [
+      512,
+      960
+    ],
+    "offset": [
+      0,
+      0
+    ]
+  },
+  "structural_pass": true,
+  "semantic_review_required": true,
+  "errors": [],
+  "warnings": [],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        74,
+        311,
+        455,
+        693
+      ],
+      "transparent_fraction": 0.77999267578125,
+      "visible_fraction": 0.20630289713541666
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        82,
+        310,
+        457,
+        691
+      ],
+      "transparent_fraction": 0.785528564453125,
+      "visible_fraction": 0.20186767578125,
+      "silhouette_iou_vs_neutral": 0.9259,
+      "max_bounds_drift_fraction": 0.0156
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        84,
+        313,
+        450,
+        683
+      ],
+      "transparent_fraction": 0.7907063802083333,
+      "visible_fraction": 0.19599405924479166,
+      "silhouette_iou_vs_neutral": 0.9245,
+      "max_bounds_drift_fraction": 0.0195
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        80,
+        308,
+        460,
+        690
+      ],
+      "transparent_fraction": 0.7818684895833333,
+      "visible_fraction": 0.205511474609375,
+      "silhouette_iou_vs_neutral": 0.94,
+      "max_bounds_drift_fraction": 0.0117
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        88,
+        312,
+        451,
+        689
+      ],
+      "transparent_fraction": 0.7878641764322917,
+      "visible_fraction": 0.19940592447916666,
+      "silhouette_iou_vs_neutral": 0.9075,
+      "max_bounds_drift_fraction": 0.0273
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ]
+}

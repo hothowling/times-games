@@ -1,0 +1,10 @@
+Create one NEUTRAL master head sprite for a mobile game.
+IMAGE 1: the extracted neutral photo portrait of jiho, sole IDENTITY reference.
+IMAGE 2: Sooji expression sheet, STYLE ONLY reference. Do not copy Sooji's face, pigtails, hair ties, tilt, or layout.
+Identity notes: Jiho: the young boy shown in IMAGE 1, warm light skin, round soft cheeks, small natural nose and lips, dark brown eyes, dark brown almost-black short straight hair with layered blunt bangs and subtly tousled crown. Keep his recognizable facial impression, short haircut and ears. No pigtails or hair ties.
+Preserve the person’s face shape, eye shape/spacing, nose, lips, jawline, ears, hairstyle, bangs, hair color, skin tone and recognizable impression.
+Transform into the same strong 2D anime game style as IMAGE 2: subtle chibi, large expressive eyes, crisp dark outlines, smooth cel shading, bright soft colors. Clearly animated, NOT photorealistic or semi-realistic.
+HEAD ONLY including full hair and ears. No neck, shoulders, body, clothing, hats, glasses, props, text, labels or shadows.
+Neutral calm expression: closed mouth or very slight smile, natural forward gaze. Front-facing, LEVEL eyes.
+Target 512 x 960 portrait canvas, center x=256. Hair top around y=144 (15%), eye centers y=413 (43%), chin y=691 (72%). Head width including hair 384-400px with generous symmetric margins.
+Actual transparent RGBA background and clean transparent chin cutout, no black/white background or checkerboard. One single isolated head, no expression row yet.

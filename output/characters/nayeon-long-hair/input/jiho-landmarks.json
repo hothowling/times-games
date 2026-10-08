@@ -1,0 +1,7 @@
+{
+  "frame": [512, 512],
+  "left_eye": [196, 314],
+  "right_eye": [309, 309],
+  "chin": [249, 459],
+  "notes": "Manual review of existing Jiho runtime neutral."
+}

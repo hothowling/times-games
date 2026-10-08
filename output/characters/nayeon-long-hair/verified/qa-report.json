@@ -1,0 +1,167 @@
+{
+  "source_size": [
+    2560,
+    960
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      512,
+      960
+    ],
+    [
+      512,
+      0,
+      512,
+      960
+    ],
+    [
+      1024,
+      0,
+      512,
+      960
+    ],
+    [
+      1536,
+      0,
+      512,
+      960
+    ],
+    [
+      2048,
+      0,
+      512,
+      960
+    ]
+  ],
+  "normalized": false,
+  "common_transform": {
+    "scale": 1.0,
+    "size": [
+      512,
+      960
+    ],
+    "offset": [
+      0,
+      0
+    ]
+  },
+  "structural_pass": true,
+  "semantic_review_required": true,
+  "minimum_margins_px": {
+    "left": 64,
+    "right": 64,
+    "top": 32,
+    "bottom": 32
+  },
+  "errors": [],
+  "warnings": [],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        101,
+        320,
+        411,
+        627
+      ],
+      "transparent_margins_px": {
+        "left": 101,
+        "right": 101,
+        "top": 320,
+        "bottom": 333
+      },
+      "transparent_fraction": 0.8454691569010416,
+      "visible_fraction": 0.146954345703125
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        102,
+        320,
+        412,
+        627
+      ],
+      "transparent_margins_px": {
+        "left": 102,
+        "right": 100,
+        "top": 320,
+        "bottom": 333
+      },
+      "transparent_fraction": 0.8455830891927083,
+      "visible_fraction": 0.14775390625,
+      "silhouette_iou_vs_neutral": 0.9896,
+      "max_bounds_drift_fraction": 0.002
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        100,
+        320,
+        411,
+        626
+      ],
+      "transparent_margins_px": {
+        "left": 100,
+        "right": 101,
+        "top": 320,
+        "bottom": 334
+      },
+      "transparent_fraction": 0.8452779134114583,
+      "visible_fraction": 0.14759114583333333,
+      "silhouette_iou_vs_neutral": 0.9933,
+      "max_bounds_drift_fraction": 0.002
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        100,
+        320,
+        411,
+        626
+      ],
+      "transparent_margins_px": {
+        "left": 100,
+        "right": 101,
+        "top": 320,
+        "bottom": 334
+      },
+      "transparent_fraction": 0.8450236002604167,
+      "visible_fraction": 0.148138427734375,
+      "silhouette_iou_vs_neutral": 0.9863,
+      "max_bounds_drift_fraction": 0.002
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        100,
+        320,
+        411,
+        626
+      ],
+      "transparent_margins_px": {
+        "left": 100,
+        "right": 101,
+        "top": 320,
+        "bottom": 334
+      },
+      "transparent_fraction": 0.8452738444010417,
+      "visible_fraction": 0.14738972981770834,
+      "silhouette_iou_vs_neutral": 0.9913,
+      "max_bounds_drift_fraction": 0.002
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ]
+}

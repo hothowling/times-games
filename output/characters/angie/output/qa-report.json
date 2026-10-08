@@ -1,0 +1,169 @@
+{
+  "source_size": [
+    2560,
+    960
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      512,
+      960
+    ],
+    [
+      512,
+      0,
+      512,
+      960
+    ],
+    [
+      1024,
+      0,
+      512,
+      960
+    ],
+    [
+      1536,
+      0,
+      512,
+      960
+    ],
+    [
+      2048,
+      0,
+      512,
+      960
+    ]
+  ],
+  "normalized": false,
+  "common_transform": {
+    "scale": 1.0,
+    "size": [
+      512,
+      960
+    ],
+    "offset": [
+      0,
+      0
+    ]
+  },
+  "structural_pass": true,
+  "semantic_review_required": true,
+  "minimum_margins_px": {
+    "left": 64,
+    "right": 64,
+    "top": 32,
+    "bottom": 32
+  },
+  "errors": [],
+  "warnings": [
+    "surprised: silhouette drift; inspect hair/jaw anchors and allow expression-related tears"
+  ],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        103,
+        306,
+        421,
+        647
+      ],
+      "transparent_margins_px": {
+        "left": 103,
+        "right": 91,
+        "top": 306,
+        "bottom": 313
+      },
+      "transparent_fraction": 0.818585205078125,
+      "visible_fraction": 0.172625732421875
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        111,
+        307,
+        426,
+        646
+      ],
+      "transparent_margins_px": {
+        "left": 111,
+        "right": 86,
+        "top": 307,
+        "bottom": 314
+      },
+      "transparent_fraction": 0.8223286946614583,
+      "visible_fraction": 0.1702880859375,
+      "silhouette_iou_vs_neutral": 0.9407,
+      "max_bounds_drift_fraction": 0.0156
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        100,
+        306,
+        414,
+        646
+      ],
+      "transparent_margins_px": {
+        "left": 100,
+        "right": 98,
+        "top": 306,
+        "bottom": 314
+      },
+      "transparent_fraction": 0.8230265299479167,
+      "visible_fraction": 0.169708251953125,
+      "silhouette_iou_vs_neutral": 0.9474,
+      "max_bounds_drift_fraction": 0.0137
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        90,
+        306,
+        405,
+        647
+      ],
+      "transparent_margins_px": {
+        "left": 90,
+        "right": 107,
+        "top": 306,
+        "bottom": 313
+      },
+      "transparent_fraction": 0.8202718098958334,
+      "visible_fraction": 0.17076619466145834,
+      "silhouette_iou_vs_neutral": 0.8682,
+      "max_bounds_drift_fraction": 0.0312
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        91,
+        306,
+        409,
+        646
+      ],
+      "transparent_margins_px": {
+        "left": 91,
+        "right": 103,
+        "top": 306,
+        "bottom": 314
+      },
+      "transparent_fraction": 0.8208943684895833,
+      "visible_fraction": 0.17110188802083334,
+      "silhouette_iou_vs_neutral": 0.8905,
+      "max_bounds_drift_fraction": 0.0234
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ]
+}

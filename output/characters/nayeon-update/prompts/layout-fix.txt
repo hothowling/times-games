@@ -1,0 +1,5 @@
+Edit the supplied Nayeon five-expression sheet. Correct ONLY sprite spacing and hair-edge clipping. IMAGE1 is the layout edit target; IMAGE2 the neutral design reference.
+Preserve the five faces, short bob hairstyle, colors, expressions and order neutral,happy,angry,surprised,crying. Keep exactly the same scale, hair silhouette, head geometry and alignment across all five heads.
+CRITICAL: shrink ALL FIVE heads uniformly to 70% of their current size within their own equal-width cells. Separate them with large completely transparent gaps. Reconstruct missing bob hair tips at clipped outer edges using neutral master so each head is complete.
+Canvas2560x960,fiveequal512x960cells. Each complete head occupies ONLY350px of512pxcellwidth with at least80px clear transparent margin on BOTH sides of EVERY head. Centersx256,768,1280,1792,2304,hairtop250,chiny700. Do not fill canvas width with heads. Keep all hair and tears entirely inside its own cell.
+No neck/body/text/props/grid/background/shadow. True transparent RGBA. ONLY uniform reduction, transparent spacing and restoration of clipped hair, no redesign or identity change.

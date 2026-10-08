@@ -1,0 +1,12 @@
+{
+  "input": "qa-v2/character_expression_sheet.png",
+  "common_cell_size": [
+    410,
+    768
+  ],
+  "common_offset": [
+    51,
+    96
+  ],
+  "note": "All five whole cells uniformly reduced and padded; no face-based per-expression fitting"
+}

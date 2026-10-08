@@ -1,0 +1,7 @@
+{
+  "frame": [512, 512],
+  "left_eye": [222, 274],
+  "right_eye": [326, 275],
+  "chin": [272, 404],
+  "notes": "Manually reviewed final runtime neutral. Skin chin, not hair ends. Eye midpoint placed at body center for level front-facing portrait."
+}

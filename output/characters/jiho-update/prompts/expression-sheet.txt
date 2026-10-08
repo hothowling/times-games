@@ -1,0 +1,15 @@
+Use case: style-transfer. Create a production-ready expression sheet for jiho.
+IMAGE 1: existing photoreal neutral portrait extracted from the game asset, IDENTITY reference, not a new original photograph.
+IMAGE 2: Sooji expression sheet, STYLE ONLY reference.
+IMAGE 3: newly generated neutral master, exact CHARACTER DESIGN and GEOMETRY reference.
+Identity notes: Jiho: the young boy shown in IMAGE 1, warm light skin, round soft cheeks, small natural nose and lips, dark brown eyes, dark brown almost-black short straight hair with layered blunt bangs and subtly tousled crown. Keep his recognizable facial impression, short haircut and ears. No pigtails or hair ties.
+Treat IMAGE 3 as ONE locked facial animation rig. Keep exactly the same head size, center, skull, jaw and chin, ears, hair silhouette, eye line and spacing, nose, camera distance and front-facing level angle in every cell. Only eyebrows, eyelids, pupils, mouth shape, cheeks and tears change. No zoom, tilt, stretching or displacement. Mouth stays centered; crying must not elongate the jaw.
+Exactly FIVE heads in ONE horizontal row:
+1 NEUTRAL: calm closed mouth, same master.
+2 HAPPY: energetic open smile.
+3 ANGRY: clearly furrowed brows and cute closed-mouth pout.
+4 SURPRISED: widened eyes and small O mouth.
+5 CRYING: squeezed closed eyelids, open crying mouth, large stylized tears streaming from BOTH eyes.
+Same strong 2D animated game style as IMAGE 2, subtle chibi, large expressive eyes, crisp outlines, smooth cel shading and soft bright colors. Preserve IMAGE 3 identity and hairstyle in all five cells.
+Target 2560 x 960 pixels, five equal 512 x 960 cells. Centers x=256,768,1280,1792,2304. Hair top about144, eye line about413, chin about691. Full head including hair width384-400. Keep at least55px transparent side margins per cell. The complete head, ears, hair and tears stay inside each cell. Equal spacing, no overlap, no clipping.
+HEADS ONLY: no neck, body, shoulders, clothes, added accessories, props, text, labels, grid or shadow. Real transparent RGBA PNG background.

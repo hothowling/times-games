@@ -1,0 +1,7 @@
+{
+  "frame": [512, 512],
+  "left_eye": [208, 273],
+  "right_eye": [310, 272],
+  "chin": [263, 391],
+  "notes": "Manual neutral coordinate review after shared runtime crop. Hair ends excluded from chin measurement."
+}

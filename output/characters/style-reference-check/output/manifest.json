@@ -1,0 +1,83 @@
+{
+  "name": "style-reference",
+  "sheet": "character_expression_sheet.png",
+  "width": 2560,
+  "height": 960,
+  "frame_width": 512,
+  "frame_height": 960,
+  "expression_order": [
+    "neutral",
+    "happy",
+    "angry",
+    "surprised",
+    "crying"
+  ],
+  "game_expression_order": [
+    "neutral",
+    "happy",
+    "angry",
+    "surprised",
+    "sad"
+  ],
+  "aliases": {
+    "sad": "crying"
+  },
+  "frames": [
+    {
+      "expression": "neutral",
+      "index": 0,
+      "file": "neutral.png",
+      "rect_xywh": [
+        0,
+        0,
+        512,
+        960
+      ]
+    },
+    {
+      "expression": "happy",
+      "index": 1,
+      "file": "happy.png",
+      "rect_xywh": [
+        512,
+        0,
+        512,
+        960
+      ]
+    },
+    {
+      "expression": "angry",
+      "index": 2,
+      "file": "angry.png",
+      "rect_xywh": [
+        1024,
+        0,
+        512,
+        960
+      ]
+    },
+    {
+      "expression": "surprised",
+      "index": 3,
+      "file": "surprised.png",
+      "rect_xywh": [
+        1536,
+        0,
+        512,
+        960
+      ]
+    },
+    {
+      "expression": "crying",
+      "index": 4,
+      "file": "crying.png",
+      "rect_xywh": [
+        2048,
+        0,
+        512,
+        960
+      ]
+    }
+  ],
+  "webp": "character_expression_sheet.webp"
+}

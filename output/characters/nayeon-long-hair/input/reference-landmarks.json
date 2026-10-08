@@ -1,0 +1,8 @@
+{
+  "frame": [512, 512],
+  "left_eye": [219, 301],
+  "right_eye": [323, 300],
+  "chin": [271, 426],
+  "rig": {"faceW": 300, "faceH": 300, "faceY": -47, "faceX_px": 125, "boxW": 250},
+  "notes": "Manually reviewed on previous-nayeon-coordinates.png. Retain approved face size/position while changing hair only. Sooji eye-to-chin rendered distance is approximately 75.9px; this reference is approximately73.5px."
+}

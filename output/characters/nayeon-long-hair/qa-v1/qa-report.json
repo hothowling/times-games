@@ -1,0 +1,177 @@
+{
+  "source_size": [
+    1983,
+    793
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      397,
+      793
+    ],
+    [
+      397,
+      0,
+      396,
+      793
+    ],
+    [
+      793,
+      0,
+      397,
+      793
+    ],
+    [
+      1190,
+      0,
+      396,
+      793
+    ],
+    [
+      1586,
+      0,
+      397,
+      793
+    ]
+  ],
+  "normalized": true,
+  "common_transform": {
+    "scale": 1.210592686002522,
+    "size": [
+      481,
+      960
+    ],
+    "offset": [
+      15,
+      0
+    ]
+  },
+  "structural_pass": false,
+  "semantic_review_required": true,
+  "minimum_margins_px": {
+    "left": 64,
+    "right": 64,
+    "top": 32,
+    "bottom": 32
+  },
+  "errors": [
+    "neutral: insufficient transparent margin {'left': 45, 'right': 25, 'top': 253, 'bottom': 299}; need left/right >= 64px, top/bottom >= 32px",
+    "happy: insufficient transparent margin {'left': 34, 'right': 31, 'top': 253, 'bottom': 299}; need left/right >= 64px, top/bottom >= 32px",
+    "angry: insufficient transparent margin {'left': 32, 'right': 35, 'top': 253, 'bottom': 299}; need left/right >= 64px, top/bottom >= 32px",
+    "surprised: insufficient transparent margin {'left': 24, 'right': 42, 'top': 253, 'bottom': 299}; need left/right >= 64px, top/bottom >= 32px",
+    "crying: insufficient transparent margin {'left': 23, 'right': 44, 'top': 253, 'bottom': 299}; need left/right >= 64px, top/bottom >= 32px"
+  ],
+  "warnings": [
+    "Input width is not divisible by five; rounded cell boundaries differ by at most one pixel",
+    "surprised: silhouette drift; inspect hair/jaw anchors and allow expression-related tears",
+    "crying: silhouette drift; inspect hair/jaw anchors and allow expression-related tears"
+  ],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        45,
+        253,
+        487,
+        661
+      ],
+      "transparent_margins_px": {
+        "left": 45,
+        "right": 25,
+        "top": 253,
+        "bottom": 299
+      },
+      "transparent_fraction": 0.7037638346354167,
+      "visible_fraction": 0.2837727864583333
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        34,
+        253,
+        481,
+        661
+      ],
+      "transparent_margins_px": {
+        "left": 34,
+        "right": 31,
+        "top": 253,
+        "bottom": 299
+      },
+      "transparent_fraction": 0.6962972005208333,
+      "visible_fraction": 0.28608805338541665,
+      "silhouette_iou_vs_neutral": 0.939,
+      "max_bounds_drift_fraction": 0.0215
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        32,
+        253,
+        477,
+        661
+      ],
+      "transparent_margins_px": {
+        "left": 32,
+        "right": 35,
+        "top": 253,
+        "bottom": 299
+      },
+      "transparent_fraction": 0.6967854817708333,
+      "visible_fraction": 0.28507080078125,
+      "silhouette_iou_vs_neutral": 0.9205,
+      "max_bounds_drift_fraction": 0.0254
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        24,
+        253,
+        470,
+        661
+      ],
+      "transparent_margins_px": {
+        "left": 24,
+        "right": 42,
+        "top": 253,
+        "bottom": 299
+      },
+      "transparent_fraction": 0.697216796875,
+      "visible_fraction": 0.287054443359375,
+      "silhouette_iou_vs_neutral": 0.8783,
+      "max_bounds_drift_fraction": 0.041
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        23,
+        253,
+        468,
+        661
+      ],
+      "transparent_margins_px": {
+        "left": 23,
+        "right": 44,
+        "top": 253,
+        "bottom": 299
+      },
+      "transparent_fraction": 0.699200439453125,
+      "visible_fraction": 0.28538411458333335,
+      "silhouette_iou_vs_neutral": 0.8729,
+      "max_bounds_drift_fraction": 0.043
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ]
+}

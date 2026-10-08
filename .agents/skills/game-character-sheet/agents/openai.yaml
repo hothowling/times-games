@@ -1,0 +1,4 @@
+interface:
+  display_name: "게임 캐릭터 표정 시트"
+  short_description: "사진 한 장을 동일한 애니메이션 스타일의 5칸 표정 시트로 제작"
+  default_prompt: "Use $game-character-sheet to create a consistent transparent five-expression game character sheet from this photo."

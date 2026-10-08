@@ -1,0 +1,6 @@
+Create ONE neutral master HEAD sprite for Angie, a new game character.
+IMAGE1 supplied photo is sole IDENTITY reference. IMAGE2 Sooji sheet is STYLE ONLY: same strong 2D animated mobile-game style, subtle chibi, large expressive eyes, crisp outlines, smooth cel shading. Do not copy Sooji identity, pigtails, tilt or hair ties.
+Preserve Angie's recognizable oval face with tapered jaw, dark brown almond eyes, arched dark eyebrows, natural nose and full lips, warm light skin, loose shoulder-length light brown hair with darker roots and golden highlights, softly off-center part and lightly curved ends. Stylize the photographed adult woman without turning her into a copy of a child. No jewelry or new accessories.
+Neutral relaxed closed lips, NOT the photo's puckered kiss expression. Front-facing level eyes.
+HEAD ONLY including full hair; NO neck, shoulders, body, clothes, photo background, text, props, floor shadow.
+Target512x960portrait. Eye midpointx256, eyelineabout480,chiny660. Entire hair max340pxwide, at least86px transparent on BOTH sides and64px above/below. Keep complete hair ends below chin inside canvas. Lots of blank margin; never zoom to fill canvas. True transparent RGBA background.

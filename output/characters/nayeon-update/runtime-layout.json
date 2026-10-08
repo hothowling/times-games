@@ -1,0 +1,32 @@
+{
+  "size": [
+    2560,
+    512
+  ],
+  "cell": [
+    512,
+    512
+  ],
+  "shared_crop_xywh": [
+    -11,
+    180,
+    530,
+    530
+  ],
+  "source_union_bounds": [
+    42,
+    266,
+    466,
+    623
+  ],
+  "outside_crop_max_alpha": 1,
+  "order": [
+    "neutral",
+    "happy",
+    "angry",
+    "surprised",
+    "sad"
+  ],
+  "sad_source": "crying",
+  "transform": "identical square crop/pad and resize for all five cells"
+}

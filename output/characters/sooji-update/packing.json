@@ -1,0 +1,66 @@
+{
+  "scale": 0.89198606271777,
+  "period": 440.6,
+  "cells": [
+    {
+      "source_rect": [
+        0,
+        0,
+        457,
+        714
+      ],
+      "output_offset": [
+        59,
+        162
+      ]
+    },
+    {
+      "source_rect": [
+        457,
+        0,
+        437,
+        714
+      ],
+      "output_offset": [
+        74,
+        162
+      ]
+    },
+    {
+      "source_rect": [
+        894,
+        0,
+        429,
+        714
+      ],
+      "output_offset": [
+        71,
+        162
+      ]
+    },
+    {
+      "source_rect": [
+        1323,
+        0,
+        456,
+        714
+      ],
+      "output_offset": [
+        61,
+        162
+      ]
+    },
+    {
+      "source_rect": [
+        1779,
+        0,
+        424,
+        714
+      ],
+      "output_offset": [
+        74,
+        162
+      ]
+    }
+  ]
+}

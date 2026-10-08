@@ -1,0 +1,176 @@
+{
+  "source_size": [
+    1983,
+    793
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      397,
+      793
+    ],
+    [
+      397,
+      0,
+      396,
+      793
+    ],
+    [
+      793,
+      0,
+      397,
+      793
+    ],
+    [
+      1190,
+      0,
+      396,
+      793
+    ],
+    [
+      1586,
+      0,
+      397,
+      793
+    ]
+  ],
+  "normalized": true,
+  "common_transform": {
+    "scale": 1.210592686002522,
+    "size": [
+      481,
+      960
+    ],
+    "offset": [
+      15,
+      0
+    ]
+  },
+  "structural_pass": false,
+  "semantic_review_required": true,
+  "minimum_margins_px": {
+    "left": 64,
+    "right": 64,
+    "top": 32,
+    "bottom": 32
+  },
+  "errors": [
+    "neutral: insufficient transparent margin {'left': 65, 'right': 50, 'top': 262, 'bottom': 272}; need left/right >= 64px, top/bottom >= 32px",
+    "happy: insufficient transparent margin {'left': 75, 'right': 43, 'top': 264, 'bottom': 272}; need left/right >= 64px, top/bottom >= 32px",
+    "angry: insufficient transparent margin {'left': 61, 'right': 59, 'top': 263, 'bottom': 272}; need left/right >= 64px, top/bottom >= 32px",
+    "surprised: insufficient transparent margin {'left': 49, 'right': 70, 'top': 263, 'bottom': 272}; need left/right >= 64px, top/bottom >= 32px",
+    "crying: insufficient transparent margin {'left': 51, 'right': 65, 'top': 263, 'bottom': 272}; need left/right >= 64px, top/bottom >= 32px"
+  ],
+  "warnings": [
+    "Input width is not divisible by five; rounded cell boundaries differ by at most one pixel",
+    "surprised: silhouette drift; inspect hair/jaw anchors and allow expression-related tears"
+  ],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        65,
+        262,
+        462,
+        688
+      ],
+      "transparent_margins_px": {
+        "left": 65,
+        "right": 50,
+        "top": 262,
+        "bottom": 272
+      },
+      "transparent_fraction": 0.7170735677083333,
+      "visible_fraction": 0.26943766276041664
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        75,
+        264,
+        469,
+        688
+      ],
+      "transparent_margins_px": {
+        "left": 75,
+        "right": 43,
+        "top": 264,
+        "bottom": 272
+      },
+      "transparent_fraction": 0.7229634602864583,
+      "visible_fraction": 0.265771484375,
+      "silhouette_iou_vs_neutral": 0.9401,
+      "max_bounds_drift_fraction": 0.0195
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        61,
+        263,
+        453,
+        688
+      ],
+      "transparent_margins_px": {
+        "left": 61,
+        "right": 59,
+        "top": 263,
+        "bottom": 272
+      },
+      "transparent_fraction": 0.723931884765625,
+      "visible_fraction": 0.26477457682291666,
+      "silhouette_iou_vs_neutral": 0.9476,
+      "max_bounds_drift_fraction": 0.0176
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        49,
+        263,
+        442,
+        688
+      ],
+      "transparent_margins_px": {
+        "left": 49,
+        "right": 70,
+        "top": 263,
+        "bottom": 272
+      },
+      "transparent_fraction": 0.7198343912760417,
+      "visible_fraction": 0.26651204427083336,
+      "silhouette_iou_vs_neutral": 0.8683,
+      "max_bounds_drift_fraction": 0.0391
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        51,
+        263,
+        447,
+        688
+      ],
+      "transparent_margins_px": {
+        "left": 51,
+        "right": 65,
+        "top": 263,
+        "bottom": 272
+      },
+      "transparent_fraction": 0.720758056640625,
+      "visible_fraction": 0.267071533203125,
+      "silhouette_iou_vs_neutral": 0.8905,
+      "max_bounds_drift_fraction": 0.0293
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ]
+}

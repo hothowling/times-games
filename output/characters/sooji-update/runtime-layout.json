@@ -1,0 +1,25 @@
+{
+  "size": [
+    2560,
+    512
+  ],
+  "cell": [
+    512,
+    512
+  ],
+  "shared_crop_xywh": [
+    0,
+    250,
+    512,
+    512
+  ],
+  "order": [
+    "neutral",
+    "happy",
+    "angry",
+    "surprised",
+    "sad"
+  ],
+  "sad_source": "crying",
+  "outside_crop_max_alpha": 1
+}

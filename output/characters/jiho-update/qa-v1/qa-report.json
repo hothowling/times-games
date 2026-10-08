@@ -1,0 +1,139 @@
+{
+  "source_size": [
+    1983,
+    793
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      397,
+      793
+    ],
+    [
+      397,
+      0,
+      396,
+      793
+    ],
+    [
+      793,
+      0,
+      397,
+      793
+    ],
+    [
+      1190,
+      0,
+      396,
+      793
+    ],
+    [
+      1586,
+      0,
+      397,
+      793
+    ]
+  ],
+  "normalized": true,
+  "common_transform": {
+    "scale": 1.210592686002522,
+    "size": [
+      481,
+      960
+    ],
+    "offset": [
+      15,
+      0
+    ]
+  },
+  "structural_pass": false,
+  "semantic_review_required": true,
+  "errors": [
+    "neutral: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "happy: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "angry: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "surprised: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "crying: visible pixels touch original cell edge; check clipping or neighbor overlap"
+  ],
+  "warnings": [
+    "Input width is not divisible by five; rounded cell boundaries differ by at most one pixel"
+  ],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        15,
+        174,
+        496,
+        744
+      ],
+      "transparent_fraction": 0.5712361653645833,
+      "visible_fraction": 0.418255615234375
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        15,
+        174,
+        495,
+        740
+      ],
+      "transparent_fraction": 0.5667317708333334,
+      "visible_fraction": 0.41944783528645835,
+      "silhouette_iou_vs_neutral": 0.971,
+      "max_bounds_drift_fraction": 0.0042
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        15,
+        174,
+        496,
+        742
+      ],
+      "transparent_fraction": 0.5698710123697917,
+      "visible_fraction": 0.419854736328125,
+      "silhouette_iou_vs_neutral": 0.9575,
+      "max_bounds_drift_fraction": 0.0021
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        15,
+        174,
+        495,
+        743
+      ],
+      "transparent_fraction": 0.5673095703125,
+      "visible_fraction": 0.419952392578125,
+      "silhouette_iou_vs_neutral": 0.9285,
+      "max_bounds_drift_fraction": 0.002
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        15,
+        174,
+        493,
+        742
+      ],
+      "transparent_fraction": 0.5628824869791667,
+      "visible_fraction": 0.42213541666666665,
+      "silhouette_iou_vs_neutral": 0.9091,
+      "max_bounds_drift_fraction": 0.0059
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ]
+}
