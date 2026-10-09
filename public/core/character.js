@@ -151,7 +151,8 @@ export function createCharacter(el, look, { body = true } = {}) {
       '--head-angle': r.headAngle + 'deg',
       '--glasses-x': faceAnchorX(r.glassesX), '--glasses-y': glassesY, '--glasses-w': glassesW, '--glasses-angle': r.glassesAngle + 'deg',
       '--back-right': r.backRight, '--back-bottom': r.backBottom, '--back-w': r.backW,
-      '--outfit-bottom': r.outfitBottom
+      '--outfit-bottom': r.outfitBottom,
+      '--pet-w': COSMETICS[eq.pet]?.renderW ?? 168
     };
     for (const [k, v] of Object.entries(vars)) rig.style.setProperty(k, px(v));
     /* 얼굴만 그릴 때는 얼굴 칸을 기준 상자로 씁니다. */

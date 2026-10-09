@@ -1,0 +1,5 @@
+Create one transparent mobile-game outfit sprite: Boys' long-sleeved navy and sky-blue swimming rashguard top, lime-green side accents, small white wave badge, short neat mock collar and subtle center zip. Sporty sun-protection swimwear, no shorts/lower body.
+Reference image is exact existing BODY layout and low arm/hand pose.
+Same polished cute 2D cartoon game art, crisp outlines, bright clean colors, rounded simple forms, soft smooth cel shading, no photorealism.
+Keep original square torso layout: collar yabout88, torso centerx132, hem near190 on256x256equivalent. Long sleeves extend along BOTH arms diagonally down/outward. LEFT open five-finger palm atx28,y170, RIGHT hand holding yellow pencil/pinkeraser atx225,y175, both hands BELOW chest and outside torso. No raised hand near head. Bare cartoon hands, no gloves. ONLY clothing and arms/hands/pencil; no head, hair, neck, legs or additional props.
+Real transparentRGBA PNG background, no opaque white/black/checkerboard, text, watermark, floor or groundshadow. Exactly one asset, not a sheet.

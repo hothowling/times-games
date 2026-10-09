@@ -30,6 +30,8 @@ export const COSMETICS = {
   basketballUniform: cos('outfit', 'outfits/16-basketball-uniform.webp', 28, '23번 농구 유니폼', 'Number 23 Basketball Uniform'),
   juniorAstronaut: cos('outfit', 'outfits/17-junior-astronaut.webp', 35, '꼬마 우주복', 'Junior Astronaut Suit'),
   jungleExplorer: cos('outfit', 'outfits/18-jungle-explorer.webp', 30, '정글 탐험가', 'Jungle Explorer'),
+  boysRashguard: cos('outfit', 'outfits/19-boys-rashguard.webp', 28, '남아 래시가드', 'Boys Rashguard'),
+  girlsRashguard: cos('outfit', 'outfits/20-girls-rashguard.webp', 28, '여아 래시가드', 'Girls Rashguard'),
   jersey: cos('outfit', 'outfits/09-sports-jersey.webp', 28, '7번 스포츠 저지', 'Number 7 Jersey'),
   magic: cos('outfit', 'outfits/10-magic-costume.webp', 40, '마법학교 제복', 'Magic Academy Uniform'),
   pinkFlowerDress: cos('outfit', 'outfits/12-pink-flower-dress.webp', 25, '핑크 플라워 드레스', 'Pink Flower Dress'),
@@ -56,6 +58,7 @@ export const COSMETICS = {
   starGlasses: cos('face', 'glasses/03-star-glasses.webp', 20, '별 안경', 'Star Glasses'),
   spiralGlasses: cos('face', 'glasses/04-spiral-glasses.webp', 20, '빙글빙글 안경', 'Spiral Glasses'),
   frogGlasses: cos('face', 'glasses/05-frog-glasses.webp', 20, '개구리 안경', 'Frog Glasses'),
+  swimGoggles: cos('face', 'glasses/06-swim-goggles.webp', 20, '수경', 'Swim Goggles'),
   petPuppy: cos('pet', 'pets/01-puppy.webp', 25, '강아지 펫', 'Puppy Pet'),
   petKitten: cos('pet', 'pets/02-kitten.webp', 25, '고양이 펫', 'Kitten Pet'),
   petBunny: cos('pet', 'pets/03-bunny.webp', 25, '토끼 펫', 'Bunny Pet'),
@@ -65,7 +68,13 @@ export const COSMETICS = {
   petAlex: cos('pet', 'pets/07-minecraft-alex.webp', 35, '알렉스 펫', 'Alex Pet'),
   petCreeper: cos('pet', 'pets/08-minecraft-creeper.webp', 35, '크리퍼 펫', 'Creeper Pet'),
   petNoob: cos('pet', 'pets/09-roblox-noob.webp', 35, '로블록스 눕 펫', 'Roblox Noob Pet'),
-  petBacon: cos('pet', 'pets/10-roblox-bacon.webp', 35, '베이컨 헤어 펫', 'Bacon Hair Pet')
+  petBacon: cos('pet', 'pets/10-roblox-bacon.webp', 35, '베이컨 헤어 펫', 'Bacon Hair Pet'),
+  petPengualaBlue: cos('pet', 'pets/11-penguala-blue.webp', 30, 'Penguala 블루', 'Blue Penguala'),
+  petPengualaTurquoise: cos('pet', 'pets/12-penguala-turquoise.webp', 30, 'Penguala 청록', 'Turquoise Penguala'),
+  petPengualaPurple: cos('pet', 'pets/13-penguala-purple.webp', 30, 'Penguala 퍼플', 'Purple Penguala'),
+  beachBall: cos('pet', 'props/01-beach-ball.webp', 15, '비치볼', 'Beach Ball', { style: 'prop', renderW: 110 }),
+  duckSwimRing: cos('pet', 'props/02-duck-swim-ring.webp', 22, '오리 튜브', 'Duck Swim Ring', { style: 'prop', renderW: 130 }),
+  stripedSwimRing: cos('pet', 'props/03-striped-swim-ring.webp', 18, '줄무늬 튜브', 'Striped Swim Ring', { style: 'prop', renderW: 120 })
 };
 
 /*
@@ -77,6 +86,8 @@ export const COSMETICS = {
  */
 const BASE_DAY = '2026-10-03';
 const ADDED = {
+  '2026-10-09b': ['boysRashguard', 'girlsRashguard', 'swimGoggles', 'beachBall', 'duckSwimRing', 'stripedSwimRing'],
+  '2026-10-09': ['petPengualaBlue', 'petPengualaTurquoise', 'petPengualaPurple'],
   '2026-10-08': ['denimJacket', 'basketballUniform', 'juniorAstronaut', 'jungleExplorer',
     'bowPurpleFlower', 'bowPinkFlower', 'sunflowerClip'],
   '2026-10-06b': ['strongBoy', 'catEars', 'cowboyHat', 'hardHat', 'propellerHat', 'chickenHat', 'watermelonHat',

@@ -13,6 +13,11 @@ import { openBox } from '../core/box.js';
 import { audio } from '../core/audio.js';
 import { GAMES } from '../games/index.js';
 
+const companionText = (c, key) => t(c.style === 'prop' ? ({
+  petTogether: 'propUsing', petPreview: 'propPreview', petJoin: 'propUse',
+  petRemove: 'propRemove', buyAndAdopt: 'buyAndUseProp'
+}[key] || key) : key);
+
 
 export function render(view, { go, toast, errorText, params }) {
   const fromGame = params.get('game');
@@ -111,10 +116,10 @@ export function render(view, { go, toast, errorText, params }) {
     const owned = owns(selected);
     const worn = look.equipped[c.slot] === selected;
     previewActions.replaceChildren(
-      h('p', { class: 'shop-try-name' }, pick(c.name), ' · ', t(c.slot === 'pet' ? (worn ? 'petTogether' : 'petPreview') : (worn ? 'wearing' : 'tryingOn'))),
+      h('p', { class: 'shop-try-name' }, pick(c.name), ' · ', companionText(c, c.slot === 'pet' ? (worn ? 'petTogether' : 'petPreview') : (worn ? 'wearing' : 'tryingOn'))),
       h('div', { class: 'shop-try-buttons' },
         h('button', { type: 'button', class: 'btn btn-small shop-confirm', disabled: actionBusy, onclick: confirmCosmetic },
-          owned ? t(c.slot === 'pet' ? (worn ? 'petRemove' : 'petJoin') : (worn ? 'remove' : 'wear')) : [t(c.slot === 'pet' ? 'buyAndAdopt' : 'buyAndWear'), ' · ', icon('sparkle'), ' ' + c.price]),
+          owned ? companionText(c, c.slot === 'pet' ? (worn ? 'petRemove' : 'petJoin') : (worn ? 'remove' : 'wear')) : [companionText(c, c.slot === 'pet' ? 'buyAndAdopt' : 'buyAndWear'), ' · ', icon('sparkle'), ' ' + c.price]),
         h('button', { type: 'button', class: 'btn btn-sub btn-small', disabled: actionBusy, onclick: cancelPreview }, t('cancel'))));
   }
 
@@ -129,7 +134,7 @@ export function render(view, { go, toast, errorText, params }) {
         class: 'shop-item' + (worn ? ' is-worn' : '') + (selected === id ? ' is-selected' : '') + (c.isNew ? ' is-new' : ''), onclick: () => onCosmetic(id) },
         c.isNew ? h('span', { class: 'shop-new-badge' }, t('newBadge')) : null,
         h('img', { src: c.img, alt: '' }), pick(c.name),
-        selected === id && !worn ? h('span', { class: 'tag' }, t(c.slot === 'pet' ? 'petPreview' : 'tryingOn')) : worn ? h('span', { class: 'tag' }, t(c.slot === 'pet' ? 'petTogether' : 'wearing')) : owned ? h('span', { class: 'tag' }, t('owned')) : price(c.price));
+        selected === id && !worn ? h('span', { class: 'tag' }, companionText(c, c.slot === 'pet' ? 'petPreview' : 'tryingOn')) : worn ? h('span', { class: 'tag' }, companionText(c, c.slot === 'pet' ? 'petTogether' : 'wearing')) : owned ? h('span', { class: 'tag' }, t('owned')) : price(c.price));
     };
     const section = (title, list, cls = '') => h('div', { class: 'shop-section ' + cls },
       h('h3', null, title), h('div', { class: 'shop-grid' }, list.map(card)));

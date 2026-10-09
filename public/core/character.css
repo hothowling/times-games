@@ -115,8 +115,8 @@
   z-index: 7;
   left: var(--pet-x, 30px);
   bottom: var(--pet-bottom, -6px);
-  width: 168px;
-  height: 168px;
+  width: var(--pet-w, 168px);
+  height: var(--pet-w, 168px);
   transform: translateX(-50%);
   object-fit: contain;
 }

@@ -1,0 +1,5 @@
+Create one transparent mobile-game swimming toy sprite: One colorful inflatable beach ball with alternating sunny yellow, turquoise, coral-red and white curved panels, small white circular cap. Round clean silhouette, cheerful swimming-pool toy, no face or characters.
+Reference image is GAME ART STYLE ONLY; do not copy creature, face, feathers or wings.
+Same polished cute 2D cartoon game art, crisp outlines, bright clean colors, rounded simple forms, soft smooth cel shading, no photorealism.
+Square256x256equivalent canvas, object centered and occupying about85% width/height, entire toy within12px margin, no people/body/extra objects/labels.
+Real transparentRGBA PNG background, no opaque white/black/checkerboard, text, watermark, floor or groundshadow. Exactly one asset, not a sheet.

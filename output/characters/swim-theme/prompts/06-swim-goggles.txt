@@ -1,0 +1,5 @@
+Create one transparent mobile-game goggle accessory sprite: Front-facing swimming goggles, turquoise and royal-blue rounded twin frames with orange nose bridge, small side strap attachments. Both lens holes are COMPLETELY transparent so character eyes remain visible. Minimal thin bright reflection at rim only. No opaque glass or painted eyes. No long strap behind head.
+Reference image is exact 2:1 glasses canvas and lens-hole layout.
+Same polished cute 2D cartoon game art, crisp outlines, bright clean colors, rounded simple forms, soft smooth cel shading, no photorealism.
+Wide horizontal 2:1 canvas target384x192, two symmetric lens centers at about28%/72% of width and53% of height. Frame centered, entire accessory within8px margin. Transparent interiors and outside background. No head, face or text.
+Real transparentRGBA PNG background, no opaque white/black/checkerboard, text, watermark, floor or groundshadow. Exactly one asset, not a sheet.
