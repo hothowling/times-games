@@ -636,14 +636,16 @@
   }
 
   /*
-   * speak(text, lang, { rate, pitch, clip }) → Promise.
+   * speak(text, lang, { rate, pitch, clip, force }) → Promise<boolean>.
    * clip(녹음 파일 주소)이 있으면 그 파일을 재생하고, 못 열면 text 를 speechSynthesis 로 읽습니다.
+   * force 는 사용자가 직접 누른 듣기용: 자동 읽기 설정이 꺼져 있어도 읽지만 전체 소리 설정은 지킵니다.
    */
   function speak(text, lang, options) {
     var opts = options || {};
-    if (opts.clip && soundOn && ttsOn) {
+    if (opts.clip && soundOn && (ttsOn || opts.force)) {
       return playClip(opts.clip).then(function (ok) {
         if (!ok) return speakTts(text, lang, opts);
+        return true;
       });
     }
     return speakTts(text, lang, opts);
@@ -653,24 +655,30 @@
     var opts = options || {};
     return new Promise(function (res) {
       stopSpeak();
-      if (!synth || !Utter || !soundOn || !ttsOn || !text) { res(); return; }
+      if (!synth || !Utter || !soundOn || (!ttsOn && !opts.force) || !text) { res(false); return; }
       var L = lang === 'ko' ? 'ko' : 'en';
       var timer = null;
-      var finish = function () {
+      var settled = false;
+      var started = false;
+      var finish = function (ok) {
+        if (settled) return;
+        settled = true;
         if (timer !== null) global.clearTimeout(timer);
         timer = null;
-        if (speakDone === finish) speakDone = null;
-        res();
+        if (speakDone === cancel) speakDone = null;
+        res(ok === true);
       };
-      speakDone = finish;
+      speakDone = function () { finish(true); };
+      var cancel = speakDone;
       try {
         var u = new Utter(String(text));
         u.lang = L === 'ko' ? 'ko-KR' : 'en-US';
         if (ttsVoices[L]) u.voice = ttsVoices[L];
         u.rate = opts.rate || 0.9;
         u.pitch = opts.pitch || 1;
-        u.onend = finish;
-        u.onerror = finish;
+        u.onstart = function () { started = true; };
+        u.onend = function () { finish(started); };
+        u.onerror = function () { finish(false); };
         timer = global.setTimeout(finish, 4000 + String(text).length * 250);
         if (synth.paused && synth.resume) synth.resume();
         synth.speak(u);

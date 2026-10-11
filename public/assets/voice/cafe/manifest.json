@@ -1,0 +1,250 @@
+{
+  "engine": "MeloTTS",
+  "language": "EN",
+  "speaker": "EN-US",
+  "speed": 1,
+  "codec": "AAC",
+  "bitrate": 48000,
+  "clips": [
+    {
+      "file": "half-cheese.m4a",
+      "text": "I'd like one half of a cheese pizza, please.",
+      "seconds": 2.6
+    },
+    {
+      "file": "half-tomato.m4a",
+      "text": "I'd like one half of a tomato pizza, please.",
+      "seconds": 2.7
+    },
+    {
+      "file": "half-mushroom.m4a",
+      "text": "I'd like one half of a mushroom pizza, please.",
+      "seconds": 2.56
+    },
+    {
+      "file": "quarter-cheese.m4a",
+      "text": "I'd like one quarter of a cheese pizza, please.",
+      "seconds": 2.68
+    },
+    {
+      "file": "quarter-tomato.m4a",
+      "text": "I'd like one quarter of a tomato pizza, please.",
+      "seconds": 2.92
+    },
+    {
+      "file": "quarter-mushroom.m4a",
+      "text": "I'd like one quarter of a mushroom pizza, please.",
+      "seconds": 2.75
+    },
+    {
+      "file": "three-quarters-cheese.m4a",
+      "text": "I'd like three quarters of a cheese pizza, please.",
+      "seconds": 2.94
+    },
+    {
+      "file": "three-quarters-tomato.m4a",
+      "text": "I'd like three quarters of a tomato pizza, please.",
+      "seconds": 3.01
+    },
+    {
+      "file": "three-quarters-mushroom.m4a",
+      "text": "I'd like three quarters of a mushroom pizza, please.",
+      "seconds": 2.94
+    },
+    {
+      "file": "whole-cheese.m4a",
+      "text": "I'd like one whole cheese pizza, please.",
+      "seconds": 2.47
+    },
+    {
+      "file": "whole-tomato.m4a",
+      "text": "I'd like one whole tomato pizza, please.",
+      "seconds": 2.58
+    },
+    {
+      "file": "whole-mushroom.m4a",
+      "text": "I'd like one whole mushroom pizza, please.",
+      "seconds": 2.42
+    },
+    {
+      "file": "third-cheese.m4a",
+      "text": "I'd like one third of a cheese pizza, please.",
+      "seconds": 2.59
+    },
+    {
+      "file": "third-tomato.m4a",
+      "text": "I'd like one third of a tomato pizza, please.",
+      "seconds": 2.66
+    },
+    {
+      "file": "third-mushroom.m4a",
+      "text": "I'd like one third of a mushroom pizza, please.",
+      "seconds": 2.67
+    },
+    {
+      "file": "two-thirds-cheese.m4a",
+      "text": "I'd like two thirds of a cheese pizza, please.",
+      "seconds": 2.77
+    },
+    {
+      "file": "two-thirds-tomato.m4a",
+      "text": "I'd like two thirds of a tomato pizza, please.",
+      "seconds": 2.88
+    },
+    {
+      "file": "two-thirds-mushroom.m4a",
+      "text": "I'd like two thirds of a mushroom pizza, please.",
+      "seconds": 2.79
+    },
+    {
+      "file": "sixth-cheese.m4a",
+      "text": "I'd like one sixth of a cheese pizza, please.",
+      "seconds": 2.76
+    },
+    {
+      "file": "sixth-tomato.m4a",
+      "text": "I'd like one sixth of a tomato pizza, please.",
+      "seconds": 2.93
+    },
+    {
+      "file": "sixth-mushroom.m4a",
+      "text": "I'd like one sixth of a mushroom pizza, please.",
+      "seconds": 2.79
+    },
+    {
+      "file": "three-eighths-cheese.m4a",
+      "text": "I'd like three eighths of a cheese pizza, please.",
+      "seconds": 2.88
+    },
+    {
+      "file": "three-eighths-tomato.m4a",
+      "text": "I'd like three eighths of a tomato pizza, please.",
+      "seconds": 2.83
+    },
+    {
+      "file": "three-eighths-mushroom.m4a",
+      "text": "I'd like three eighths of a mushroom pizza, please.",
+      "seconds": 2.84
+    },
+    {
+      "file": "half-eighths-cheese.m4a",
+      "text": "I'd like two quarters of a cheese pizza, please.",
+      "seconds": 2.95
+    },
+    {
+      "file": "half-eighths-tomato.m4a",
+      "text": "I'd like two quarters of a tomato pizza, please.",
+      "seconds": 3.07
+    },
+    {
+      "file": "half-eighths-mushroom.m4a",
+      "text": "I'd like two quarters of a mushroom pizza, please.",
+      "seconds": 2.93
+    },
+    {
+      "file": "quarter-eighths-cheese.m4a",
+      "text": "I'd like one quarter of a cheese pizza, please.",
+      "seconds": 2.67
+    },
+    {
+      "file": "quarter-eighths-tomato.m4a",
+      "text": "I'd like one quarter of a tomato pizza, please.",
+      "seconds": 2.88
+    },
+    {
+      "file": "quarter-eighths-mushroom.m4a",
+      "text": "I'd like one quarter of a mushroom pizza, please.",
+      "seconds": 2.8
+    },
+    {
+      "file": "add-quarters-cheese.m4a",
+      "text": "I'd like one quarter plus two quarters of a cheese pizza, please.",
+      "seconds": 3.81
+    },
+    {
+      "file": "add-quarters-tomato.m4a",
+      "text": "I'd like one quarter plus two quarters of a tomato pizza, please.",
+      "seconds": 4
+    },
+    {
+      "file": "add-quarters-mushroom.m4a",
+      "text": "I'd like one quarter plus two quarters of a mushroom pizza, please.",
+      "seconds": 3.71
+    },
+    {
+      "file": "add-thirds-cheese.m4a",
+      "text": "I'd like one third plus one third of a cheese pizza, please.",
+      "seconds": 3.35
+    },
+    {
+      "file": "add-thirds-tomato.m4a",
+      "text": "I'd like one third plus one third of a tomato pizza, please.",
+      "seconds": 3.58
+    },
+    {
+      "file": "add-thirds-mushroom.m4a",
+      "text": "I'd like one third plus one third of a mushroom pizza, please.",
+      "seconds": 3.43
+    },
+    {
+      "file": "add-sixths-cheese.m4a",
+      "text": "I'd like one sixth plus two sixths of a cheese pizza, please.",
+      "seconds": 3.8
+    },
+    {
+      "file": "add-sixths-tomato.m4a",
+      "text": "I'd like one sixth plus two sixths of a tomato pizza, please.",
+      "seconds": 3.94
+    },
+    {
+      "file": "add-sixths-mushroom.m4a",
+      "text": "I'd like one sixth plus two sixths of a mushroom pizza, please.",
+      "seconds": 3.82
+    },
+    {
+      "file": "add-eighths-cheese.m4a",
+      "text": "I'd like two eighths plus three eighths of a cheese pizza, please.",
+      "seconds": 3.68
+    },
+    {
+      "file": "add-eighths-tomato.m4a",
+      "text": "I'd like two eighths plus three eighths of a tomato pizza, please.",
+      "seconds": 3.83
+    },
+    {
+      "file": "add-eighths-mushroom.m4a",
+      "text": "I'd like two eighths plus three eighths of a mushroom pizza, please.",
+      "seconds": 3.79
+    },
+    {
+      "file": "add-half-cheese.m4a",
+      "text": "I'd like one eighth plus three eighths of a cheese pizza, please.",
+      "seconds": 3.57
+    },
+    {
+      "file": "add-half-tomato.m4a",
+      "text": "I'd like one eighth plus three eighths of a tomato pizza, please.",
+      "seconds": 3.64
+    },
+    {
+      "file": "add-half-mushroom.m4a",
+      "text": "I'd like one eighth plus three eighths of a mushroom pizza, please.",
+      "seconds": 3.49
+    },
+    {
+      "file": "add-whole-cheese.m4a",
+      "text": "I'd like two quarters plus two quarters of a cheese pizza, please.",
+      "seconds": 3.94
+    },
+    {
+      "file": "add-whole-tomato.m4a",
+      "text": "I'd like two quarters plus two quarters of a tomato pizza, please.",
+      "seconds": 4.13
+    },
+    {
+      "file": "add-whole-mushroom.m4a",
+      "text": "I'd like two quarters plus two quarters of a mushroom pizza, please.",
+      "seconds": 3.95
+    }
+  ]
+}

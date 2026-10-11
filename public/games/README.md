@@ -36,3 +36,15 @@ games/<id>/
 | `ctx.openShop()`, `ctx.exit()` | 상점(이 게임의 아이템 탭)이나 로비로 갑니다. |
 
 게임은 localStorage, fetch, `location`을 직접 쓰지 않습니다. 필요한 것은 모두 ctx에 있습니다.
+
+### 문장 듣기
+
+`ctx.audio.speak(text, lang, { clip, force })`는 녹음 파일을 먼저 재생하고,
+파일이 없으면 브라우저 음성 합성으로 읽습니다. 녹음은 `preloadClips([url])`로
+미리 준비할 수 있습니다. 기기의 음성 합성 지원 여부만 보고 듣기 버튼을 숨기지
+마세요. 녹음 재생은 `voiceSupported`로, 음성 합성은 `speechSupported`로 확인합니다.
+
+사용자가 직접 누른 **듣기**는 `force: true`를 넘길 수 있습니다. 자동 문제 읽기
+설정과 별개로 동작하며 전체 소리 설정(`getSound()`)은 지킵니다. 탭 안에서
+`audio.unlock()`를 호출하고, 반환하는 `Promise<boolean>`이 false이면 실패를
+안내하세요. 다른 문제로 바꾸거나 나갈 때는 `stopSpeak()`로 재생을 정리합니다.

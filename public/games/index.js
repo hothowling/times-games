@@ -8,6 +8,12 @@
  */
 export const GAMES = [
   {
+    id: 'cafe', badge: 'new', items: [], thumb: 'assets/games/cafe/cafe-interior-v1.jpg',
+    title: { ko: '펫 피자 카페', en: 'Pet Pizza Café' },
+    short: { ko: '카페', en: 'Café' }, rank: { ko: '{n}점', en: '{n} pts' },
+    desc: { ko: '펫의 영어 주문대로 피자를 나누고 페소 거스름돈을 건네요.', en: 'Slice pizza for your pets and give their peso change.' }
+  },
+  {
     id: 'wordmatch', badge: 'new', items: ['hint', 'eraser', 'time'], thumb: 'assets/thumbs/wordmatch.jpg',
     title: { ko: '영단어 짝맞추기', en: 'Word Match' },
     short: { ko: '영단어', en: 'Words' }, rank: { ko: '{n}점', en: '{n} pts' },

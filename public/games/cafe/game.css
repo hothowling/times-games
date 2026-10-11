@@ -1,0 +1,432 @@
+/* Use the lobby's shared 560px frame, even on wide desktop windows. */
+body.playing:has(.game-cafe) #view { container: cafe-frame / inline-size; }
+.game-cafe {
+  --cf-ink: #513624; --cf-accent: #537b51; --cf-wall: #f8f0df;
+  --cf-awning: #8aa375; --cf-light: #edf2e5; --cf-line: #e5d5b9; --cf-tomato: #c74c35;
+  min-height: 100dvh; color: var(--cf-ink);
+  width: 100%; max-width: 560px; margin: 0 auto;
+  background: radial-gradient(ellipse at top, #fffcf2 0, transparent 68%), var(--cf-wall);
+  padding: max(14px, env(safe-area-inset-top)) 22px max(28px, env(safe-area-inset-bottom));
+  font-family: 'Jua', system-ui, sans-serif;
+}
+.game-cafe[data-theme="sunset"] { --cf-wall: #fff0e4; --cf-awning: #df9b84; --cf-light: #fff0e9; --cf-accent: #a45b48; }
+.game-cafe[data-theme="ocean"] { --cf-wall: #edf4f3; --cf-awning: #8ebbbb; --cf-light: #e6f2f1; --cf-accent: #437c80; }
+.game-cafe *, .game-cafe *::before, .game-cafe *::after { box-sizing: border-box; }
+.game-cafe [hidden] { display: none !important; }
+.game-cafe button { font: inherit; cursor: pointer; touch-action: manipulation; transition: background .15s, transform .15s, box-shadow .15s; }
+.game-cafe button:disabled { cursor: default; opacity: .5; }
+.game-cafe button:focus-visible, .game-cafe [role="button"]:focus-visible { outline: 3px solid #367cb7; outline-offset: 4px; }
+.game-cafe button:active:not(:disabled) { transform: translateY(2px); }
+.game-cafe .cf-shell { max-width: 100%; margin: 0 auto; }
+.game-cafe .cf-hud { padding: 0 2px 12px; background: transparent; }
+.game-cafe .cf-hud .hud-btn, .game-cafe .cf-hud .hud-pill { background: #fffcf2; color: var(--cf-ink); border: 1px solid var(--cf-line); box-shadow: 0 2px 0 #c9ac8726; }
+.game-cafe .cf-sign { position: relative; height: 370px; border: 4px solid #fffcf4; border-radius: 28px 28px 0 0; overflow: hidden; text-align: center; background: #e9d3a2 url('../../assets/games/cafe/cafe-interior-v1.jpg') center 63% / cover; }
+.game-cafe .cf-sign-copy { position: relative; margin: 26px auto 0; width: fit-content; max-width: 92%; padding: 13px 28px 18px; border-radius: 28px; background: #fff4d6cf; text-shadow: 0 2px #fff7e7; }
+.game-cafe .cf-sign h1 { margin: 6px 0 4px; color: #743e26; font-size: clamp(28px, 5vw, 43px); letter-spacing: -.04em; }
+.game-cafe .cf-sign p { margin: 0; font-size: 15px; }
+.game-cafe .cf-sign .cf-welcome { font-size: 13px; color: #7a633b; }
+.game-cafe .cf-chef-badge { position: absolute; right: 22px; bottom: 14px; width: 100px; padding: 4px 6px 7px; border: 2px solid #fff5d4; border-radius: 22px; background: #fff7e8e6; box-shadow: 0 4px 16px #58391624; font-size: 12px; }
+.game-cafe .cf-chef { position: relative; width: 82px; height: 94px; margin: auto; }
+.game-cafe .cf-card { background: #fffcf4; border: 2px solid #fff; box-shadow: 0 10px 28px #8f6b3020; padding: 22px; border-radius: 26px; }
+.game-cafe .cf-intro { text-align: center; border-radius: 0 0 28px 28px; padding: 20px 30px; }
+.game-cafe .cf-prop { display: block; flex: 0 0 auto; width: 80px; height: 80px; background: url('../../assets/games/cafe/cafe-props-v1.png') 0 50% / 300% 100% no-repeat; }
+.game-cafe .cf-prop-oven { background-position: 50% 50%; }
+.game-cafe .cf-prop-register { background-position: 100% 50%; }
+.game-cafe .cf-howto { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-bottom: 18px; border-bottom: 1px dashed var(--cf-line); }
+.game-cafe .cf-howto-step { display: flex; align-items: center; gap: 8px; text-align: left; }
+.game-cafe .cf-howto-step strong, .game-cafe .cf-howto-step span:not(.cf-prop) { display: block; }
+.game-cafe .cf-howto-step strong { font-size: 16px; margin-bottom: 7px; }
+.game-cafe .cf-howto-step span:not(.cf-prop) { font-family: system-ui, sans-serif; font-size: 12px; line-height: 1.5; color: #7b6855; }
+.game-cafe .cf-level-title { font-size: 18px; margin: 18px 0 12px; }
+.game-cafe .cf-levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 auto 18px; max-width: 740px; }
+.game-cafe .cf-level { position: relative; min-height: 80px; padding: 13px 10px 12px 42px; border: 2px solid var(--cf-line); border-radius: 16px; background: #fffdf7; color: var(--cf-ink); text-align: left; }
+.game-cafe .cf-level strong, .game-cafe .cf-level span { display: block; }
+.game-cafe .cf-level strong { margin-bottom: 5px; font-size: 17px; }
+.game-cafe .cf-level span { font-family: system-ui, sans-serif; font-size: 11px; line-height: 1.4; }
+.game-cafe .cf-level .cf-level-number { position: absolute; left: 10px; top: 16px; display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; background: #f0e4cf; font-family: inherit; font-size: 15px; }
+.game-cafe .cf-level[aria-pressed="true"] { border-color: var(--cf-accent); background: var(--cf-light); box-shadow: 0 3px 0 #c2d1b1; }
+.game-cafe .cf-level[aria-pressed="true"] .cf-level-number { background: var(--cf-accent); color: #fff; }
+.game-cafe .cf-main { min-height: 50px; border: 1px solid #b3432e; border-radius: 15px; color: #fffaf0; background: var(--cf-tomato); padding: 13px 25px; font-size: 17px; box-shadow: 0 4px 0 #983923, inset 0 1px 0 #ffffff38; }
+.game-cafe .cf-main:hover { background: #b9412c; }
+.game-cafe .cf-small { min-height: 44px; padding: 8px 13px; background: #fffdf8; border: 1px solid #d8c6a7; border-radius: 12px; color: var(--cf-ink); }
+.game-cafe .cf-small:hover { background: #fff0d1; }
+.game-cafe .cf-muted { color: #7c6958; font-family: system-ui, sans-serif; font-size: 12px; line-height: 1.5; }
+.game-cafe .cf-start { min-width: 270px; }
+.game-cafe .cf-gentle { font-size: 12px; color: var(--cf-accent); margin: 13px 0; }
+.game-cafe .cf-saved { margin: 10px 0; }
+.game-cafe .cf-decorations { margin-top: 16px; text-align: center; padding-top: 14px; border-top: 1px dashed var(--cf-line); }
+.game-cafe .cf-decorations h2 { font-size: 14px; margin: 0 0 9px; }
+.game-cafe .cf-themes { display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; }
+.game-cafe .cf-theme { min-width: 110px; min-height: 60px; border-radius: 12px; border: 2px solid var(--cf-line); background: #fffaf0; color: var(--cf-ink); padding: 6px 12px; font-size: 12px; }
+.game-cafe .cf-theme::before { content: ''; display: block; height: 10px; margin-bottom: 6px; border-radius: 4px; background: repeating-linear-gradient(90deg, #8aa375 0 12px, #fff7e8 12px 24px); }
+.game-cafe .cf-theme[data-theme="sunset"]::before { background: repeating-linear-gradient(90deg, #df9b84 0 12px, #fff7e8 12px 24px); }
+.game-cafe .cf-theme[data-theme="ocean"]::before { background: repeating-linear-gradient(90deg, #8ebbbb 0 12px, #fff7e8 12px 24px); }
+.game-cafe .cf-theme[aria-pressed="true"] { border-color: var(--cf-accent); }
+.game-cafe .cf-service { position: relative; padding: 30px 24px 24px; overflow: hidden; }
+.game-cafe .cf-service::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 12px; background: repeating-linear-gradient(90deg, var(--cf-awning) 0 35px, #fff4df 35px 70px); border-bottom: 2px solid #4d64321c; }
+.game-cafe .cf-shop-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.game-cafe .cf-shop-bar > div { display: flex; align-items: center; gap: 8px; font-size: 19px; }
+.game-cafe .cf-shop-mark { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 50%; color: #fff7e8; background: var(--cf-tomato); font-size: 19px; }
+.game-cafe .cf-queue { display: flex; justify-content: center; gap: 14px; margin: 8px 0 16px; }
+.game-cafe .cf-queue img { width: 42px; height: 42px; padding: 3px; object-fit: contain; opacity: .45; background: #eee4d4; border-radius: 50%; border: 2px solid transparent; }
+.game-cafe .cf-queue .cf-current { opacity: 1; background: #fff3d1; border-color: #da9e52; transform: scale(1.12); }
+.game-cafe .cf-queue .cf-fed { opacity: 1; background: var(--cf-light); border-color: #9db28a; }
+.game-cafe .cf-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 20px; padding: 0; list-style: none; }
+.game-cafe .cf-steps li { display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; padding: 6px 12px; background: #f3ebdd; border: 2px solid #e9dec9; border-radius: 15px; color: #85725e; font-size: 14px; }
+.game-cafe .cf-steps .cf-prop { width: 50px; height: 50px; }
+.game-cafe .cf-step-number { display: grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; background: #e2d4bd; font: bold 12px system-ui, sans-serif; }
+.game-cafe .cf-steps .cf-active { background: #fff0cf; border-color: #dda15b; color: #8e4c27; box-shadow: 0 3px 0 #ead2ac; }
+.game-cafe .cf-steps .cf-active .cf-step-number { background: #ca643a; color: white; }
+.game-cafe .cf-steps .cf-complete { color: var(--cf-accent); background: var(--cf-light); border-color: #c9d6bb; }
+.game-cafe .cf-steps .cf-complete .cf-step-number { background: var(--cf-accent); color: white; }
+.game-cafe .cf-service-layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 22px; align-items: start; }
+.game-cafe .cf-customer { position: sticky; top: 14px; text-align: center; }
+.game-cafe .cf-guest-portrait { background: radial-gradient(ellipse, #f5e3bc 0, transparent 70%); }
+.game-cafe .cf-pet { width: 130px; height: 138px; object-fit: contain; }
+.game-cafe .cf-speech { position: relative; background: #fffdf7; border: 2px solid var(--cf-line); border-radius: 16px; padding: 18px 16px; box-shadow: 0 5px 0 #dcc8aa44; text-align: left; }
+.game-cafe .cf-speech::before { content: ''; position: absolute; width: 18px; height: 18px; top: -11px; left: calc(50% - 9px); background: #fffdf7; border-left: 2px solid var(--cf-line); border-top: 2px solid var(--cf-line); transform: rotate(45deg); }
+.game-cafe .cf-ticket-label { display: block; color: #ab7449; font-size: 12px; border-bottom: 1px dashed var(--cf-line); padding-bottom: 9px; margin-bottom: 12px; }
+.game-cafe .cf-customer-name { color: var(--cf-accent); font-size: 17px; }
+.game-cafe .cf-order { margin: 8px 0 14px; font-family: system-ui, sans-serif; font-size: 20px; font-weight: 750; line-height: 1.45; color: #4a3829; }
+.game-cafe .cf-order-tools { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+.game-cafe .cf-recipe { padding: 7px 12px; border-radius: 9px; font-family: system-ui, sans-serif; font-size: 20px; font-weight: 800; color: #97512e; background: #fff0ce; border: 1px solid #eed9a7; }
+.game-cafe .cf-order-tools button { font-size: 12px; padding: 7px 10px; }
+.game-cafe .cf-translation { font-size: 13px; margin: 12px 0 0; line-height: 1.6; }
+.game-cafe .cf-work { min-width: 0; text-align: center; border: 1px solid var(--cf-line); border-radius: 20px; padding: 20px; background: #fffdf8; }
+.game-cafe .cf-eyebrow { display: block; color: var(--cf-accent); font-size: 12px; margin-bottom: 5px; }
+.game-cafe .cf-work h2 { margin: 0 0 14px; font-size: 23px; font-weight: 400; }
+.game-cafe .cf-work-order { width: fit-content; margin: -4px auto 13px; padding: 6px 13px; border-radius: 20px; background: #fff0cf; color: #95552f; font-size: 12px; }
+.game-cafe .cf-cutters, .game-cafe .cf-toppings { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.game-cafe .cf-cutters { margin-bottom: 14px; }
+.game-cafe .cf-cutters button { font-size: 12px; }
+.game-cafe .cf-cutters button[aria-pressed="true"], .game-cafe .cf-toppings button[aria-pressed="true"] { border-color: var(--cf-accent); background: var(--cf-light); box-shadow: inset 0 0 0 1px var(--cf-accent); }
+.game-cafe .cf-pizza-station { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(150px, 1fr); gap: 16px; align-items: center; }
+.game-cafe .cf-prep-board { padding: 12px 8px; border: 4px solid #d9b582; border-radius: 44px; background: repeating-linear-gradient(2deg, #f3dfb9 0 16px, #eed6ab 18px, #f3dfb9 20px); box-shadow: inset 0 0 0 2px #fff1d2, 0 5px 0 #c29966; }
+.game-cafe .cf-board-note { margin: 0 0 5px; font-size: 11px; color: #8d633b; }
+.game-cafe .cf-pizza-wrap { width: min(100%, 265px); margin: 4px auto 6px; position: relative; }
+.game-cafe .cf-pizza { display: block; width: 100%; height: auto; overflow: visible; }
+.game-cafe .cf-wedge { cursor: pointer; transition: opacity .15s, filter .15s; }
+.game-cafe .cf-wedge:hover { filter: brightness(1.07); }
+.game-cafe .cf-wedge[aria-pressed="true"] { filter: drop-shadow(0 0 4px #8a4808); }
+.game-cafe .cf-selected { margin: 2px 0; padding: 7px; background: #fff9e6e6; border-radius: 12px; font-family: system-ui, sans-serif; font-size: 12px; font-weight: 700; line-height: 1.5; }
+.game-cafe .cf-ingredients { border: 1px solid #e0d4bc; padding: 14px 10px; border-radius: 17px; background: #faf4e9; }
+.game-cafe .cf-ingredients h3 { margin: 0; font-size: 17px; font-weight: 400; }
+.game-cafe .cf-toppings { flex-direction: column; gap: 9px; margin: 14px 0; }
+.game-cafe .cf-toppings button { display: flex; gap: 10px; align-items: center; padding: 8px 12px; font-size: 14px; min-height: 51px; box-shadow: 0 3px 0 #ddceb44d; }
+.game-cafe .cf-toppings svg { width: 30px; height: 30px; }
+.game-cafe .cf-topping-note { margin: 6px 0; font-size: 11px; }
+.game-cafe .cf-whole-price { margin: 6px 0 0; font-size: 11px; }
+.game-cafe .cf-oven-action { display: flex; justify-content: center; align-items: center; gap: 18px; padding: 12px 14px 5px; margin-top: 12px; }
+.game-cafe .cf-oven-action .cf-prop { width: 94px; height: 94px; }
+.game-cafe .cf-oven-action p { margin: 0 0 9px; font-size: 12px; }
+.game-cafe .cf-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 12px 0 0; }
+.game-cafe .cf-help { border-style: dashed; background: transparent; font-size: 12px; }
+.game-cafe .cf-feedback { padding: 14px; border: 1px solid #e8c97b; border-radius: 14px; background: #fff4d4; color: #805521; font-family: system-ui, sans-serif; font-size: 14px; line-height: 1.6; margin: 16px auto 0; max-width: 580px; }
+.game-cafe .cf-feedback svg { display: block; width: 120px; margin: 10px auto 0; }
+.game-cafe .cf-baking { text-align: center; padding: 28px 10px; }
+.game-cafe .cf-baking > .cf-prop { width: 245px; height: 245px; margin: auto; }
+.game-cafe .cf-baking-pizza { width: 110px; margin: -15px auto 16px; }
+.game-cafe .cf-baking h2 { font-size: 24px; font-weight: 400; }
+.game-cafe .cf-checkout-heading { display: flex; align-items: center; justify-content: center; gap: 14px; text-align: left; margin-bottom: 10px; }
+.game-cafe .cf-checkout-heading .cf-prop { width: 78px; height: 78px; }
+.game-cafe .cf-checkout-heading h2 { margin: 0; }
+.game-cafe .cf-bill { display: grid; grid-template-columns: .9fr 1fr 1fr; align-items: stretch; gap: 8px; margin: 12px 0 16px; }
+.game-cafe .cf-bill > div { display: flex; flex-direction: column; justify-content: center; padding: 10px 7px; border-radius: 13px; background: #f7eedc; }
+.game-cafe .cf-bill > .cf-bill-paid { background: var(--cf-light); border: 1px solid #c8d4b9; }
+.game-cafe .cf-checkout-pizza { width: 65px; margin: auto; }
+.game-cafe .cf-bill span { font-size: 12px; }
+.game-cafe .cf-bill b { font-family: system-ui, sans-serif; font-size: 28px; margin: 6px 0; }
+.game-cafe .cf-bill small { font: 10px/1.4 system-ui, sans-serif; color: #7b6855; }
+.game-cafe .cf-ready-pizza span { margin-top: 5px; color: #9d6933; font-size: 10px; }
+.game-cafe .cf-coins { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 20px 0 12px; }
+.game-cafe .cf-coin { width: 66px; height: 66px; border-radius: 50%; border: 3px solid #d49b3c; background: radial-gradient(circle at 35% 30%, #fff0b9, #eaba5f); box-shadow: inset 0 0 0 3px #ffdf8f, 0 4px 0 #ae792d; color: #754f1c; font: 800 19px system-ui, sans-serif; }
+.game-cafe .cf-tray { min-height: 140px; padding: 15px; background: #f1e4cd; border: 5px solid #d8c4a2; border-radius: 25px; box-shadow: inset 0 2px 5px #75583420; }
+.game-cafe .cf-tray-total { display: block; font: 800 28px system-ui, sans-serif; color: #855828; margin: 7px 0 10px; }
+.game-cafe .cf-tray-coins { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.game-cafe .cf-tray-coins button { min-width: 44px; min-height: 44px; border-radius: 50%; border: 2px solid #c79d51; background: #ffe6a0; color: #5e411e; font: 700 13px system-ui, sans-serif; box-shadow: 0 2px 0 #b28948; }
+.game-cafe .cf-empty-tray { color: #8d7758; font: 12px/1.5 system-ui, sans-serif; padding: 3px 0; }
+.game-cafe .cf-deliver-action { border-top: 1px dashed var(--cf-line); margin-top: 18px; padding-top: 4px; }
+.game-cafe .cf-served { text-align: center; padding: 24px 0; background: radial-gradient(ellipse, #fff0c9, transparent 65%); }
+.game-cafe .cf-complete-badge { display: block; width: fit-content; margin: 0 auto 12px; padding: 8px 17px; color: var(--cf-accent); background: var(--cf-light); border: 1px solid #c4d3b6; border-radius: 22px; font-size: 13px; }
+.game-cafe .cf-served .cf-pet { width: 170px; height: 170px; }
+.game-cafe .cf-served h2 { font-size: 27px; margin: 12px 0; font-weight: 400; }
+.game-cafe .cf-mini-pizza { width: 100px; margin: -18px auto 12px; }
+.game-cafe .cf-receipt { font: 14px/1.7 system-ui, sans-serif; padding: 20px; margin: 18px auto 24px; background: #fffdf6; border: 1px dashed #d8c7a8; border-radius: 6px; box-shadow: 0 5px 12px #96775013; max-width: 440px; }
+.game-cafe .cf-summary { text-align: center; border-radius: 0 0 28px 28px; }
+.game-cafe .cf-summary > h2 { margin: 12px 0 8px; font-size: 28px; font-weight: 400; }
+.game-cafe .cf-stars { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
+.game-cafe .cf-stars .ui-icon { --icon-size: 40px; }
+.game-cafe .cf-summary-pets { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.game-cafe .cf-summary-pets img { width: 70px; height: 78px; object-fit: contain; }
+.game-cafe .cf-new-theme { color: var(--cf-accent); font-size: 17px; }
+@container cafe-frame (max-width: 800px) {
+  .game-cafe .cf-service-layout { grid-template-columns: 185px minmax(0, 1fr); gap: 14px; }
+  .game-cafe .cf-service { padding-inline: 16px; }
+  .game-cafe .cf-work { padding: 16px 12px; }
+  .game-cafe .cf-order { font-size: 17px; }
+  .game-cafe .cf-pizza-station { grid-template-columns: minmax(0, 1fr); }
+  .game-cafe .cf-prep-board { max-width: 315px; width: 100%; margin: auto; }
+  .game-cafe .cf-toppings { flex-direction: row; }
+  .game-cafe .cf-ingredients { margin-top: 5px; }
+  .game-cafe .cf-toppings button { padding: 7px 9px; }
+  .game-cafe .cf-toppings svg { width: 24px; height: 24px; }
+  .game-cafe .cf-howto-step { flex-direction: column; text-align: center; gap: 6px; }
+  .game-cafe .cf-howto-step .cf-prop { width: 64px; height: 64px; }
+}
+@container cafe-frame (max-width: 600px) {
+  .game-cafe { padding: max(9px, env(safe-area-inset-top)) 10px max(24px, env(safe-area-inset-bottom)); }
+  .game-cafe .cf-hud { padding-bottom: 10px; gap: 6px; }
+  .game-cafe .cf-hud .hud-pill { font-size: 11px; padding-inline: 9px; }
+  .game-cafe .cf-sign { height: 300px; border-radius: 22px 22px 0 0; background-position: center; }
+  .game-cafe .cf-sign-copy { margin-top: 28px; padding: 10px 18px; }
+  .game-cafe .cf-sign h1 { font-size: 29px; }
+  .game-cafe .cf-sign p { font-size: 12px; }
+  .game-cafe .cf-chef-badge { width: 72px; right: 10px; bottom: 10px; font-size: 10px; border-radius: 15px; }
+  .game-cafe .cf-chef { width: 58px; height: 64px; }
+  .game-cafe .cf-intro { padding: 16px 12px; }
+  .game-cafe .cf-howto { gap: 9px; padding-bottom: 16px; }
+  .game-cafe .cf-howto-step strong { font-size: 12px; margin-bottom: 4px; }
+  .game-cafe .cf-howto-step span:not(.cf-prop) { font-size: 10px; }
+  .game-cafe .cf-levels { gap: 7px; }
+  .game-cafe .cf-level { text-align: center; padding: 10px 4px; }
+  .game-cafe .cf-level .cf-level-number { position: static; margin: 0 auto 8px; }
+  .game-cafe .cf-level strong { font-size: 14px; }
+  .game-cafe .cf-level span { font-size: 10px; }
+  .game-cafe .cf-start { min-width: min(270px, 100%); }
+  .game-cafe .cf-theme { min-width: 90px; padding-inline: 7px; }
+  .game-cafe .cf-service { padding: 25px 12px 15px; border-radius: 20px; }
+  .game-cafe .cf-shop-bar { gap: 5px; }
+  .game-cafe .cf-shop-bar > div { font-size: 17px; }
+  .game-cafe .cf-shop-bar > .cf-muted { font-size: 10px; }
+  .game-cafe .cf-queue { gap: 11px; margin: 14px 0; }
+  .game-cafe .cf-queue img { width: 35px; height: 35px; }
+  .game-cafe .cf-steps { gap: 7px; margin-bottom: 18px; }
+  .game-cafe .cf-steps li { flex-wrap: wrap; padding: 7px 2px; gap: 4px; border-radius: 12px; font-size: 11px; }
+  .game-cafe .cf-steps .cf-prop { width: 40px; height: 40px; }
+  .game-cafe .cf-steps strong { flex: 0 0 100%; font-weight: 400; }
+  .game-cafe .cf-step-number { width: 17px; height: 17px; font-size: 10px; }
+  .game-cafe .cf-service-layout { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .game-cafe .cf-customer { position: static; display: flex; align-items: center; gap: 9px; }
+  .game-cafe .cf-guest-portrait { flex: 0 0 70px; }
+  .game-cafe .cf-pet { width: 70px; height: 96px; }
+  .game-cafe .cf-speech { flex: 1; min-width: 0; padding: 12px; }
+  .game-cafe .cf-speech::before { top: 30px; left: -10px; border-top: 0; border-bottom: 2px solid var(--cf-line); }
+  .game-cafe .cf-ticket-label { font-size: 10px; margin-bottom: 7px; padding-bottom: 6px; }
+  .game-cafe .cf-customer-name { font-size: 13px; }
+  .game-cafe .cf-order { font-size: 16px; margin: 5px 0 9px; }
+  .game-cafe .cf-recipe { font-size: 17px; padding: 5px 9px; }
+  .game-cafe .cf-order-tools { gap: 5px; }
+  .game-cafe .cf-order-tools button { padding: 5px 8px; font-size: 11px; }
+  .game-cafe .cf-work { padding: 17px 11px; }
+  .game-cafe .cf-work h2 { font-size: 21px; }
+  .game-cafe .cf-toppings { gap: 6px; }
+  .game-cafe .cf-toppings button { font-size: 12px; gap: 5px; padding: 8px; }
+  .game-cafe .cf-oven-action { gap: 10px; padding-inline: 0; }
+  .game-cafe .cf-oven-action .cf-prop { width: 80px; height: 80px; }
+  .game-cafe .cf-oven-action p { font-size: 11px; }
+  .game-cafe .cf-main { padding: 12px 17px; font-size: 16px; }
+  .game-cafe .cf-bill { gap: 6px; }
+  .game-cafe .cf-bill > div { padding: 10px 4px; }
+  .game-cafe .cf-bill b { font-size: 25px; }
+  .game-cafe .cf-bill span { font-size: 11px; }
+  .game-cafe .cf-bill small { font-size: 9px; }
+  .game-cafe .cf-coins { gap: 12px; }
+  .game-cafe .cf-coin { width: 56px; height: 56px; font-size: 17px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .game-cafe .cf-served .cf-pet { animation: cf-happy .55s ease-out; }
+  .game-cafe .cf-baking > .cf-prop { animation: cf-warm .7s ease-in-out infinite alternate; }
+  @keyframes cf-happy { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-12px) rotate(-5deg); } }
+  @keyframes cf-warm { from { filter: brightness(1); } to { filter: brightness(1.1) drop-shadow(0 0 10px #ffb55255); } }
+}
+/* Phone: keep the entire active task and its action inside the visible screen. */
+@container cafe-frame (max-width: 600px) {
+  .game-cafe { height: 100dvh; min-height: 0; overflow: hidden; padding: max(6px, env(safe-area-inset-top)) 8px max(6px, env(safe-area-inset-bottom)); }
+  .game-cafe .cf-shell { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+  .game-cafe .cf-hud { flex: 0 0 auto; padding: 0 2px 6px; --hud-size: 40px; --hud-pill-h: 30px; }
+  .game-cafe .cf-sign { flex: 0 0 clamp(145px, 28dvh, 240px); height: auto; background-position: center 65%; border-width: 2px; }
+  .game-cafe .cf-sign-copy { margin-top: 12px; padding: 7px 14px; }
+  .game-cafe .cf-sign h1 { font-size: clamp(23px, 6.5vw, 29px); margin: 3px 0; }
+  .game-cafe .cf-sign .cf-welcome { font-size: 10px; }
+  .game-cafe .cf-sign p { font-size: 10px; }
+  .game-cafe .cf-chef-badge { width: 58px; bottom: 6px; right: 6px; padding: 2px; font-size: 9px; }
+  .game-cafe .cf-chef { width: 48px; height: 52px; }
+  .game-cafe .cf-intro, .game-cafe .cf-summary { flex: 1; min-height: 0; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-evenly; }
+  .game-cafe .cf-howto { gap: 5px; padding-bottom: 8px; }
+  .game-cafe .cf-howto-step { gap: 3px; }
+  .game-cafe .cf-howto-step .cf-prop { width: 42px; height: 42px; }
+  .game-cafe .cf-howto-step strong { font-size: 11px; margin: 0; }
+  .game-cafe .cf-howto-step span:not(.cf-prop) { display: none; }
+  .game-cafe .cf-level-title { font-size: 16px; margin: 8px 0; }
+  .game-cafe .cf-levels { width: 100%; margin: 0 0 10px; }
+  .game-cafe .cf-level { min-height: 72px; padding: 7px 3px; }
+  .game-cafe .cf-level .cf-level-number { width: 20px; height: 20px; font-size: 12px; margin-bottom: 4px; }
+  .game-cafe .cf-level strong { font-size: 13px; margin-bottom: 4px; }
+  .game-cafe .cf-level span { font-size: 9px; }
+  .game-cafe .cf-start { align-self: center; min-height: 46px; width: 90%; padding: 10px; }
+  .game-cafe .cf-gentle, .game-cafe .cf-saved { margin: 6px 0; font-size: 10px; }
+  .game-cafe .cf-decorations { margin-top: 5px; padding-top: 8px; }
+  .game-cafe .cf-decorations h2 { margin-bottom: 5px; font-size: 12px; }
+  .game-cafe .cf-theme { min-width: 0; flex: 1; min-height: 44px; padding: 5px; font-size: 10px; }
+  .game-cafe .cf-theme::before { height: 7px; margin-bottom: 3px; }
+  .game-cafe .cf-decorations > .cf-muted { margin: 5px 0 0; font-size: 9px; }
+  .game-cafe .cf-service { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 19px 10px 10px; }
+  .game-cafe .cf-service::before { height: 8px; }
+  .game-cafe .cf-shop-bar { margin-bottom: 4px; min-height: 22px; }
+  .game-cafe .cf-shop-bar > div { font-size: 14px; gap: 6px; }
+  .game-cafe .cf-shop-mark { width: 23px; height: 23px; font-size: 15px; }
+  .game-cafe .cf-queue { gap: 9px; margin: 3px 0 7px; }
+  .game-cafe .cf-queue img { width: 26px; height: 26px; padding: 1px; }
+  .game-cafe .cf-steps { gap: 6px; margin-bottom: 8px; flex: 0 0 auto; }
+  .game-cafe .cf-steps li { flex-wrap: nowrap; gap: 4px; padding: 4px 3px; min-height: 44px; font-size: 10px; }
+  .game-cafe .cf-steps .cf-prop { width: 27px; height: 27px; }
+  .game-cafe .cf-steps strong { flex: 1; font-size: 10px; text-align: left; }
+  .game-cafe .cf-step-number { display: none; }
+  .game-cafe .cf-service-layout { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+  .game-cafe .cf-customer { flex: 0 0 auto; gap: 8px; width: 100%; }
+  .game-cafe .cf-guest-portrait { flex-basis: 50px; }
+  .game-cafe .cf-pet { width: 50px; height: 65px; }
+  .game-cafe .cf-speech { padding: 8px 10px; border-radius: 12px; }
+  .game-cafe .cf-ticket-label { display: none; }
+  .game-cafe .cf-customer-name { font-size: 11px; }
+  .game-cafe .cf-order { font-size: 13px; line-height: 1.3; margin: 3px 0 5px; }
+  .game-cafe .cf-order-tools { gap: 5px; }
+  .game-cafe .cf-recipe { font-size: 14px; padding: 4px 8px; }
+  .game-cafe .cf-order-tools button { min-height: 32px; font-size: 10px; padding: 4px 9px; }
+  .game-cafe .cf-translation { margin: 5px 0 0; font-size: 10px; line-height: 1.3; }
+  .game-cafe .cf-voice-status { margin: 4px 0 0; font-size: 10px; }
+  .game-cafe .cf-work { flex: 1; min-height: 0; position: relative; width: 100%; padding: 10px; display: flex; flex-direction: column; border-radius: 15px; }
+  .game-cafe .cf-work > .cf-eyebrow { display: none; }
+  .game-cafe .cf-work h2 { font-size: 17px; line-height: 1.2; margin: 0 0 5px; }
+  .game-cafe .cf-work-order { margin: 0 auto 6px; font-size: 11px; padding: 4px 10px; }
+  .game-cafe .cf-cutters { gap: 6px; margin-bottom: 6px; }
+  .game-cafe .cf-cutters button { min-height: 34px; padding: 6px 12px; font-size: 10px; }
+  .game-cafe .cf-pizza-station { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 94px; gap: 8px; align-items: center; }
+  .game-cafe .cf-prep-board { height: 100%; max-height: 260px; min-height: 0; max-width: none; padding: 7px 4px 5px; border-width: 3px; border-radius: 26px; display: flex; flex-direction: column; justify-content: center; }
+  .game-cafe .cf-board-note { font-size: 9px; margin: 0; flex: 0 0 auto; }
+  .game-cafe .cf-pizza-wrap { flex: 1; min-height: 0; width: 100%; margin: 3px auto; }
+  .game-cafe .cf-pizza-wrap .cf-pizza { height: 100%; width: 100%; }
+  .game-cafe .cf-selected { flex: 0 0 auto; padding: 4px; margin: 0; font-size: 9px; line-height: 1.3; }
+  .game-cafe .cf-ingredients { margin: 0; padding: 8px 6px; border-radius: 12px; }
+  .game-cafe .cf-ingredients h3 { font-size: 12px; }
+  .game-cafe .cf-topping-note { display: none; }
+  .game-cafe .cf-toppings { flex-direction: column; gap: 6px; margin: 7px 0; }
+  .game-cafe .cf-toppings button { min-height: 44px; font-size: 11px; gap: 4px; padding: 6px 5px; }
+  .game-cafe .cf-toppings svg { width: 21px; height: 21px; }
+  .game-cafe .cf-whole-price { font-size: 9px; margin: 0; }
+  .game-cafe .cf-oven-action { flex: 0 0 auto; gap: 9px; padding: 0; margin-top: 8px; }
+  .game-cafe .cf-oven-action .cf-prop { width: 48px; height: 48px; }
+  .game-cafe .cf-oven-action > div { flex: 1; }
+  .game-cafe .cf-oven-action p { display: none; }
+  .game-cafe .cf-oven-action .cf-main { width: 100%; min-height: 44px; padding: 9px; font-size: 15px; }
+  .game-cafe .cf-work > .cf-actions { margin-top: 6px; }
+  .game-cafe .cf-help { min-height: 30px; font-size: 10px; padding: 4px 12px; }
+  .game-cafe .cf-feedback { position: absolute; z-index: 2; left: 8px; right: 8px; bottom: 63px; margin: 0; padding: 12px; font-size: 12px; line-height: 1.5; box-shadow: 0 8px 22px #674a3d30; }
+  .game-cafe .cf-feedback svg { width: 88px; margin: 7px auto; }
+  .game-cafe .cf-feedback-close { display: block; margin: 8px auto 0; min-height: 36px; padding: 6px 14px; font-size: 12px; }
+  .game-cafe .cf-checkout-heading { gap: 8px; margin-bottom: 5px; }
+  .game-cafe .cf-checkout-heading .cf-prop { width: 40px; height: 40px; }
+  .game-cafe .cf-checkout-heading .cf-eyebrow { font-size: 10px; margin-bottom: 2px; }
+  .game-cafe .cf-checkout-heading h2 { margin: 0; }
+  .game-cafe .cf-bill { gap: 5px; margin: 0 0 7px; }
+  .game-cafe .cf-bill > div { padding: 6px 3px; border-radius: 9px; }
+  .game-cafe .cf-bill b { font-size: 22px; margin: 3px 0; }
+  .game-cafe .cf-bill span { font-size: 10px; }
+  .game-cafe .cf-bill small { display: none; }
+  .game-cafe .cf-checkout-pizza { width: 42px; }
+  .game-cafe .cf-ready-pizza span { font-size: 8px; margin-top: 1px; }
+  .game-cafe .cf-tray { flex: 1; min-height: 78px; padding: 8px; border-width: 3px; border-radius: 17px; display: flex; flex-direction: column; justify-content: center; }
+  .game-cafe .cf-tray > .cf-muted { font-size: 10px; }
+  .game-cafe .cf-tray-total { font-size: 24px; margin: 3px 0 6px; }
+  .game-cafe .cf-empty-tray { font-size: 10px; }
+  .game-cafe .cf-tray-coins { gap: 4px; }
+  .game-cafe .cf-tray-coins button { min-width: 36px; min-height: 36px; font-size: 11px; }
+  .game-cafe .cf-coins { gap: 13px; margin: 10px 0 5px; }
+  .game-cafe .cf-coin { width: 46px; height: 46px; font-size: 15px; }
+  .game-cafe .cf-work > .cf-muted { font-size: 9px; margin: 3px 0; }
+  .game-cafe .cf-undo, .game-cafe .cf-clear { min-height: 34px; font-size: 11px; padding: 5px 10px; }
+  .game-cafe .cf-deliver-action { margin-top: 7px; padding-top: 0; }
+  .game-cafe .cf-deliver-action > p { display: none; }
+  .game-cafe .cf-deliver-action .cf-actions { margin-top: 7px; flex-wrap: nowrap; gap: 6px; align-items: center; }
+  .game-cafe .cf-deliver-action .cf-main { flex: 1; min-height: 44px; padding: 9px 7px; font-size: 14px; }
+  .game-cafe .cf-served, .game-cafe .cf-baking { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; }
+  .game-cafe .cf-served .cf-pet { width: min(140px, 20dvh); height: min(140px, 20dvh); }
+  .game-cafe .cf-served h2, .game-cafe .cf-baking h2 { font-size: 22px; margin: 10px 0; }
+  .game-cafe .cf-mini-pizza { width: 70px; margin: -10px auto 5px; }
+  .game-cafe .cf-receipt { font-size: 12px; padding: 12px; margin: 8px auto 18px; width: 100%; }
+  .game-cafe .cf-baking > .cf-prop { width: min(230px, 33dvh); height: min(230px, 33dvh); margin: 0 auto; }
+  .game-cafe .cf-baking-pizza { width: 80px; margin: -10px auto 5px; }
+  .game-cafe .cf-summary-pets { gap: 5px; }
+  .game-cafe .cf-summary-pets img { width: 40px; height: 44px; }
+  .game-cafe .cf-summary > h2 { font-size: 21px; margin: 6px 0; }
+  .game-cafe .cf-summary > p { font-size: 10px; margin: 4px 0; }
+  .game-cafe .cf-stars { margin: 5px 0; }
+  .game-cafe .cf-stars .ui-icon { --icon-size: 28px; }
+  .game-cafe .cf-summary .cf-actions { margin-top: 6px; gap: 7px; flex-wrap: nowrap; }
+  .game-cafe .cf-summary .cf-main, .game-cafe .cf-summary .cf-small { min-height: 44px; padding: 7px 12px; font-size: 12px; }
+}
+@media (max-height: 700px) {
+@container cafe-frame (max-width: 600px) {
+  .game-cafe .cf-sign { flex-basis: 23dvh; }
+  .game-cafe .cf-shop-bar > .cf-muted { display: none; }
+  .game-cafe .cf-shop-bar { margin: 0; min-height: 18px; }
+  .game-cafe .cf-queue { position: absolute; top: 15px; right: 10px; margin: 0; gap: 4px; }
+  .game-cafe .cf-queue img { width: 21px; height: 21px; }
+  .game-cafe .cf-steps { margin-top: 6px; margin-bottom: 6px; }
+  .game-cafe .cf-customer-name { display: none; }
+  .game-cafe .cf-order { font-size: 12px; }
+  .game-cafe .cf-speech { padding: 6px 9px; }
+  .game-cafe .cf-work { padding: 7px; }
+  .game-cafe .cf-work h2 { font-size: 15px; }
+  .game-cafe .cf-work-order { font-size: 10px; margin-bottom: 4px; }
+  .game-cafe .cf-cutters { margin-bottom: 4px; }
+  .game-cafe .cf-cutters button { min-height: 30px; padding: 4px 10px; }
+  .game-cafe .cf-pizza-station { grid-template-columns: minmax(0, 1fr) 88px; }
+  .game-cafe .cf-board-note { display: none; }
+  .game-cafe .cf-ingredients { padding: 5px; }
+  .game-cafe .cf-toppings { gap: 4px; margin: 5px 0; }
+  .game-cafe .cf-toppings button { min-height: 38px; }
+  .game-cafe .cf-oven-action { margin-top: 6px; }
+  .game-cafe .cf-work > .cf-actions { margin-top: 3px; }
+  .game-cafe .cf-bill { margin-bottom: 5px; }
+  .game-cafe .cf-checkout-heading .cf-prop { width: 32px; height: 32px; }
+  .game-cafe .cf-coins { margin-top: 7px; }
+  .game-cafe .cf-tray-coins button { min-width: 32px; min-height: 32px; }
+}
+}
+@media (max-height: 700px) {
+@container cafe-frame (max-width: 600px) {
+  .game-cafe .cf-service[data-stage="pizza"] .cf-work > h2,
+  .game-cafe .cf-service[data-stage="pizza"] .cf-work-order { display: none; }
+  .game-cafe .cf-service[data-stage="pizza"] .cf-cutters { justify-content: flex-start; padding-right: 65px; }
+  .game-cafe .cf-service[data-stage="pizza"] .cf-work > .cf-actions { position: absolute; top: 7px; right: 7px; margin: 0; }
+  .game-cafe .cf-service[data-stage="pizza"] .cf-help { padding-inline: 7px; }
+}
+}
+@media (max-height: 600px) {
+@container cafe-frame (max-width: 600px) {
+  .game-cafe .cf-sign { flex-basis: 18dvh; }
+  .game-cafe .cf-sign-copy { margin-top: 8px; padding: 5px 13px; }
+  .game-cafe .cf-sign-copy p { display: none; }
+  .game-cafe .cf-howto-step .cf-prop { width: 32px; height: 32px; }
+  .game-cafe .cf-decorations > .cf-muted { display: none; }
+  .game-cafe .cf-shop-bar, .game-cafe .cf-queue { display: none; }
+  .game-cafe .cf-service { padding-top: 12px; }
+  .game-cafe .cf-steps { margin-top: 0; }
+}
+}
+.game-cafe .cf-coin-stack { position: relative; }
+.game-cafe .cf-coin-count { position: absolute; top: -6px; right: -7px; border-radius: 10px; background: #537b51; color: #fff; padding: 2px 4px; font: 700 10px system-ui, sans-serif; border: 1px solid #fff3d1; }
+.game-cafe .cf-tray-coins { gap: 12px; }
+@media (max-height: 700px) {
+@container cafe-frame (max-width: 600px) {
+  .game-cafe .cf-service[data-stage="money"] .cf-order-tools,
+  .game-cafe .cf-service[data-stage="money"] .cf-translation,
+  .game-cafe .cf-service[data-stage="money"] .cf-work > .cf-muted { display: none; }
+  .game-cafe .cf-service[data-stage="money"] .cf-bill > div { padding-block: 4px; }
+  .game-cafe .cf-service[data-stage="money"] .cf-ready-pizza span { display: none; }
+  .game-cafe .cf-service[data-stage="money"] .cf-tray { padding: 6px; }
+  .game-cafe .cf-service[data-stage="money"] .cf-tray > .cf-muted { font-size: 9px; }
+  .game-cafe .cf-service[data-stage="money"] .cf-tray-total { font-size: 21px; margin: 2px 0 4px; }
+}
+}

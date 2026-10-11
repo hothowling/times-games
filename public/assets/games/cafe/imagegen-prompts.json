@@ -1,0 +1,13 @@
+{
+  "mode": "built-in image_gen",
+  "assets": [
+    {
+      "file": "cafe-interior-v1.jpg",
+      "prompt": "Use case: illustration-story\nAsset type: wide illustrated hero backdrop for a children's Pet Pizza Café educational browser game, landscape 3:2.\nPrimary request: A beautiful inviting pizza café run for cute animal guests that makes children want to play. A handcrafted polished 2D storybook game illustration, rounded chunky shapes, charming detailed environment, warm cream, tomato red, sage green, honey wood, soft sunlight. The café has a mint-and-cream striped awning at the top, a sunny arched window with plants, a cozy red brick pizza oven at the right glowing warmly, a lovely wooden counter spanning the lower third. A delighted puppy, kitten and bunny peek over the counter in the center-left; a delicious cheese-and-tomato pizza sits on a ceramic plate on the counter, a little ingredient bowl and basil plant nearby. Tasteful bunting and a paw motif. Slightly overhead front view, generous open warm cream wall in the upper center for live UI title overlay; characters and objects mostly in the lower half. Rich clean illustrated shapes, soft painted shading, warm outlines, genuinely premium children's game art, readable at small size.\nConstraints: environment illustration only, no UI buttons, no text, no letters, no numbers, no watermark. No photorealism, no excessive tiny details."
+    },
+    {
+      "file": "cafe-props-v1.png",
+      "prompt": "Use case: stylized-concept\nAsset type: transparent game prop atlas for a children's Pet Pizza Café browser game.\nPrimary request: Three adorable polished 2D illustrated pizza cafe props, arranged in one horizontal row of THREE equally spaced square cells, equal cell widths. LEFT CELL: an order clipboard with blank cream paper, a little pizza-slice drawing and a friendly green checkmark, tomato-red clip. CENTER CELL: a cozy terracotta brick pizza oven with a rounded arch, soft warm golden fire, a pizza baking inside, and a wooden peel leaning beside it. RIGHT CELL: a cute sage-green retro cash register with big cream keys, a coin and a little paper receipt with NO writing, warm wood base. Each complete object isolated in its own cell with generous clear margins, baseline aligned, no objects crossing between cells. Cohesive warm storybook illustration with soft painted shading, chunky rounded forms, rich honey and cream colors, fine warm brown outlines, legible at 100px. Match an inviting illustrated animal pizza café mood.\nComposition: wide 3:1 aspect ratio, three equal square cells, all props centered in their cells.\nConstraints: real transparent background; NO text, NO letters, NO digits, NO cell borders, NO labels, NO people, NO watermark."
+    }
+  ]
+}

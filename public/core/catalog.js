@@ -171,7 +171,7 @@ export const UPGRADE_REWARD = 30;
 /* 설치 안내 팝업의 '다음에': 이만큼 지나면 다시 보여 줍니다. */
 export const INSTALL_SNOOZE_MS = 3 * 864e5;
 
-export const GAMES = ['master', 'blocks', 'shooter', 'classroom', 'capitals', 'defense', 'wordmatch'];
+export const GAMES = ['master', 'blocks', 'shooter', 'classroom', 'capitals', 'defense', 'wordmatch', 'cafe'];
 
 export const isPhotoKey = (key) => /^p\d+$/.test(key);
 

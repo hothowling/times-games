@@ -156,6 +156,25 @@ test('static files stay inside public/', async () => {
   assert.equal((await fetch(base + '/core/catalog.js')).status, 200);
 });
 
+test('Pet Pizza Café stores progress, rewards a completed day and appears in rankings', async () => {
+  const a = client();
+  await a('POST', '/api/signup', { nickname: 'cafeKid', pin: '2468' });
+  assert.equal((await a('GET', '/api/progress/cafe')).body.data, null);
+  const data = { version: 1, served: 6, days: 1, best: 600, level: 1, theme: 'sunset', skills: { half: { tries: 2, clean: 2 } } };
+  assert.equal((await a('PUT', '/api/progress/cafe', { data })).status, 200);
+  assert.deepEqual((await a('GET', '/api/progress/cafe')).body.data, data);
+  const play = { game: 'cafe', roundKey: 'cafe-day-1', stars: 3, score: 600, detail: { level: 1, served: 6, clean: 6 } };
+  const earned = await a('POST', '/api/plays', play);
+  assert.equal(earned.status, 200);
+  assert.equal(earned.body.earned, 10);
+  assert.equal((await a('POST', '/api/plays', play)).body.sparkles, 10, 'duplicate day does not reward twice');
+  assert.equal((await a('GET', '/api/ranking?board=cafe&period=all')).body.me.value, 600);
+  assert.equal((await a('GET', '/api/records')).body.plays[0].game, 'cafe');
+  const thumbnail = await fetch(base + '/assets/thumbs/cafe.svg');
+  assert.equal(thumbnail.status, 200);
+  assert.match(thumbnail.headers.get('content-type'), /image\/svg\+xml/);
+});
+
 test('admin: off without password, Basic auth, PIN reset', async () => {
   assert.equal((await fetch(base + '/admin/')).status, 404, 'disabled when ADMIN_PASSWORD is unset');
 
