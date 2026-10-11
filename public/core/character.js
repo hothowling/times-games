@@ -2,7 +2,7 @@
  * character.js - 캐릭터 그리기. 모든 화면과 게임이 이것 하나로 캐릭터를 보여 줍니다.
  *
  *   const c = createCharacter(el, look, { body: true })
- *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'angie'|'bs'|'photo', equipped: { outfit, head, face, back, pet } }
+ *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'angie'|'bs'|'dimsum'|'photo', equipped: { outfit, head, face, back, pet } }
  *     body: false 면 얼굴만(머리 장식·안경은 그대로) 그립니다.
  *   c.react('correct'|'wrong'|'timeout'|'clear'|'fail'|'idle')   표정 + 동작
  *   c.expression('neutral'|'happy'|'angry'|'surprised'|'sad')     표정만 바꾸기(다음 react 전까지 유지)
@@ -61,6 +61,13 @@ export const RIGS = {
     headY: -83, headW: 190, headAngle: 0, clipY: 6,
     glassesY: 65.8, glassesW: 114, glassesScale: 1.1,
     bow: { headY: -47, headW: 135 }
+  },
+  /* 만두: 최종 정사각형 셀의 눈–턱 거리와 눈 중심을 수지에 맞춘 공통 배율. */
+  dimsum: {
+    ...BASE_RIG, faceX: '46.8%', faceY: -67, faceW: 262.5, faceH: 262.5,
+    headX: '46%', headY: -114, headW: 218, headAngle: 0, clipY: -24,
+    glassesX: '45.1%', glassesY: 59.2, glassesW: 139, glassesScale: 1.1, glassesAngle: -7.2,
+    bow: { headY: -76, headW: 155 }
   },
   /* 사진 캐릭터: 정사각형 칸, 눈이 칸의 54% 높이(core/maker.js 의 EYE_Y) */
   photo: { ...BASE_RIG, faceY: 2, faceW: 200, faceH: 200, headY: -70, glassesY: 75, glassesW: 128, bow: { headY: -34, headW: 140 } }

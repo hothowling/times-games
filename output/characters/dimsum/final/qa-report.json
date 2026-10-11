@@ -1,0 +1,197 @@
+{
+  "source_size": [
+    2048,
+    768
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "adjacent_head_gaps_px": [
+    171,
+    181,
+    178,
+    175
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      410,
+      768
+    ],
+    [
+      410,
+      0,
+      409,
+      768
+    ],
+    [
+      819,
+      0,
+      410,
+      768
+    ],
+    [
+      1229,
+      0,
+      409,
+      768
+    ],
+    [
+      1638,
+      0,
+      410,
+      768
+    ]
+  ],
+  "normalized": true,
+  "common_transform": {
+    "scale": 1.248780487804878,
+    "size": [
+      512,
+      959
+    ],
+    "offset": [
+      0,
+      0
+    ]
+  },
+  "common_margin_padding": {
+    "requested": true,
+    "applied": true,
+    "scale": 0.9109947643979057,
+    "target_side_px": 80,
+    "target_vertical_px": 64,
+    "size": [
+      466,
+      875
+    ],
+    "offset": [
+      23,
+      42
+    ]
+  },
+  "structural_pass": true,
+  "semantic_review_required": true,
+  "minimum_margins_px": {
+    "left": 64,
+    "right": 64,
+    "top": 32,
+    "bottom": 32
+  },
+  "errors": [],
+  "warnings": [
+    "Input width is not divisible by five; rounded cell boundaries differ by at most one pixel"
+  ],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        87,
+        258,
+        423,
+        682
+      ],
+      "transparent_margins_px": {
+        "left": 87,
+        "right": 89,
+        "top": 258,
+        "bottom": 278
+      },
+      "transparent_fraction": 0.7754536946614583,
+      "visible_fraction": 0.21094767252604166
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        82,
+        257,
+        420,
+        676
+      ],
+      "transparent_margins_px": {
+        "left": 82,
+        "right": 92,
+        "top": 257,
+        "bottom": 284
+      },
+      "transparent_fraction": 0.7792378743489583,
+      "visible_fraction": 0.20886433919270833,
+      "silhouette_iou_vs_neutral": 0.9574,
+      "max_bounds_drift_fraction": 0.0098
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        89,
+        257,
+        422,
+        675
+      ],
+      "transparent_margins_px": {
+        "left": 89,
+        "right": 90,
+        "top": 257,
+        "bottom": 285
+      },
+      "transparent_fraction": 0.779718017578125,
+      "visible_fraction": 0.20707804361979168,
+      "silhouette_iou_vs_neutral": 0.9657,
+      "max_bounds_drift_fraction": 0.0073
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        88,
+        257,
+        427,
+        678
+      ],
+      "transparent_margins_px": {
+        "left": 88,
+        "right": 85,
+        "top": 257,
+        "bottom": 282
+      },
+      "transparent_fraction": 0.7759012858072917,
+      "visible_fraction": 0.210125732421875,
+      "silhouette_iou_vs_neutral": 0.9514,
+      "max_bounds_drift_fraction": 0.0078
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        90,
+        257,
+        428,
+        676
+      ],
+      "transparent_margins_px": {
+        "left": 90,
+        "right": 84,
+        "top": 257,
+        "bottom": 284
+      },
+      "transparent_fraction": 0.7767903645833333,
+      "visible_fraction": 0.21221516927083334,
+      "silhouette_iou_vs_neutral": 0.9491,
+      "max_bounds_drift_fraction": 0.0098
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ],
+  "manual_review": {
+    "expression_order": "neutral / happy / angry / surprised / crying visually confirmed",
+    "head_only": true,
+    "identity_style": "photo-based high bun and face; consistent stylized character across five expressions",
+    "remaining_issue": "Red/yellow fringe artifacts visible at hair/ear/chin edges. Two image_gen corrections did not remove them. Kept structurally valid spaced version; latest redraw rejected for original cell boundary contact.",
+    "game_integration": false
+  }
+}

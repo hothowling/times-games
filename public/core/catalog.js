@@ -4,7 +4,7 @@
  */
 
 /* 프리셋 캐릭터. 모든 계정에 항상 보입니다. 사진 캐릭터 키는 'p<id>' 입니다. */
-export const PRESETS = ['sooji', 'jiho', 'nayeon', 'angie', 'bs'];
+export const PRESETS = ['sooji', 'jiho', 'nayeon', 'angie', 'bs', 'dimsum'];
 
 /* 의상 선택이 없으면 렌더러가 기본 흰색 티셔츠를 그립니다. */
 export const SLOTS = ['outfit', 'head', 'face', 'back', 'pet'];

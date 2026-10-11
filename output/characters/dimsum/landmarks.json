@@ -1,0 +1,7 @@
+{
+  "frame": [512, 512],
+  "left_eye": [192, 325],
+  "right_eye": [303, 311],
+  "chin": [254, 466],
+  "notes": "Manually reviewed runtime-neutral.png with runtime-coordinates.png. Eye centers and skin chin on the final shared square crop; preserve photo-based slight eye-line angle."
+}

@@ -1,0 +1,22 @@
+{
+  "shared_crop": [
+    0,
+    214,
+    512,
+    726
+  ],
+  "size": [
+    2560,
+    512
+  ],
+  "outside_max_alpha": 1,
+  "order": [
+    "neutral",
+    "happy",
+    "angry",
+    "surprised",
+    "sad"
+  ],
+  "sad_source": "crying",
+  "source": "final/character_expression_sheet.png"
+}

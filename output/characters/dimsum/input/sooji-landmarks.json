@@ -1,0 +1,8 @@
+{
+  "frame": [512, 512],
+  "left_eye": [188, 268],
+  "right_eye": [282, 251],
+  "chin": [242, 389],
+  "rig": {"faceW": 300, "faceH": 300, "faceY": -56, "faceX_px": 125, "boxW": 250},
+  "notes": "Manual review of actual Sooji runtime neutral: chin is skin tip, not pigtail ends. Apply its vertical anchors and scale; level front-facing characters keep eye midpoint at body center x125."
+}

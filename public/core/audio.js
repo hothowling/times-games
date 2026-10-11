@@ -8,21 +8,34 @@
   const global = globalThis;
 
   var ctx = null;
+  var unlockedCtx = null;
   var soundOn = true;
   var ttsOn = true;
   var speaking = false;
   var speakToken = 0;
 
   function ensureCtx() {
-    if (ctx) return ctx;
-    var Ctor = global.AudioContext || global.webkitAudioContext;
-    if (!Ctor) return null;
-    try {
-      ctx = new Ctor();
-    } catch (e) {
-      ctx = null;
+    if (!ctx || ctx.state === 'closed') {
+      var Ctor = global.AudioContext || global.webkitAudioContext;
+      if (!Ctor) return null;
+      try {
+        ctx = new Ctor();
+      } catch (e) {
+        ctx = null;
+      }
     }
+    /* 직접 context()를 쓰는 게임과 효과음도 대기에서 돌아오면 같은 컨텍스트를 깨웁니다. */
+    resumeContext(ctx);
     return ctx;
+  }
+
+  function resumeContext(c) {
+    if (!soundOn || !c || (c.state !== 'suspended' && c.state !== 'interrupted') || !c.resume) return;
+    try {
+      var p = c.resume();
+      /* 자동 재개가 거절되면 다음 사용자 입력에서 다시 시도합니다. */
+      if (p && typeof p.catch === 'function') p.catch(function () {});
+    } catch (e) { /* 다음 입력에서 다시 시도 */ }
   }
 
   /* 하나의 음을 냅니다. at 은 지금부터 몇 초 뒤에 시작할지입니다. */
@@ -49,19 +62,15 @@
   }
 
   function resume() {
-    var c = ensureCtx();
-    if (c && c.state === 'suspended' && c.resume) {
-      try { c.resume(); } catch (e) { /* 무시 */ }
-    }
+    ensureCtx();
   }
 
   /*
-   * 첫 사용자 탭에서 호출합니다.
+   * 첫 사용자 탭과 대기 후 다시 누르는 순간에 호출합니다.
    * iOS 는 사용자 탭 안에서 컨텍스트를 깨우고 소리를 한 번 내야 이후 재생이 풀립니다.
    * 그래서 1샘플짜리 무음 버퍼를 한 번 재생합니다.
    */
   function unlock() {
-    resume();
     var c = ensureCtx();
     if (!c) return;
     try {
@@ -70,6 +79,7 @@
       src.buffer = buf;
       src.connect(c.destination);
       src.start(0);
+      unlockedCtx = c;
     } catch (e) { /* 무시 */ }
   }
 
@@ -478,9 +488,8 @@
       items.push(clip);
     }
     if (!items.length) return skip();
-    var c = ctx;
+    var c = (allBuffers || ctx) ? ensureCtx() : null;
     if (allBuffers && !c) return skip();
-    if (c) resume();
     var rate = opts.rate || DEFAULT_RATE;
     var delay = Math.max(0, Number(opts.delay) || 0);
     speaking = true;
@@ -596,7 +605,6 @@
       stopSpeak();
       var c = hasCtxCtor ? ensureCtx() : null;
       if (!c) { res(false); return; }
-      resume();
       var src = null;
       var timer = null;
       var settled = false;
@@ -618,6 +626,9 @@
       loadClip(url).then(function (buf) {
         if (settled) return;
         if (!buf) { finish(false); return; }
+        /* 로딩 중 대기하거나 컨텍스트가 닫혔을 수도 있습니다. 캐시한 버퍼는 계속 씁니다. */
+        c = ensureCtx();
+        if (!c) { finish(false); return; }
         try {
           src = c.createBufferSource();
           src.buffer = buf;
@@ -698,6 +709,37 @@
       u.volume = 0;
       synth.speak(u);
     } catch (e) { /* 무시 */ }
+  }
+
+  /* 화면 잠금·앱 전환·뒤로 가기 후 자동 재개를 시도하고, 막히면 다음 입력에서 풉니다. */
+  var doc = global.document;
+  var win = global.window;
+
+  function recoverAudio() {
+    if (!soundOn || (doc && doc.hidden)) return;
+    /* 첫 입력 전 화면 복귀만으로 컨텍스트를 만들지는 않습니다. */
+    if (ctx) resume();
+    if (synth && synth.paused && synth.resume) {
+      try { synth.resume(); } catch (e) { /* 다음 입력에서 다시 시도 */ }
+    }
+  }
+
+  function recoverOnInput() {
+    if (!soundOn || (doc && doc.hidden)) return;
+    if (!ctx || unlockedCtx !== ctx || ctx.state !== 'running') unlock();
+    recoverAudio();
+  }
+
+  if (doc && doc.addEventListener) {
+    doc.addEventListener('visibilitychange', recoverAudio);
+    /* 캡처 단계에서 게임의 입력 처리보다 먼저 깨웁니다. touchend는 iOS 사용자 활성화용입니다. */
+    doc.addEventListener('pointerdown', recoverOnInput, { capture: true, passive: true });
+    doc.addEventListener('touchend', recoverOnInput, { capture: true, passive: true });
+    doc.addEventListener('keydown', recoverOnInput, true);
+  }
+  if (win && win.addEventListener) {
+    win.addEventListener('pageshow', recoverAudio);
+    win.addEventListener('focus', recoverAudio);
   }
 
   export const audio = {

@@ -1,0 +1,24 @@
+{
+  "source_size": [
+    916,
+    1717
+  ],
+  "source_bounds": [
+    108,
+    342,
+    830,
+    1299
+  ],
+  "output_size": [
+    512,
+    960
+  ],
+  "common_uniform_scale": 0.5589519650655022,
+  "margin_uniform_scale": 0.8365384615384616,
+  "margins": {
+    "left": 92,
+    "right": 82,
+    "top": 237,
+    "bottom": 274
+  }
+}

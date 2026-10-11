@@ -1,0 +1,16 @@
+{
+  "rig_candidate": {
+    "faceW": 262.5,
+    "faceH": 262.5,
+    "faceY": -66.9863,
+    "faceX": "46.8213%"
+  },
+  "eye_center_y": 96.0508,
+  "eye_center_x": 112.6953,
+  "rendered_eye_chin_distance": 75.87890625,
+  "eye_spacing_ratio_vs_reference": 1.0248061961785884,
+  "uniform_scale": 0.5126953125,
+  "warnings": [],
+  "manual_review_required": true,
+  "scope": "same transform for all five expressions; hairstyle is excluded from face-size calibration"
+}

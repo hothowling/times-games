@@ -280,8 +280,7 @@ async function boot() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   bindSettings();
   bus.addEventListener('change', renderTopbar);
-  /* iOS: 첫 터치에서 오디오를 깨웁니다. */
-  document.addEventListener('pointerdown', () => audio.unlock(), { once: true });
+  /* 첫 입력과 화면 복귀 시 오디오 깨우기는 core/audio.js에서 계속 처리합니다. */
   try {
     await loadMe();
   } catch {

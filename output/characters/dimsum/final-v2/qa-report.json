@@ -1,0 +1,192 @@
+{
+  "source_size": [
+    1983,
+    793
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "adjacent_head_gaps_px": [
+    31,
+    32,
+    33,
+    32
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      397,
+      793
+    ],
+    [
+      397,
+      0,
+      396,
+      793
+    ],
+    [
+      793,
+      0,
+      397,
+      793
+    ],
+    [
+      1190,
+      0,
+      396,
+      793
+    ],
+    [
+      1586,
+      0,
+      397,
+      793
+    ]
+  ],
+  "normalized": true,
+  "common_transform": {
+    "scale": 1.210592686002522,
+    "size": [
+      481,
+      960
+    ],
+    "offset": [
+      15,
+      0
+    ]
+  },
+  "common_margin_padding": {
+    "requested": true,
+    "applied": false,
+    "scale": 1.0,
+    "target_side_px": 80,
+    "target_vertical_px": 64
+  },
+  "structural_pass": false,
+  "semantic_review_required": true,
+  "minimum_margins_px": {
+    "left": 64,
+    "right": 64,
+    "top": 32,
+    "bottom": 32
+  },
+  "errors": [
+    "neutral: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "happy: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "angry: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "surprised: visible pixels touch original cell edge; check clipping or neighbor overlap",
+    "crying: visible pixels touch original cell edge; check clipping or neighbor overlap"
+  ],
+  "warnings": [
+    "Input width is not divisible by five; rounded cell boundaries differ by at most one pixel",
+    "happy: silhouette drift; inspect hair/jaw anchors and allow expression-related tears",
+    "angry: silhouette drift; inspect hair/jaw anchors and allow expression-related tears",
+    "surprised: silhouette drift; inspect hair/jaw anchors and allow expression-related tears",
+    "crying: silhouette drift; inspect hair/jaw anchors and allow expression-related tears"
+  ],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        38,
+        127,
+        496,
+        733
+      ],
+      "transparent_margins_px": {
+        "left": 38,
+        "right": 16,
+        "top": 127,
+        "bottom": 227
+      },
+      "transparent_fraction": 0.5634033203125,
+      "visible_fraction": 0.4111409505208333
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        15,
+        125,
+        495,
+        735
+      ],
+      "transparent_margins_px": {
+        "left": 15,
+        "right": 17,
+        "top": 125,
+        "bottom": 225
+      },
+      "transparent_fraction": 0.5544698079427083,
+      "visible_fraction": 0.41726888020833336,
+      "silhouette_iou_vs_neutral": 0.965,
+      "max_bounds_drift_fraction": 0.0449
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        15,
+        126,
+        494,
+        728
+      ],
+      "transparent_margins_px": {
+        "left": 15,
+        "right": 18,
+        "top": 126,
+        "bottom": 232
+      },
+      "transparent_fraction": 0.5585286458333333,
+      "visible_fraction": 0.41140543619791664,
+      "silhouette_iou_vs_neutral": 0.919,
+      "max_bounds_drift_fraction": 0.0449
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        15,
+        126,
+        495,
+        735
+      ],
+      "transparent_margins_px": {
+        "left": 15,
+        "right": 17,
+        "top": 126,
+        "bottom": 225
+      },
+      "transparent_fraction": 0.55384521484375,
+      "visible_fraction": 0.41541748046875,
+      "silhouette_iou_vs_neutral": 0.8755,
+      "max_bounds_drift_fraction": 0.0449
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        15,
+        126,
+        477,
+        725
+      ],
+      "transparent_margins_px": {
+        "left": 15,
+        "right": 35,
+        "top": 126,
+        "bottom": 235
+      },
+      "transparent_fraction": 0.55787353515625,
+      "visible_fraction": 0.4178548177083333,
+      "silhouette_iou_vs_neutral": 0.849,
+      "max_bounds_drift_fraction": 0.0449
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ]
+}
