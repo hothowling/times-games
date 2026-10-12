@@ -35,7 +35,8 @@ export const COSMETICS = {
   jersey: cos('outfit', 'outfits/09-sports-jersey.webp', 28, '7번 스포츠 저지', 'Number 7 Jersey'),
   magic: cos('outfit', 'outfits/10-magic-costume.webp', 40, '마법학교 제복', 'Magic Academy Uniform'),
   pinkFlowerDress: cos('outfit', 'outfits/12-pink-flower-dress.webp', 25, '핑크 플라워 드레스', 'Pink Flower Dress'),
-  purpleSunflowerDress: cos('outfit', 'outfits/13-purple-sunflower-dress.webp', 25, '해바라기 퍼플 드레스', 'Purple Sunflower Dress'),
+  purpleSunflowerDress: cos('outfit', 'outfits/13-purple-sunflower-dress.webp?v=purple-floral-20261012', 25, '퍼플 플라워 드레스', 'Purple Floral Dress'),
+  orangeFloralDress: cos('outfit', 'outfits/21-orange-floral-dress.webp', 25, '오렌지 플라워 드레스', 'Orange Floral Dress'),
   redCap: cos('head', 'red-cap.webp', 10, '빨간 모자', 'Red Cap'),
   catEars: cos('head', 'hats/01-cat-ears.webp', 15, '고양이 머리띠', 'Cat Ear Headband'),
   cowboyHat: cos('head', 'hats/02-cowboy-hat.webp', 20, '카우보이 모자', 'Cowboy Hat'),
@@ -86,6 +87,7 @@ export const COSMETICS = {
  */
 const BASE_DAY = '2026-10-03';
 const ADDED = {
+  '2026-10-12': ['purpleSunflowerDress', 'orangeFloralDress'],
   '2026-10-09b': ['boysRashguard', 'girlsRashguard', 'swimGoggles', 'beachBall', 'duckSwimRing', 'stripedSwimRing'],
   '2026-10-09': ['petPengualaBlue', 'petPengualaTurquoise', 'petPengualaPurple'],
   '2026-10-08': ['denimJacket', 'basketballUniform', 'juniorAstronaut', 'jungleExplorer',
@@ -93,7 +95,7 @@ const ADDED = {
   '2026-10-06b': ['strongBoy', 'catEars', 'cowboyHat', 'hardHat', 'propellerHat', 'chickenHat', 'watermelonHat',
     'batmanGlasses', 'heartGlasses', 'starGlasses', 'spiralGlasses', 'frogGlasses',
     'petPuppy', 'petKitten', 'petBunny', 'petHamster', 'petFox', 'petSteve', 'petAlex', 'petCreeper', 'petNoob', 'petBacon'],
-  '2026-10-06a': ['pinkFlowerDress', 'purpleSunflowerDress']
+  '2026-10-06a': ['pinkFlowerDress']
 };
 const LATEST_DAY = Object.keys(ADDED).sort().at(-1);
 for (const [day, ids] of Object.entries(ADDED)) for (const id of ids) COSMETICS[id].added = day;
