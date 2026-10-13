@@ -1,0 +1,38 @@
+[
+  {
+    "id": "petZebra",
+    "target": "public/assets/wearables/pets/14-zebra.webp",
+    "size": [
+      256,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "visibleBounds": [
+      57,
+      7,
+      233,
+      249
+    ]
+  },
+  {
+    "id": "petJellyfish",
+    "target": "public/assets/wearables/pets/15-jellyfish.webp",
+    "size": [
+      256,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "visibleBounds": [
+      36,
+      22,
+      222,
+      234
+    ]
+  }
+]

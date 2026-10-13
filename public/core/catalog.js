@@ -73,6 +73,8 @@ export const COSMETICS = {
   petPengualaBlue: cos('pet', 'pets/11-penguala-blue.webp', 30, 'Penguala 블루', 'Blue Penguala'),
   petPengualaTurquoise: cos('pet', 'pets/12-penguala-turquoise.webp', 30, 'Penguala 청록', 'Turquoise Penguala'),
   petPengualaPurple: cos('pet', 'pets/13-penguala-purple.webp', 30, 'Penguala 퍼플', 'Purple Penguala'),
+  petZebra: cos('pet', 'pets/14-zebra.webp', 25, '얼룩말 펫', 'Zebra Pet'),
+  petJellyfish: cos('pet', 'pets/15-jellyfish.webp', 25, '해파리 펫', 'Jellyfish Pet'),
   beachBall: cos('pet', 'props/01-beach-ball.webp', 15, '비치볼', 'Beach Ball', { style: 'prop', renderW: 110 }),
   duckSwimRing: cos('pet', 'props/02-duck-swim-ring.webp', 22, '오리 튜브', 'Duck Swim Ring', { style: 'prop', renderW: 130 }),
   stripedSwimRing: cos('pet', 'props/03-striped-swim-ring.webp', 18, '줄무늬 튜브', 'Striped Swim Ring', { style: 'prop', renderW: 120 })
@@ -87,6 +89,7 @@ export const COSMETICS = {
  */
 const BASE_DAY = '2026-10-03';
 const ADDED = {
+  '2026-10-13': ['petZebra', 'petJellyfish'],
   '2026-10-12': ['purpleSunflowerDress', 'orangeFloralDress'],
   '2026-10-09b': ['boysRashguard', 'girlsRashguard', 'swimGoggles', 'beachBall', 'duckSwimRing', 'stripedSwimRing'],
   '2026-10-09': ['petPengualaBlue', 'petPengualaTurquoise', 'petPengualaPurple'],
