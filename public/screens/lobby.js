@@ -42,10 +42,11 @@ export function render(view, { go, toast, errorText }) {
     h('section', { class: 'lobby-hero' }, hero,
       h('nav', { class: 'lobby-actions' },
         btn('ranking', 'ranking', 'ranking'), btn('characters', 'characters', 'chars'), btn('shop', 'shop', 'shop'), btn('records', 'records', 'records'),
-        /* 휴대폰 브라우저에서 아직 홈 화면 보상을 안 받았으면: 설치 안내(언제든 다시 볼 수 있게) */
-        guideAvailable() && !state.me.installRewarded
+        /* 휴대폰 브라우저(홈 화면 앱이 아닐 때)면 늘 보입니다. 보상을 이미 받은 계정(다른 기기에서 설치)은 +30 배지만 뺍니다. */
+        guideAvailable()
           ? h('button', { type: 'button', class: 'lobby-icon', 'aria-label': installText('installLobby'), onclick: () => openInstallGuide({ go, toast }) },
-            icon('home'), h('small', null, installText('installLobby')), h('b', { class: 'lobby-badge' }, '+' + INSTALL_REWARD))
+            icon('home'), h('small', null, installText('installLobby')),
+            state.me.installRewarded ? null : h('b', { class: 'lobby-badge' }, '+' + INSTALL_REWARD))
           : null)),
     /* 손님이면 계정 만들기를 권합니다(모은 것이 그대로 남음). */
     state.me.user.guest ? h('button', { type: 'button', class: 'guest-note', onclick: () => go('login?upgrade=1') },
