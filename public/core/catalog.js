@@ -7,8 +7,8 @@
 export const PRESETS = ['sooji', 'jiho', 'nayeon', 'angie', 'bs', 'dimsum'];
 
 /* 의상 선택이 없으면 렌더러가 기본 흰색 티셔츠를 그립니다. */
-export const SLOTS = ['outfit', 'head', 'face', 'back', 'pet'];
-export const DEFAULT_LOOK = { outfit: null, head: null, face: null, back: null, pet: null };
+export const SLOTS = ['outfit', 'head', 'face', 'mouth', 'back', 'pet'];
+export const DEFAULT_LOOK = { outfit: null, head: null, face: null, mouth: null, back: null, pet: null };
 export const BASE_OUTFIT = 'assets/wearables/outfits/11-white-tee.webp?v=hands-low-20261008';
 
 const W = 'assets/wearables/';
@@ -37,6 +37,7 @@ export const COSMETICS = {
   pinkFlowerDress: cos('outfit', 'outfits/12-pink-flower-dress.webp', 25, '핑크 플라워 드레스', 'Pink Flower Dress'),
   purpleSunflowerDress: cos('outfit', 'outfits/13-purple-sunflower-dress.webp?v=purple-floral-20261012', 25, '퍼플 플라워 드레스', 'Purple Floral Dress'),
   orangeFloralDress: cos('outfit', 'outfits/21-orange-floral-dress.webp', 25, '오렌지 플라워 드레스', 'Orange Floral Dress'),
+  yellowStarDress: cos('outfit', 'outfits/22-yellow-star-sleeveless-dress.webp', 25, '노란 별 민소매 드레스', 'Yellow Star Sleeveless Dress'),
   redCap: cos('head', 'red-cap.webp', 10, '빨간 모자', 'Red Cap'),
   catEars: cos('head', 'hats/01-cat-ears.webp', 15, '고양이 머리띠', 'Cat Ear Headband'),
   cowboyHat: cos('head', 'hats/02-cowboy-hat.webp', 20, '카우보이 모자', 'Cowboy Hat'),
@@ -60,6 +61,10 @@ export const COSMETICS = {
   spiralGlasses: cos('face', 'glasses/04-spiral-glasses.webp', 20, '빙글빙글 안경', 'Spiral Glasses'),
   frogGlasses: cos('face', 'glasses/05-frog-glasses.webp', 20, '개구리 안경', 'Frog Glasses'),
   swimGoggles: cos('face', 'glasses/06-swim-goggles.webp', 20, '수경', 'Swim Goggles'),
+  chocoChipCookie: cos('mouth', 'snacks/01-chocolate-chip-cookie.webp', 15, '초코칩 쿠키', 'Chocolate Chip Cookie', { renderW: 100 }),
+  pepero: cos('mouth', 'snacks/02-pepero.webp', 15, '빼빼로', 'Chocolate Biscuit Stick', { renderW: 130 }),
+  cupRamen: cos('mouth', 'snacks/03-cup-ramen.webp', 20, '컵라면', 'Cup Ramen', { renderW: 112 }),
+  lollipop: cos('mouth', 'snacks/04-lollipop.webp', 15, '롤리팝', 'Lollipop', { renderW: 108 }),
   petPuppy: cos('pet', 'pets/01-puppy.webp', 25, '강아지 펫', 'Puppy Pet'),
   petKitten: cos('pet', 'pets/02-kitten.webp', 25, '고양이 펫', 'Kitten Pet'),
   petBunny: cos('pet', 'pets/03-bunny.webp', 25, '토끼 펫', 'Bunny Pet'),
@@ -89,6 +94,7 @@ export const COSMETICS = {
  */
 const BASE_DAY = '2026-10-03';
 const ADDED = {
+  '2026-10-15': ['yellowStarDress', 'chocoChipCookie', 'pepero', 'cupRamen', 'lollipop'],
   '2026-10-13': ['petZebra', 'petJellyfish'],
   '2026-10-12': ['purpleSunflowerDress', 'orangeFloralDress'],
   '2026-10-09b': ['boysRashguard', 'girlsRashguard', 'swimGoggles', 'beachBall', 'duckSwimRing', 'stripedSwimRing'],

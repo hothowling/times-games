@@ -2,7 +2,7 @@
  * character.js - 캐릭터 그리기. 모든 화면과 게임이 이것 하나로 캐릭터를 보여 줍니다.
  *
  *   const c = createCharacter(el, look, { body: true })
- *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'angie'|'bs'|'dimsum'|'photo', equipped: { outfit, head, face, back, pet } }
+ *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'angie'|'bs'|'dimsum'|'photo', equipped: { outfit, head, face, mouth, back, pet } }
  *     body: false 면 얼굴만(머리 장식·안경은 그대로) 그립니다.
  *   c.react('correct'|'wrong'|'timeout'|'clear'|'fail'|'idle')   표정 + 동작
  *   c.expression('neutral'|'happy'|'angry'|'surprised'|'sad')     표정만 바꾸기(다음 react 전까지 유지)
@@ -115,6 +115,7 @@ export function createCharacter(el, look, { body = true } = {}) {
     face: node('span', 'chr-face', rig),
     head: node('img', 'chr-w chr-head', rig),
     glasses: node('img', 'chr-w chr-glasses', rig),
+    mouth: node('img', 'chr-w chr-mouth', rig),
     pet: node('img', 'chr-w chr-pet', rig)
   };
 
@@ -150,6 +151,7 @@ export function createCharacter(el, look, { body = true } = {}) {
     const glassesY = lensCenter - (COSMETICS[eq.face]?.lensY ?? 0.53) * glassesW / 2;
     const bow = COSMETICS[eq.head]?.style === 'bow';
     const clip = COSMETICS[eq.head]?.style === 'clip';
+    const snack = COSMETICS[eq.mouth];
     const vars = {
       '--face-x': faceAnchorX(r.faceX), '--face-y': r.faceY, '--face-w': r.faceW, '--face-h': r.faceH,
       '--head-x': clip ? `calc(${r.faceX} + ${r.faceW * 0.28 + faceShiftX}px)` : faceAnchorX(r.headX),
@@ -157,6 +159,8 @@ export function createCharacter(el, look, { body = true } = {}) {
       '--head-w': clip ? 90 : bow ? r.bow.headW : r.headW,
       '--head-angle': r.headAngle + 'deg',
       '--glasses-x': faceAnchorX(r.glassesX), '--glasses-y': glassesY, '--glasses-w': glassesW, '--glasses-angle': r.glassesAngle + 'deg',
+      /* 스낵은 얼굴 대신 공통 의상 좌표의 오른쪽 어깨 옆에 배치합니다. */
+      '--mouth-x': 180, '--mouth-y': 180, '--mouth-w': snack?.renderW ?? 100,
       '--back-right': r.backRight, '--back-bottom': r.backBottom, '--back-w': r.backW,
       '--outfit-bottom': r.outfitBottom,
       '--pet-w': COSMETICS[eq.pet]?.renderW ?? 168
@@ -174,6 +178,7 @@ export function createCharacter(el, look, { body = true } = {}) {
     wear(L.back, body && eq.back);
     wear(L.head, eq.head);
     wear(L.glasses, eq.face);
+    wear(L.mouth, eq.mouth);
     wear(L.pet, body && eq.pet);
     fit();
   }

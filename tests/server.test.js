@@ -83,7 +83,7 @@ test('plays reward, idempotency, shop, looks', async () => {
   assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { face: 'redCap' } })).body.error, 'badLook', 'wrong slot');
   assert.equal((await a('PUT', '/api/looks/jiho', { equipped: { outfit: null, head: 'redCap' } })).status, 200);
   assert.equal((await a('PUT', '/api/looks/nobody', { equipped: {} })).status, 404);
-  assert.deepEqual((await a('GET', '/api/me')).body.looks.jiho, { outfit: null, head: 'redCap', face: null, back: null, pet: null });
+  assert.deepEqual((await a('GET', '/api/me')).body.looks.jiho, { outfit: null, head: 'redCap', face: null, mouth: null, back: null, pet: null });
 
   r = await a('GET', '/api/records?days=1');
   assert.equal(r.body.plays.length, 4);
@@ -109,6 +109,36 @@ test('pets can be bought, saved per character and removed without changing the o
   assert.equal(me.looks.jiho.outfit, 'uniform');
   assert.equal(me.inventory.petPuppy, 1);
   assert.equal(me.user.sparkles, 75);
+});
+
+test('mouth snacks can be bought and swapped while keeping glasses and outfit', async () => {
+  const a = client();
+  const signup = await a('POST', '/api/signup', { nickname: 'snack-test', pin: '1234' });
+  db.prepare('update users set sparkles = 150 where id = ?').run(signup.body.user.id);
+  assert.equal((await a('PUT', '/api/looks/dimsum', { equipped: { mouth: 'chocoChipCookie' } })).body.error, 'badLook');
+  const snacks = ['chocoChipCookie', 'pepero', 'cupRamen', 'lollipop'];
+  for (const itemId of ['yellowStarDress', 'glasses', ...snacks]) {
+    assert.equal((await a('POST', '/api/shop/buy', { itemId })).status, 200);
+  }
+  assert.equal((await a('PUT', '/api/looks/dimsum', { equipped: { face: 'chocoChipCookie' } })).body.error, 'badLook');
+  for (const mouth of snacks) {
+    assert.equal((await a('PUT', '/api/looks/dimsum', { equipped: { outfit: 'yellowStarDress', face: 'glasses', mouth } })).status, 200);
+    const me = (await a('GET', '/api/me')).body;
+    assert.equal(me.looks.dimsum.mouth, mouth);
+    assert.equal(me.looks.dimsum.face, 'glasses');
+    assert.equal(me.looks.dimsum.outfit, 'yellowStarDress');
+  }
+  assert.equal((await a('PUT', '/api/looks/dimsum', { equipped: { outfit: 'yellowStarDress', face: 'glasses', mouth: null } })).status, 200);
+  const me = (await a('GET', '/api/me')).body;
+  assert.equal(me.looks.dimsum.mouth, null);
+  assert.equal(me.looks.dimsum.face, 'glasses');
+  assert.equal(me.looks.dimsum.outfit, 'yellowStarDress');
+  assert.equal(me.user.sparkles, 40);
+  for (const file of ['outfits/22-yellow-star-sleeveless-dress.webp', 'snacks/01-chocolate-chip-cookie.webp', 'snacks/02-pepero.webp', 'snacks/03-cup-ramen.webp', 'snacks/04-lollipop.webp']) {
+    const asset = await client()('GET', '/assets/wearables/' + file);
+    assert.equal(asset.status, 200);
+    assert.equal(asset.body.subarray(8, 12).toString(), 'WEBP');
+  }
 });
 
 for (const preset of ['nayeon', 'angie', 'bs', 'dimsum']) test(`${preset} preset can be selected, dressed and loaded without a photo upload`, async () => {

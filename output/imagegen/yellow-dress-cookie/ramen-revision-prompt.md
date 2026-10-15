@@ -1,0 +1,8 @@
+Use case: precise-object-edit
+Edit IMAGE 1 into the revised cup-ramen MOUTH ACCESSORY for the same cute 2D mobile game.
+Keep the polished cartoon food rendering, clean dark outlines, warm glossy noodles and transparent background.
+TWO requested changes:
+1. Change cup packaging to a recognizable Korean SHIN RAMYUN-style bright RED cup with BLACK accents, cream/white top rim and base, and one large bold black brush-style character “辛” outlined in cream on its front. Compact red-and-black Korean spicy ramen cup design. Keep text sparse and legible. Do not use the current large blank red band on mostly white cup.
+2. Add a PAIR of light wooden chopsticks entering diagonally from the UPPER RIGHT. Their tips near (50%,25%) of the square canvas visibly PINCH AND LIFT a bundle of wavy golden-yellow noodles. Several lifted noodle strands dangle continuously down from the chopsticks into the OPEN CUP below, clearly a mouthful being lifted with chopsticks. No floating disconnected noodles. No hand needed.
+Recompose as one complete tall compact sprite: cup occupies lower portion roughly x20–80%, y45–92%; noodles rise above it; chopsticks completely inside x45–92%, y12–30%. Top of lifted noodles around(50%,25%) will align with character lips when worn. Show top oval with noodles, broth and a few tiny green bits. Keep at least6% entirely transparent margin on EVERY side, all chopstick ends/cup visible.
+One isolated cup with chopsticks lifting noodles. No human hands, mouth, face, head, arm, character, plate, extra props, background, floor shadow, steam cloud or watermark. Genuine transparent RGBA PNG square canvas.

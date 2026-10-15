@@ -1,0 +1,6 @@
+Use case: stylized-concept
+Asset type: transparent 2D mobile-game MOUTH ACCESSORY sprite.
+IMAGE 1 is the DESIGN reference: a round tan-brown chocolate-chip cookie with several large darker chocolate chips and a clearly missing jagged bite along the TOP edge, revealing pale golden crumb.
+Draw one cute polished single chocolate-chip cookie, round warm golden-brown baked biscuit, 5–7 chunky dark brown chocolate chips, large unmistakable bite missing from the TOP CENTER edge (three small curved tooth-like scallops), pale butter-yellow crumb visible inside the bitten edge. Match reference's simple round shape, warm brown/chocolate colors and top bite. Slightly thick crisp biscuit with soft 2D cel shading, a few tiny baked texture dots, warm dark clean outline. Keep details legible when rendered only35–45px wide in front of a character's mouth.
+Exactly ONE isolated cookie, FRONT VIEW, nearly circular rather than foreshortened. Centered in square transparent canvas at about85% width/height, complete silhouette with8% clear margin around all sides. Top-center bite is transparent missing cookie; the cream crumb is a thin edge inside that bite.
+No face, hands, arms, mouth, characters, plate, packaging, loose crumbs, props, text, logo or shadow. Genuine transparent RGBA PNG, no opaque or checkerboard background.

@@ -1,0 +1,87 @@
+[
+  {
+    "path": "outfits/22-yellow-star-sleeveless-dress.webp",
+    "size": [
+      256,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "visibleBounds": [
+      6,
+      93,
+      254,
+      231
+    ]
+  },
+  {
+    "path": "snacks/01-chocolate-chip-cookie.webp",
+    "size": [
+      256,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "visibleBounds": [
+      24,
+      32,
+      232,
+      225
+    ]
+  },
+  {
+    "path": "snacks/02-pepero.webp",
+    "size": [
+      256,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "visibleBounds": [
+      19,
+      80,
+      241,
+      187
+    ]
+  },
+  {
+    "path": "snacks/03-cup-ramen.webp",
+    "size": [
+      256,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "visibleBounds": [
+      50,
+      6,
+      249,
+      249
+    ]
+  },
+  {
+    "path": "snacks/04-lollipop.webp",
+    "size": [
+      256,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "visibleBounds": [
+      21,
+      17,
+      242,
+      239
+    ]
+  }
+]

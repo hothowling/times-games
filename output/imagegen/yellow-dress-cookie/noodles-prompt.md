@@ -1,0 +1,4 @@
+Use case: stylized-concept
+Asset type: transparent square 2D animated mobile-game MOUTH ACCESSORY.
+Draw one cute small CUP OF INSTANT RAMEN, front view slightly from above: a tapered cream-white paper cup with a simple solid coral-red band, open oval top revealing curly golden-yellow noodles, a few tiny green vegetable bits and small orange carrot pieces. Rolled cream rim, soft warm cel shading, crisp warm dark outline. One short noodle strand curls slightly upward at the TOP CENTER as if being slurped; its top around(50%,18%) will align to a character's lips. Cup body centered below, entirely visible, occupies about80% canvas width and80% height. Cute appetizing clean mobile-game icon matching polished 2D character accessories.
+No hands, chopsticks, face, character, lid, extra bowl, package, text, numbers, logo, steam cloud, floor shadow or background. Keep8% genuine transparent padding on each edge. Transparent RGBA PNG.

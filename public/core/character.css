@@ -89,6 +89,15 @@
   transform: translateX(-50%) rotate(var(--glasses-angle));
 }
 
+.chr-mouth {
+  z-index: 6;
+  top: var(--mouth-y);
+  left: var(--mouth-x);
+  width: var(--mouth-w);
+  height: var(--mouth-w);
+  transform: translate(-50%, -50%);
+}
+
 .chr-back {
   z-index: 0;
   right: var(--back-right);

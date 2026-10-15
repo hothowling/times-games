@@ -1,0 +1,5 @@
+Use case: stylized-concept
+Asset type: transparent square 2D animated mobile-game MOUTH ACCESSORY.
+Draw one delicious chocolate-coated biscuit stick (Pepero): a thin straight golden biscuit with most of its length covered in glossy dark milk chocolate, a few tiny crumb/nut flecks in chocolate, and a short exposed golden biscuit end at the LOWER LEFT. Angle it gently upward toward the RIGHT, approximately25 degrees above horizontal. The exposed lower-left end will touch a character's lips. Full stick runs from around(20%,65%) at bare end to(88%,35%) at chocolate tip on square canvas. A single slender straight stick, not a thick candy bar, not crossed sticks.
+Cute polished game illustration, clean warm dark outline, soft cel shading, rich chocolate and golden biscuit highlights, readable at50–65px display. One object only, at least8% transparent margin on all edges.
+No hands, face, mouth, character, packaging, text, logo, plate, crumbs floating outside, shadow or backdrop. Genuine transparent RGBA PNG.
