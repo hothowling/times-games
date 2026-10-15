@@ -260,7 +260,8 @@ function inAppBody(info) {
 }
 
 export function openInstallGuide({ auto = false, go, toast } = {}) {
-  if (openDlg) return openDlg;
+  /* 닫히는 중인 창(close 이벤트 전)은 다시 쓰지 않습니다. */
+  if (openDlg?.open) return openDlg;
   lastToast = toast || lastToast;
   const info = current();
   if (!canGuide(info)) return null;
