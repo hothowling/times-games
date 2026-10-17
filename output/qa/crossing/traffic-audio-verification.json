@@ -1,0 +1,198 @@
+{
+  "playing": {
+    "state": {
+      "row": "3",
+      "column": "1",
+      "mode": "play",
+      "hearts": "2",
+      "cleared": "0",
+      "level": "1",
+      "gifts": "0"
+    },
+    "gain": 0.8815378546714783,
+    "rms": 0.007946886797623894,
+    "live": [
+      {
+        "loop": true,
+        "duration": 4,
+        "rate": 1
+      }
+    ],
+    "errors": []
+  },
+  "muted": {
+    "state": {
+      "row": "3",
+      "column": "1",
+      "mode": "play",
+      "hearts": "2",
+      "cleared": "0",
+      "level": "1",
+      "gifts": "0"
+    },
+    "gain": 0,
+    "rms": 0,
+    "live": [],
+    "errors": []
+  },
+  "unmuted": {
+    "state": {
+      "row": "3",
+      "column": "1",
+      "mode": "play",
+      "hearts": "2",
+      "cleared": "0",
+      "level": "1",
+      "gifts": "0"
+    },
+    "gain": 0.8761540651321411,
+    "rms": 0.007956682660392001,
+    "live": [
+      {
+        "loop": true,
+        "duration": 4,
+        "rate": 1
+      }
+    ],
+    "errors": []
+  },
+  "paused": {
+    "state": {
+      "row": "3",
+      "column": "1",
+      "mode": "pause",
+      "hearts": "2",
+      "cleared": "0",
+      "level": "1",
+      "gifts": "0"
+    },
+    "gain": 0,
+    "rms": 0,
+    "live": [],
+    "errors": []
+  },
+  "thinking": {
+    "state": {
+      "row": "10",
+      "column": "1",
+      "mode": "play",
+      "hearts": "2",
+      "cleared": "1",
+      "level": "1",
+      "gifts": "0"
+    },
+    "gain": 0.25432565808296204,
+    "rms": 0.007613900201487171,
+    "live": [
+      {
+        "loop": true,
+        "duration": 4,
+        "rate": 1
+      },
+      {
+        "loop": false,
+        "duration": 2.04,
+        "rate": 0.972335696220398
+      }
+    ],
+    "errors": []
+  },
+  "correct": {
+    "state": {
+      "row": "11",
+      "column": "1",
+      "mode": "play",
+      "hearts": "2",
+      "cleared": "1",
+      "level": "1",
+      "gifts": "0"
+    },
+    "gain": 0.25005531311035156,
+    "rms": 0.0028198111334967624,
+    "live": [
+      {
+        "loop": true,
+        "duration": 4,
+        "rate": 1
+      }
+    ],
+    "errors": []
+  },
+  "afterFeedback": {
+    "state": {
+      "row": "12",
+      "column": "1",
+      "mode": "play",
+      "hearts": "2",
+      "cleared": "2",
+      "level": "1",
+      "gifts": "0"
+    },
+    "gain": 0.9828426241874695,
+    "rms": 0.013962605228188058,
+    "live": [
+      {
+        "loop": true,
+        "duration": 4,
+        "rate": 1
+      }
+    ],
+    "errors": []
+  },
+  "exitDialog": {
+    "state": {
+      "row": "12",
+      "column": "1",
+      "mode": "pause",
+      "hearts": "2",
+      "cleared": "2",
+      "level": "1",
+      "gifts": "0"
+    },
+    "gain": 0,
+    "rms": 0,
+    "live": [],
+    "errors": []
+  },
+  "left": {
+    "liveSources": 0,
+    "sharedContextState": "running",
+    "errors": []
+  },
+  "clip": {
+    "duration": 2.04,
+    "passByCount": 30,
+    "panEndValues": [
+      0.699999988079071,
+      0.699999988079071,
+      0.6999940276145935,
+      0.699999988079071,
+      0.699999988079071,
+      -0.12620830535888672,
+      0.699999988079071,
+      0.699999988079071,
+      0.550125777721405,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      -0.699999988079071,
+      0.18225795030593872,
+      -0.699999988079071,
+      0.699999988079071
+    ]
+  }
+}

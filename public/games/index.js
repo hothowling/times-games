@@ -8,6 +8,12 @@
  */
 export const GAMES = [
   {
+    id: 'crossing', badge: 'new', items: ['hint', 'eraser', 'time', 'shield'], thumb: 'assets/thumbs/crossing.jpg',
+    title: { ko: '구구단 건너기', en: 'Quiz Crossroads' },
+    short: { ko: '길건너기', en: 'Crossroads' }, rank: { ko: '{n}점', en: '{n} pts' },
+    desc: { ko: '차와 바위·나무를 피하고 선물을 모으며, 끝없이 이어지는 퀴즈 길을 건너요.', en: 'Dodge traffic, rocks and trees, collect gifts, and cross endless quiz roads.' }
+  },
+  {
     id: 'cafe', badge: 'new', items: [], thumb: 'assets/games/cafe/cafe-interior-v1.jpg',
     title: { ko: '펫 피자 카페', en: 'Pet Pizza Café' },
     short: { ko: '카페', en: 'Café' }, rank: { ko: '{n}점', en: '{n} pts' },

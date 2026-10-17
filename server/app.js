@@ -25,7 +25,7 @@ const GUEST_PER_HOUR = 20;     /* 한 IP 에서 1시간에 만들 수 있는 손
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.png': 'image/png', '.webp': 'image/webp',
-  '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.ogg': 'audio/ogg', '.m4a': 'audio/mp4', '.wasm': 'application/wasm',
+  '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.ogg': 'audio/ogg', '.mp3': 'audio/mpeg', '.m4a': 'audio/mp4', '.wasm': 'application/wasm',
   '.task': 'application/octet-stream', '.tflite': 'application/octet-stream', '.ico': 'image/x-icon'
 };
 

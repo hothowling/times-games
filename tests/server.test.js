@@ -33,6 +33,20 @@ function client() {
 
 const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3]);
 
+test('crossing is registered for progress, rewards, records and its own ranking', async () => {
+  const a = client();
+  assert.equal((await a('POST', '/api/signup', { nickname: 'crossingtest', pin: '1234' })).status, 200);
+  const data = { best: 3500, distance: 150, runs: 1 };
+  assert.equal((await a('PUT', '/api/progress/crossing', { data })).status, 200);
+  assert.deepEqual((await a('GET', '/api/progress/crossing')).body.data, data);
+  const play = { game: 'crossing', roundKey: 'crossing-finish', stars: 3, score: 3500, detail: { correct: 20, capitals: 9, gifts: 7, level: 7 } };
+  assert.equal((await a('POST', '/api/plays', play)).body.earned, 10);
+  assert.equal((await a('GET', '/api/records')).body.plays[0].game, 'crossing');
+  const rank = await a('GET', '/api/ranking?board=crossing');
+  assert.equal(rank.status, 200);
+  assert.equal(rank.body.me.value, 3500);
+});
+
 test('signup, login, lockout', async () => {
   const a = client();
   assert.equal((await a('POST', '/api/signup', { nickname: '가', pin: '1234' })).body.error, 'badNickname');
@@ -184,6 +198,10 @@ test('static files stay inside public/', async () => {
   const res = await fetch(base + '/%2e%2e/server/app.js');
   assert.equal(res.status, 404);
   assert.equal((await fetch(base + '/core/catalog.js')).status, 200);
+  const traffic = await fetch(base + '/assets/games/crossing/audio/car-drive-by-whoosh.mp3');
+  assert.equal(traffic.status, 200);
+  assert.equal(traffic.headers.get('content-type'), 'audio/mpeg');
+  assert.equal((await traffic.arrayBuffer()).byteLength, 65280);
 });
 
 test('Pet Pizza Café stores progress, rewards a completed day and appears in rankings', async () => {
