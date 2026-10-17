@@ -1,0 +1,17 @@
+{
+  "target": "public/assets/wearables/snacks/05-waffle.webp",
+  "size": [
+    256,
+    256
+  ],
+  "alphaRange": [
+    0,
+    255
+  ],
+  "visibleBounds": [
+    16,
+    33,
+    243,
+    224
+  ]
+}

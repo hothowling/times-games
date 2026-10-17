@@ -65,6 +65,7 @@ export const COSMETICS = {
   pepero: cos('mouth', 'snacks/02-pepero.webp', 15, '빼빼로', 'Chocolate Biscuit Stick', { renderW: 130 }),
   cupRamen: cos('mouth', 'snacks/03-cup-ramen.webp', 20, '컵라면', 'Cup Ramen', { renderW: 112 }),
   lollipop: cos('mouth', 'snacks/04-lollipop.webp', 15, '롤리팝', 'Lollipop', { renderW: 108 }),
+  waffle: cos('mouth', 'snacks/05-waffle.webp', 20, '와플', 'Waffle', { renderW: 112 }),
   petPuppy: cos('pet', 'pets/01-puppy.webp', 25, '강아지 펫', 'Puppy Pet'),
   petKitten: cos('pet', 'pets/02-kitten.webp', 25, '고양이 펫', 'Kitten Pet'),
   petBunny: cos('pet', 'pets/03-bunny.webp', 25, '토끼 펫', 'Bunny Pet'),
@@ -94,6 +95,7 @@ export const COSMETICS = {
  */
 const BASE_DAY = '2026-10-03';
 const ADDED = {
+  '2026-10-17': ['waffle'],
   '2026-10-15': ['yellowStarDress', 'chocoChipCookie', 'pepero', 'cupRamen', 'lollipop'],
   '2026-10-13': ['petZebra', 'petJellyfish'],
   '2026-10-12': ['purpleSunflowerDress', 'orangeFloralDress'],
