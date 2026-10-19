@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { openDb } from '../server/db.js';
 import { createApp } from '../server/app.js';
+import { COSMETICS, PACKS } from '../public/core/catalog.js';
 
 const dir = mkdtempSync(join(tmpdir(), 'tg-'));
 const db = openDb(':memory:');
@@ -101,6 +102,60 @@ test('plays reward, idempotency, shop, looks', async () => {
 
   r = await a('GET', '/api/records?days=1');
   assert.equal(r.body.plays.length, 4);
+});
+
+test('Gold Pack grants all four permanent cosmetics for 50, rejects insufficient funds and duplicate purchases', async () => {
+  const a = client();
+  const signup = await a('POST', '/api/signup', { nickname: 'gold-pack', pin: '1234' });
+  const userId = signup.body.user.id;
+  const ids = PACKS.goldPack.items;
+  db.prepare('update users set sparkles = 49 where id = ?').run(userId);
+  assert.equal((await a('POST', '/api/shop/buy', { itemId: 'goldPack' })).body.error, 'notEnough');
+  let me = (await a('GET', '/api/me')).body;
+  assert.equal(me.user.sparkles, 49);
+  assert.ok(ids.every((id) => !me.inventory[id]), 'failed purchase grants nothing');
+  assert.equal((await a('PUT', '/api/looks/sooji', { equipped: { mouth: 'goldenCheese' } })).body.error, 'badLook');
+
+  db.prepare('update users set sparkles = 50 where id = ?').run(userId);
+  const purchases = await Promise.all([a('POST', '/api/shop/buy', { itemId: 'goldPack' }), a('POST', '/api/shop/buy', { itemId: 'goldPack' })]);
+  assert.deepEqual(purchases.map((r) => r.status).sort(), [200, 409]);
+  me = (await a('GET', '/api/me')).body;
+  assert.equal(me.user.sparkles, 0);
+  for (const id of ids) assert.equal(me.inventory[id], 1);
+  assert.equal(db.prepare("select count(*) as n from sparkle_log where user_id = ? and ref = 'goldPack' and delta = -50").get(userId).n, 1);
+
+  const equipped = Object.fromEntries(ids.map((id) => [COSMETICS[id].slot, id]));
+  for (const key of ['sooji', 'dimsum']) assert.equal((await a('PUT', '/api/looks/' + key, { equipped })).status, 200);
+  const b = client();
+  assert.equal((await b('POST', '/api/login', { nickname: 'gold-pack', pin: '1234' })).status, 200);
+  me = (await b('GET', '/api/me')).body;
+  for (const id of ids) assert.equal(me.inventory[id], 1, 'ownership survives a new session');
+  assert.equal(me.looks.sooji.mouth, 'goldenCheese');
+  assert.equal((await b('PUT', '/api/looks/sooji', { equipped: { ...equipped, mouth: null } })).status, 200);
+  me = (await b('GET', '/api/me')).body;
+  assert.equal(me.looks.sooji.mouth, null);
+  assert.equal(me.looks.sooji.face, 'goldenGlasses');
+  assert.equal(me.looks.dimsum.mouth, 'goldenCheese');
+  assert.equal(me.inventory.goldenCheese, 1);
+  for (const id of ids) {
+    const asset = await client()('GET', '/' + COSMETICS[id].img);
+    assert.equal(asset.status, 200);
+    assert.equal(asset.body.subarray(8, 12).toString(), 'WEBP');
+  }
+});
+
+test('Gold Pack components cannot be bought separately and existing components are not duplicated', async () => {
+  const a = client();
+  const signup = await a('POST', '/api/signup', { nickname: 'gold-parts', pin: '1234' });
+  const userId = signup.body.user.id;
+  db.prepare('update users set sparkles = 100 where id = ?').run(userId);
+  for (const itemId of PACKS.goldPack.items) assert.equal((await a('POST', '/api/shop/buy', { itemId })).body.error, 'badItem');
+  assert.equal((await a('POST', '/api/shop/buy', { itemId: '__proto__' })).body.error, 'badItem');
+  db.prepare('insert into inventory values (?, ?, 1)').run(userId, 'goldenCrown');
+  const purchase = await a('POST', '/api/shop/buy', { itemId: 'goldPack' });
+  assert.equal(purchase.status, 200);
+  assert.equal(purchase.body.sparkles, 50);
+  for (const id of PACKS.goldPack.items) assert.equal(purchase.body.inventory[id], 1);
 });
 
 test('pets can be bought, saved per character and removed without changing the outfit', async () => {

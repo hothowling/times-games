@@ -504,6 +504,10 @@ body.playing #view { padding: 0; }
 .shop-item .price img, .shop-item .price .ui-icon { width: 18px; height: 18px; }
 .shop-item .tag { color: var(--primary); font-family: var(--font-fun); font-size: 15px; }
 .shop-item .desc { color: var(--muted); font-size: 12px; }
+.shop-pack { width: 100%; padding: 14px; border-color: #f3d58a; background: linear-gradient(135deg, #fffdf4, #fff2c9); }
+.shop-pack strong { color: #8a570c; font-family: var(--font-fun); font-size: 22px; }
+.shop-pack-images { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.shop-pack-images img { width: 62px; height: 62px; }
 
 /* ---------- 기록 ---------- */
 

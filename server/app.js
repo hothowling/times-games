@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { randomBytes, scryptSync, timingSafeEqual, createHash, randomInt } from 'node:crypto';
 import { tx } from './db.js';
 import { adminRoutes } from './admin.js';
-import { PRESETS, COSMETICS, ITEMS, REWARD, BONUS_MAX, GAMES, DEFAULT_LOOK, BOX, INSTALL_REWARD, INSTALL_SNOOZE_MS, UPGRADE_REWARD, rewardFor, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
+import { PRESETS, COSMETICS, PACKS, ITEMS, REWARD, BONUS_MAX, GAMES, DEFAULT_LOOK, BOX, INSTALL_REWARD, INSTALL_SNOOZE_MS, UPGRADE_REWARD, rewardFor, pickPrize, isPhotoKey, validLook } from '../public/core/catalog.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const SESSION_DAYS = 180;
@@ -351,14 +351,18 @@ export function createApp({ db, dataDir, adminPassword, version = {} }) {
   route('POST', '/api/shop/buy', async (req, res) => {
     const user = currentUser(req);
     const { itemId } = await readJson(req);
-    const entry = Object.hasOwn(COSMETICS, itemId) ? COSMETICS[itemId] : Object.hasOwn(ITEMS, itemId) ? ITEMS[itemId] : null;
-    if (!entry) fail(400, 'badItem');
-    if (COSMETICS[itemId] && owns(user.id, itemId)) fail(409, 'owned');
+    const pack = Object.hasOwn(PACKS, itemId) ? PACKS[itemId] : null;
+    const cosmetic = Object.hasOwn(COSMETICS, itemId) ? COSMETICS[itemId] : null;
+    const entry = pack || cosmetic || (Object.hasOwn(ITEMS, itemId) ? ITEMS[itemId] : null);
+    if (!entry || cosmetic?.pack) fail(400, 'badItem');
     tx(db, () => {
+      if ((pack && pack.items.every((id) => owns(user.id, id))) || (cosmetic && owns(user.id, itemId))) fail(409, 'owned');
       const fresh = S.userById.get(user.id);
       if (fresh.sparkles < entry.price) fail(400, 'notEnough');
       S.addSparkles.run(-entry.price, user.id);
-      S.invAdd.run(user.id, itemId);
+      for (const id of pack?.items || [itemId]) {
+        if (!pack || !owns(user.id, id)) S.invAdd.run(user.id, id);
+      }
       S.log.run(user.id, -entry.price, 'buy', itemId, Date.now());
     });
     send(res, 200, { sparkles: S.userById.get(user.id).sparkles, inventory: inventoryOf(user.id) });

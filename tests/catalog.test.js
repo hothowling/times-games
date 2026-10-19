@@ -17,3 +17,15 @@ test('pickPrize: every slot reachable, cosmetics only when not owned', () => {
   assert.deepEqual(pickPrize(last, () => true), { kind: 'sparkles', amount: 30 });
   assert.equal(pickPrize(last, () => false).kind, 'cosmetic');
 });
+
+test('Mystery Box cosmetics exclude pack-only items', () => {
+  const total = BOX_PRIZES.reduce((sum, prize) => sum + prize[2], 0);
+  const available = Object.values(COSMETICS).filter((c) => c.price > 0 && !c.pack);
+  for (let i = 0; i < available.length; i++) {
+    let draw = 0;
+    const prize = pickPrize((n) => draw++ === 0 ? total - 1 : i % n, () => false);
+    assert.equal(prize.kind, 'cosmetic');
+    assert.equal(COSMETICS[prize.id].pack, undefined);
+  }
+  assert.deepEqual(pickPrize((n) => n - 1, (id) => !COSMETICS[id].pack), { kind: 'sparkles', amount: 30 });
+});

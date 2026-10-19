@@ -89,6 +89,88 @@
   transform: translateX(-50%) rotate(var(--glasses-angle));
 }
 
+/* 금속 표면 위를 지나가는 반사광과 서로 다른 시점에 빛나는 작은 별. */
+.wearable-shine {
+  --shine-period: 5.4s;
+  --shine-delay: 0s;
+  --glint-a-x: 50%;
+  --glint-a-y: 35%;
+  --glint-b-x: 72%;
+  --glint-b-y: 74%;
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  filter: none;
+}
+.wearable-shine[hidden] { display: none; }
+.wearable-shine[data-shine='glasses'] {
+  --shine-delay: -2.2s;
+  --glint-a-x: 24%;
+  --glint-a-y: 25%;
+  --glint-b-x: 79%;
+  --glint-b-y: 73%;
+}
+.wearable-shine[data-shine='dress'] {
+  --shine-delay: -3.5s;
+  --glint-a-x: 53%;
+  --glint-a-y: 58%;
+  --glint-b-x: 68%;
+  --glint-b-y: 79%;
+}
+/* 의상 그림에 포함된 팔·손·연필은 빼고 드레스의 옷감에만 반사광을 비춥니다. */
+.wearable-shine[data-shine='dress'] .wearable-sheen {
+  opacity: .65;
+  clip-path: polygon(40% 36%, 63% 36%, 64% 49%, 63% 56%, 64% 59%, 89% 79%, 87% 94%, 12% 94%, 12% 79%, 39% 59%, 39% 55%, 38% 49%);
+}
+.wearable-shine[data-shine='dress'] .wearable-glint { width: 5%; }
+.wearable-shine[data-shine='dress'] .wearable-glint-b { width: 4%; }
+.wearable-sheen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask: var(--shine-image) center / contain no-repeat;
+  mask: var(--shine-image) center / contain no-repeat;
+}
+.wearable-sheen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 32%, rgb(255 247 208 / 25%) 40%, #fffdf3 48%, rgb(255 255 255 / 85%) 51%, rgb(255 247 208 / 25%) 59%, transparent 67%);
+  animation: wearable-sweep var(--shine-period) ease-in-out var(--shine-delay) infinite;
+}
+.wearable-glint {
+  position: absolute;
+  width: 8%;
+  aspect-ratio: 1;
+  left: var(--glint-a-x);
+  top: var(--glint-a-y);
+  opacity: 0;
+  background: #fffdf1;
+  clip-path: polygon(50% 0, 60% 39%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 39%);
+  animation: wearable-glint var(--shine-period) ease-in-out var(--shine-delay) infinite;
+}
+.wearable-glint-b {
+  left: var(--glint-b-x);
+  top: var(--glint-b-y);
+  animation-delay: calc(var(--shine-delay) - 2.7s);
+  width: 6%;
+}
+.wearable-icon { position: relative; display: block; width: 64px; height: 64px; }
+.wearable-icon > img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.wearable-icon > .wearable-shine { inset: 0; }
+.wearable-icon > .wearable-shine[data-shine='glasses'] { top: 25%; bottom: 25%; }
+.shop-pack-images > .wearable-icon { width: 62px; height: 62px; }
+@keyframes wearable-sweep {
+  0%, 5% { opacity: 0; transform: translateX(-110%); }
+  8% { opacity: .9; }
+  28% { opacity: .9; transform: translateX(110%); }
+  30%, 100% { opacity: 0; transform: translateX(110%); }
+}
+@keyframes wearable-glint {
+  0%, 13%, 31%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(.25) rotate(-20deg); }
+  22% { opacity: 1; transform: translate(-50%, -50%) scale(1.15) rotate(0); }
+}
+
 .chr-mouth {
   z-index: 6;
   top: var(--mouth-y);
@@ -259,4 +341,7 @@
     animation: none !important;
   }
   .chr-sparkles { display: none; }
+  .wearable-sheen::before, .wearable-glint { animation: none; }
+  .wearable-sheen::before { opacity: .2; transform: none; }
+  .wearable-glint { opacity: .6; transform: translate(-50%, -50%) scale(.7); }
 }

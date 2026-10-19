@@ -1,0 +1,67 @@
+{
+  "dress": {
+    "file": "public/assets/wearables/gold-pack/dress.webp",
+    "width": 256,
+    "height": 256,
+    "alpha": [
+      0,
+      255
+    ],
+    "bounds": [
+      9,
+      93,
+      252,
+      231
+    ]
+  },
+  "crown": {
+    "file": "public/assets/wearables/gold-pack/crown.webp",
+    "width": 256,
+    "height": 256,
+    "alpha": [
+      0,
+      255
+    ],
+    "bounds": [
+      6,
+      76,
+      249,
+      217
+    ],
+    "source": "generated/crown-front.png",
+    "rearRemoved": true
+  },
+  "glasses": {
+    "file": "public/assets/wearables/gold-pack/glasses.webp",
+    "width": 360,
+    "height": 180,
+    "alpha": [
+      0,
+      255
+    ],
+    "bounds": [
+      36,
+      38,
+      322,
+      144
+    ]
+  },
+  "cheese": {
+    "file": "public/assets/wearables/gold-pack/cheese.webp",
+    "width": 256,
+    "height": 256,
+    "alpha": [
+      0,
+      255
+    ],
+    "bounds": [
+      33,
+      41,
+      227,
+      214
+    ],
+    "renderW": 74,
+    "biteOffsetX": 26,
+    "biteOffsetBelowLens": 65
+  }
+}

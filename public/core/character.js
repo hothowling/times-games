@@ -13,6 +13,7 @@
  * 움직임(숨쉬기·흔들기·점프·반짝이)은 구구단 마스터의 마스코트 애니메이션을 그대로 씁니다(character.css).
  */
 import { COSMETICS, BASE_OUTFIT } from './catalog.js';
+import { createWearableShine } from './wearable-effects.js';
 
 const EXPRESSIONS = ['neutral', 'happy', 'angry', 'surprised', 'sad'];
 const BOX_W = 250;
@@ -118,6 +119,9 @@ export function createCharacter(el, look, { body = true } = {}) {
     mouth: node('img', 'chr-w chr-mouth', rig),
     pet: node('img', 'chr-w chr-pet', rig)
   };
+  const outfitShine = createWearableShine(rig, 'chr-w chr-outfit');
+  const headShine = createWearableShine(rig, 'chr-w chr-head');
+  const glassesShine = createWearableShine(rig, 'chr-w chr-glasses');
 
   let current = look;
   let timer = null;
@@ -151,16 +155,19 @@ export function createCharacter(el, look, { body = true } = {}) {
     const glassesY = lensCenter - (COSMETICS[eq.face]?.lensY ?? 0.53) * glassesW / 2;
     const bow = COSMETICS[eq.head]?.style === 'bow';
     const clip = COSMETICS[eq.head]?.style === 'clip';
+    const crown = COSMETICS[eq.head]?.style === 'crown';
     const snack = COSMETICS[eq.mouth];
+    const bite = snack?.style === 'bite';
     const vars = {
       '--face-x': faceAnchorX(r.faceX), '--face-y': r.faceY, '--face-w': r.faceW, '--face-h': r.faceH,
       '--head-x': clip ? `calc(${r.faceX} + ${r.faceW * 0.28 + faceShiftX}px)` : faceAnchorX(r.headX),
-      '--head-y': clip ? (r.clipY ?? r.faceY + 12) : bow ? r.bow.headY : r.headY,
-      '--head-w': clip ? 90 : bow ? r.bow.headW : r.headW,
+      '--head-y': clip ? (r.clipY ?? r.faceY + 12) : crown ? r.headY - 28 : bow ? r.bow.headY : r.headY,
+      '--head-w': clip ? 90 : crown ? r.headW * 0.82 : bow ? r.bow.headW : r.headW,
       '--head-angle': r.headAngle + 'deg',
       '--glasses-x': faceAnchorX(r.glassesX), '--glasses-y': glassesY, '--glasses-w': glassesW, '--glasses-angle': r.glassesAngle + 'deg',
-      /* 스낵은 얼굴 대신 공통 의상 좌표의 오른쪽 어깨 옆에 배치합니다. */
-      '--mouth-x': 180, '--mouth-y': 180, '--mouth-w': snack?.renderW ?? 100,
+      /* 일반 스낵은 오른쪽 어깨, 물고 있는 치즈는 얼굴의 입 높이에 맞춥니다. */
+      '--mouth-x': bite ? `calc(${r.glassesX} + ${faceShiftX + 26}px)` : 180,
+      '--mouth-y': bite ? lensCenter + 65 : 180, '--mouth-w': snack?.renderW ?? 100,
       '--back-right': r.backRight, '--back-bottom': r.backBottom, '--back-w': r.backW,
       '--outfit-bottom': r.outfitBottom,
       '--pet-w': COSMETICS[eq.pet]?.renderW ?? 168
@@ -180,6 +187,9 @@ export function createCharacter(el, look, { body = true } = {}) {
     wear(L.glasses, eq.face);
     wear(L.mouth, eq.mouth);
     wear(L.pet, body && eq.pet);
+    outfitShine.update(body ? COSMETICS[eq.outfit] : null);
+    headShine.update(COSMETICS[eq.head]);
+    glassesShine.update(COSMETICS[eq.face]);
     fit();
   }
 
