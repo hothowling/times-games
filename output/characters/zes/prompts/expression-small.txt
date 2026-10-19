@@ -1,0 +1,5 @@
+Make a VERY SPARSE wide transparent game sprite sheet. Image1 defines exact child design. Image2 defines illustrative 2D anime game style.
+FIVE SMALL separate floating heads of this SAME round-cheeked child with black twin ponytails, pale yellow bows. Front level view, consistent head geometry.
+Huge blank gaps between heads. Each head ONLY 10% of whole canvas width. Half of EACH cell must be EMPTY. Do NOT enlarge the heads. Draw all five heads small, isolated, fully intact, with full ponytails, centered in equal fifths of canvas. Lots of empty transparent space is REQUIRED, it is not a poster.
+Same head size/alignment for five expressions left-to-right: smug neutral faint smile; goofy joyful big laugh squint; comically puffed-cheek angry pout; wide-eyed O-mouth surprised; exaggerated crying with tears both eyes.
+No neck, body, props, words, labels, grid or background. Target2560x960 actual alpha PNG. Do not overlap or crop any hair. IMPORTANT all heads complete, each under256px wide in its512px-wide cell, at least128px transparent blank to either side.

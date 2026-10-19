@@ -1,0 +1,8 @@
+Create ONE front-facing neutral master HEAD sprite for a new boy character in a 2D anime mobile game.
+IMAGE 1 is the sole IDENTITY reference: the photographed boy with short dense black hair, a straight slightly uneven fringe, dark narrow almond eyes, straight eyebrows, soft youthful oval face, small nose and a closed relaxed mouth. Preserve his recognizable impression and age.
+IMAGE 2 is STYLE ONLY: approved Sooji anime game sheet. Match its crisp dark outlines, expressive simplified features, smooth cel shading and bright soft colors. Do not copy her identity, hair, ornaments or tilt.
+Convert the reference boy's sideways pose into a completely FRONT-FACING level head: both eyes and ears symmetrically visible, nose centered, looking directly at viewer. Preserve identity while reconstructing front view.
+Expression: cool, chic, quietly confident and slightly unimpressed; relaxed half-lidded eyes, very subtle lifted eyebrow attitude, closed mouth almost straight, no broad smile and no angry scowl. Cute childlike game character, not older teen or adult.
+HEAD ONLY including all hair and ears, cut cleanly below chin. NO neck, shoulders, torso, clothing, accessories, labels, text, props or shadows.
+Target512x960 portrait canvas. Head centered x256, eye-line around y480, chin around y660. All hair complete. Head maximum352px wide with80px fully transparent margins each side and64px top/bottom. Plenty of intentional empty transparent space.
+Strong illustrative 2D animation, not realistic skin or photographic portrait. True transparent RGBA background, no opaque white/black or painted checkerboard. Exactly ONE face.

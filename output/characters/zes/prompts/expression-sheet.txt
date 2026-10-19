@@ -1,0 +1,11 @@
+Create a production-ready five-expression sprite sheet for ZeS (빵점이), a cute mischievous comic game child.
+IMAGE1 original photo: identity ONLY. IMAGE2 Sooji sheet: crisp 2D anime game illustration STYLE ONLY. IMAGE3: exact locked neutral design/geometry; preserve this child's round cheeks, narrow dark eyes, center-parted black twin ponytails and pale yellow bows. Heads ONLY no neck body clothes hands food props text.
+Exactly FIVE complete heads in ONE horizontal row in equal cells, LEFT TO RIGHT:
+1 neutral: cheeky faint closed smile and slightly smug eyebrows, same as master.
+2 happy: hilariously delighted toothy grin, smile squeezed eyes, goofy infectious laugh.
+3 angry: comically puffed cheeks, fiercely furrowed eyebrows and tiny pout.
+4 surprised: cartoon-wide eyes and small O mouth, silly shocked look.
+5 crying: exaggerated funny bawl, closed squeezed eyelids, open crying mouth with big stylized tears streaming from BOTH eyes.
+Keep skull, jaw/chin, nose, eye centers, face size, camera, level angle, hair/bow silhouette and center identical in ALL five; change expression features only. No head tilts or enlarged crying jaw. Cute affectionate humor.
+Target2560x960, five512x960cells. IMAGE3 has intentionally lots of empty space, keep it! Complete head INCLUDING ponytails/bows/tears max352px width,80px clear each side and64px above/below. Shared eye line and chin across row; no overlapping hair or cropping. Strong 2D ANIME with outlines, cel-shaded colors like IMAGE2, not photo realism.
+Actual transparent RGBA background. NO grid labels shadows or painted checkerboard.

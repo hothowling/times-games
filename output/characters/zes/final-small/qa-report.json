@@ -1,0 +1,190 @@
+{
+  "source_size": [
+    1983,
+    793
+  ],
+  "output_size": [
+    2560,
+    960
+  ],
+  "adjacent_head_gaps_px": [
+    186,
+    176,
+    185,
+    189
+  ],
+  "source_cells_xywh": [
+    [
+      0,
+      0,
+      397,
+      793
+    ],
+    [
+      397,
+      0,
+      396,
+      793
+    ],
+    [
+      793,
+      0,
+      397,
+      793
+    ],
+    [
+      1190,
+      0,
+      396,
+      793
+    ],
+    [
+      1586,
+      0,
+      397,
+      793
+    ]
+  ],
+  "normalized": true,
+  "common_transform": {
+    "scale": 1.210592686002522,
+    "size": [
+      481,
+      960
+    ],
+    "offset": [
+      15,
+      0
+    ]
+  },
+  "common_margin_padding": {
+    "requested": true,
+    "applied": true,
+    "scale": 0.8130841121495327,
+    "target_side_px": 80,
+    "target_vertical_px": 64,
+    "size": [
+      416,
+      781
+    ],
+    "offset": [
+      48,
+      89
+    ]
+  },
+  "structural_pass": true,
+  "semantic_review_required": true,
+  "minimum_margins_px": {
+    "left": 64,
+    "right": 64,
+    "top": 32,
+    "bottom": 32
+  },
+  "errors": [],
+  "warnings": [
+    "Input width is not divisible by five; rounded cell boundaries differ by at most one pixel"
+  ],
+  "frames": [
+    {
+      "expression": "neutral",
+      "alpha_bounds_xyxy": [
+        103,
+        357,
+        424,
+        630
+      ],
+      "transparent_margins_px": {
+        "left": 103,
+        "right": 88,
+        "top": 357,
+        "bottom": 330
+      },
+      "transparent_fraction": 0.8550374348958333,
+      "visible_fraction": 0.13371785481770834
+    },
+    {
+      "expression": "happy",
+      "alpha_bounds_xyxy": [
+        98,
+        355,
+        430,
+        627
+      ],
+      "transparent_margins_px": {
+        "left": 98,
+        "right": 82,
+        "top": 355,
+        "bottom": 333
+      },
+      "transparent_fraction": 0.8485331217447917,
+      "visible_fraction": 0.13896891276041667,
+      "silhouette_iou_vs_neutral": 0.9249,
+      "max_bounds_drift_fraction": 0.0117
+    },
+    {
+      "expression": "angry",
+      "alpha_bounds_xyxy": [
+        94,
+        356,
+        417,
+        628
+      ],
+      "transparent_margins_px": {
+        "left": 94,
+        "right": 95,
+        "top": 356,
+        "bottom": 332
+      },
+      "transparent_fraction": 0.85333251953125,
+      "visible_fraction": 0.133355712890625,
+      "silhouette_iou_vs_neutral": 0.9029,
+      "max_bounds_drift_fraction": 0.0176
+    },
+    {
+      "expression": "surprised",
+      "alpha_bounds_xyxy": [
+        90,
+        354,
+        418,
+        628
+      ],
+      "transparent_margins_px": {
+        "left": 90,
+        "right": 94,
+        "top": 354,
+        "bottom": 332
+      },
+      "transparent_fraction": 0.848828125,
+      "visible_fraction": 0.13810831705729168,
+      "silhouette_iou_vs_neutral": 0.8869,
+      "max_bounds_drift_fraction": 0.0254
+    },
+    {
+      "expression": "crying",
+      "alpha_bounds_xyxy": [
+        95,
+        354,
+        416,
+        624
+      ],
+      "transparent_margins_px": {
+        "left": 95,
+        "right": 96,
+        "top": 354,
+        "bottom": 336
+      },
+      "transparent_fraction": 0.852301025390625,
+      "visible_fraction": 0.13494466145833334,
+      "silhouette_iou_vs_neutral": 0.899,
+      "max_bounds_drift_fraction": 0.0156
+    }
+  ],
+  "not_automatically_verified": [
+    "identity",
+    "expression count/order semantics",
+    "eyes",
+    "nose",
+    "chin",
+    "neck/body absence"
+  ]
+}

@@ -1,0 +1,13 @@
+Create a production-ready five-expression HEAD-ONLY sprite sheet for mobile game boy Hoya (호야).
+IMAGE1 is original photograph, IDENTITY reference only. IMAGE2 is Sooji sheet, STYLE ONLY. IMAGE3 is user-approved neutral master, EXACT CHARACTER DESIGN and locked GEOMETRY reference.
+Preserve IMAGE3's short dense black hair with slightly uneven straight fringe, youthful oval face, narrow almond dark eyes, straight brows, small nose, closed relaxed lips, cool quietly confident impression. Front-facing head with level gaze throughout.
+Treat master as ONE animation rig: same skull, hair outline, head dimensions, ears, jaw/chin, eye centers, nose position, camera, alignment and scale in all five. Change expression features only, no head tilt or zoom.
+EXACTLY FIVE SMALL separate heads in ONE HORIZONTAL ROW, five equal cells:
+1 NEUTRAL: exact approved cool half-lidded look, closed nearly straight mouth.
+2 HAPPY: clear cheerful open-mouth smile while retaining his identity.
+3 ANGRY: furrowed brows and cute firm pout.
+4 SURPRISED: widened eyes, small O-shaped open mouth.
+5 CRYING: squeezed/closed eyelids, open crying mouth, anime tears streaming from BOTH eyes. Same chin shape.
+Target2560x960; each512x960 cell; centers256,768,1280,1792,2304. Each entire head INCLUDING ears/hair/tears occupies ONLY10-12% of TOTAL image width, maximum60% of cell width. Large intentional transparent gaps and large top/bottom blank space. At least80px blank each side and64px above/below every head. No edge contacts or overlaps. Keep all head features and hair fully intact.
+Use IMAGE2 crisp outlined 2D anime mobile game style, smooth cel shading, soft bright color, not photo realism. IMAGE3 identity/style must remain recognizable.
+HEADS ONLY no neck shoulders body clothing props new accessories labels text grid shadows. True transparent RGBA background, no painted white black checkerboard.

@@ -210,7 +210,7 @@ test('mouth snacks can be bought and swapped while keeping glasses and outfit', 
   }
 });
 
-for (const preset of ['nayeon', 'angie', 'bs', 'dimsum']) test(`${preset} preset can be selected, dressed and loaded without a photo upload`, async () => {
+for (const preset of ['nayeon', 'angie', 'bs', 'dimsum', 'zes', 'hoya']) test(`${preset} preset can be selected, dressed and loaded without a photo upload`, async () => {
   const a = client();
   await a('POST', '/api/signup', { nickname: `${preset}-test`, pin: '1234' });
   const selected = await a('PATCH', '/api/settings', { character: preset });

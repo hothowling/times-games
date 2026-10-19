@@ -37,7 +37,8 @@ export function render(view, { go, toast, errorText }) {
     chars.forEach((c) => c.destroy());
     chars = [];
     const cur = currentKey();
-    const cards = characterKeys().map((key) => {
+    /* 등록 순서를 뒤집어 최근 추가한 캐릭터부터 보여 줍니다. */
+    const cards = characterKeys().reverse().map((key) => {
       const slot = h('span');
       const photo = state.me.characters.find((c) => c.key === key);
       const card = h('div', { style: 'position:relative' },

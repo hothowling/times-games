@@ -2,7 +2,7 @@
  * character.js - 캐릭터 그리기. 모든 화면과 게임이 이것 하나로 캐릭터를 보여 줍니다.
  *
  *   const c = createCharacter(el, look, { body: true })
- *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'angie'|'bs'|'dimsum'|'photo', equipped: { outfit, head, face, mouth, back, pet } }
+ *     look = { key, face: 얼굴 그림 주소, rig: 'sooji'|'jiho'|'nayeon'|'angie'|'bs'|'dimsum'|'zes'|'hoya'|'photo', equipped: { outfit, head, face, mouth, back, pet } }
  *     body: false 면 얼굴만(머리 장식·안경은 그대로) 그립니다.
  *   c.react('correct'|'wrong'|'timeout'|'clear'|'fail'|'idle')   표정 + 동작
  *   c.expression('neutral'|'happy'|'angry'|'surprised'|'sad')     표정만 바꾸기(다음 react 전까지 유지)
@@ -69,6 +69,20 @@ export const RIGS = {
     headX: '46%', headY: -114, headW: 218, headAngle: 0, clipY: -24,
     glassesX: '45.1%', glassesY: 59.2, glassesW: 139, glassesScale: 1.1, glassesAngle: -7.2,
     bow: { headY: -76, headW: 155 }
+  },
+  /* 빵점이: 짧고 동그란 얼굴의 눈–턱 거리를 수지와 맞춘 공통 배율. */
+  zes: {
+    ...BASE_RIG, faceX: '42.2%', faceY: -113.3, faceW: 406.8, faceH: 406.8, bodyFaceOffsetX: 16, portraitScale: 1.3,
+    headX: '44%', headY: -115, headW: 218, headAngle: 0, clipY: -30,
+    glassesX: '45.1%', glassesY: 58.7, glassesW: 141, glassesScale: 1.1, glassesAngle: 4.9,
+    bow: { headY: -77, headW: 155 }
+  },
+  /* 호야: 승인한 정면 얼굴의 눈–턱 거리로 수지와 크기·턱높이를 맞춥니다. */
+  hoya: {
+    ...BASE_RIG, faceX: '40.8%', faceY: -88.9, faceW: 312, faceH: 312, bodyFaceOffsetX: 16,
+    headX: '43%', headY: -134, headW: 218, headAngle: 0, clipY: -45,
+    glassesX: '45.1%', glassesY: 59.2, glassesW: 139, glassesScale: 1.1, glassesAngle: -4.1,
+    bow: { headY: -96, headW: 155 }
   },
   /* 사진 캐릭터: 정사각형 칸, 눈이 칸의 54% 높이(core/maker.js 의 EYE_Y) */
   photo: { ...BASE_RIG, faceY: 2, faceW: 200, faceH: 200, headY: -70, glassesY: 75, glassesW: 128, bow: { headY: -34, headW: 140 } }
@@ -146,7 +160,8 @@ export function createCharacter(el, look, { body = true } = {}) {
     current = next;
     const r = RIGS[next.rig] || RIGS.photo;
     const eq = next.equipped || {};
-    const faceShiftX = body ? BODY_FACE_SHIFT_X : 0;
+    /* 새 정면 얼굴은 의상 옷깃 중심에 맞춰 추가 이동하며 얼굴 장식도 함께 옮깁니다. */
+    const faceShiftX = body ? BODY_FACE_SHIFT_X + (r.bodyFaceOffsetX ?? 0) : 0;
     const faceAnchorX = (x) => faceShiftX ? `calc(${px(x)} + ${faceShiftX}px)` : x;
     /* 가면처럼 위로 긴 안경도 렌즈 구멍을 캐릭터 눈높이에 맞춥니다(그림은 2:1). */
     /* 렌즈 중심 = glassesY + 0.53 × glassesW/2 를 기준점으로 두고, 배율을 키워도 이 점이 움직이지 않게 합니다. */
@@ -175,9 +190,10 @@ export function createCharacter(el, look, { body = true } = {}) {
     for (const [k, v] of Object.entries(vars)) rig.style.setProperty(k, px(v));
     /* 얼굴만 그릴 때는 얼굴 칸을 기준 상자로 씁니다. */
     el.style.setProperty('--chr-ratio', body ? `${BOX_W} / ${BOX_H}` : `${r.faceW} / ${r.faceH}`);
-    /* 얼굴만: 기준 상자는 그대로 두고 얼굴 칸이 요소를 채우도록 옮깁니다(얼굴은 항상 가로 가운데). */
-    shift = body ? '' : ` translate(${r.faceW / 2 - BOX_W / 2}px, ${-r.faceY}px)`;
-    boxW = body ? BOX_W : r.faceW;
+    /* 얼굴 전용 미리보기는 셀 중심을 유지하며 장식까지 같은 배율로 확대합니다. */
+    const portraitScale = r.portraitScale ?? 1;
+    boxW = body ? BOX_W : r.faceW / portraitScale;
+    shift = body ? '' : ` translate(${boxW / 2 - BOX_W / 2}px, ${-r.faceY - (r.faceH - r.faceH / portraitScale) / 2}px)`;
     L.face.style.backgroundImage = `url("${next.face}")`;
     L.outfit.hidden = !body;
     if (body) L.outfit.src = COSMETICS[eq.outfit]?.img || BASE_OUTFIT;

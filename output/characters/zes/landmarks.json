@@ -1,0 +1,7 @@
+{
+  "frame": [512, 512],
+  "left_eye": [224, 260],
+  "right_eye": [306, 267],
+  "chin": [261, 359],
+  "notes": "Manual neutral runtime review: pupil centers and skin chin tip. Child has naturally wide eye spacing relative to short round face."
+}

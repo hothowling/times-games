@@ -1,0 +1,6 @@
+Create one neutral master HEAD ONLY sprite for mobile game character ZeS (빵점이).
+IMAGE 1 is sole IDENTITY reference: young child, round plump cheeks, small chin, narrow almond dark eyes with playful sleepy gaze, small rounded nose, glossy gently smiling lips, black center-parted long twin ponytails, pale yellow bow hair ties on both sides. Preserve recognizability.
+IMAGE 2 Sooji sheet is STYLE ONLY: strong 2D anime mobile game illustration, crisp outlines, cel shading, soft bright colors, slightly chibi. Do NOT copy her face or hairstyle/accessories.
+Make ZeS a cute mischievous comic character: slightly cheeky crooked closed smile and playful eyebrow attitude, naturally rounded cheeks. Affectionate humorous expression.
+HEAD and complete hair ONLY, NO neck shoulders body hands bread props or lettering. Preserve existing pale yellow bows only. Head level front facing.
+Target portrait 512x960, eye midpoint centered x256 y480, chin y660. Entire hair width at most352px with at least80px blank on both sides and64px above/below, all hair intact, ample transparent space intentional. True RGBA transparent background. No white/black/checkerboard painted background or shadow.

@@ -1,0 +1,7 @@
+{
+  "frame": [512, 512],
+  "left_eye": [225, 307],
+  "right_eye": [322, 300],
+  "chin": [276, 428],
+  "notes": "Manual review of final runtime neutral: pupil centers and skin chin tip; all frames share the same crop and scale."
+}

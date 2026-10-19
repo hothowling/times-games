@@ -1,0 +1,20 @@
+{
+  "shared_crop": [
+    0,
+    232,
+    512,
+    744
+  ],
+  "size": [
+    2560,
+    512
+  ],
+  "order": [
+    "neutral",
+    "happy",
+    "angry",
+    "surprised",
+    "sad"
+  ],
+  "sad_source": "crying"
+}
